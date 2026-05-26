@@ -1,12 +1,6 @@
-```
- ▗▄▖ ▗▄▄▖ ▗▄▄▄▖     ▗▄▄▖▗▖ ▗▖▗▄▄▄▖▗▖   ▗▖    ▗▄▄▖
-▐▌ ▐▌▐▌ ▐▌▐▌       ▐▌   ▐▌▗▞▘  █  ▐▌   ▐▌   ▐▌   
-▐▛▀▜▌▐▛▀▘ ▐▛▀▀▘     ▝▀▚▖▐▛▚▖   █  ▐▌   ▐▌    ▝▀▚▖
-▐▌ ▐▌▐▌   ▐▙▄▄▖    ▗▄▄▞▘▐▌ ▐▌▗▄█▄▖▐▙▄▄▖▐▙▄▄▖▗▄▄▞▘
+# Ape Skills
 
-```
-
-Skills for apes like us, so we can do our jobs better.
+Skills for apes like us, so we can do our jobs better and make our lives easier.
 
 ## Installation
 
@@ -42,6 +36,7 @@ You can also tag a skill explicitly with `/skill`, e.g. `/ape-review-blog`.
 | -------------------------------------- | -------------------------------------------------------------------------- |
 | [ape-review-blog](./ape-review-blog)   | Reviews engineering blog drafts.                                           |
 | [ape-rewrite-blog](./ape-rewrite-blog) | Rewrites a blog draft by applying every fix from `ape-review-blog`.        |
+| [ape-commit](./ape-commit)             | Formats git commit messages with a crisp summary and imperative bullets.   |
 
 ## License
 
