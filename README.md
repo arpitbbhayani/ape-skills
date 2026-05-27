@@ -36,9 +36,9 @@ You can also tag a skill explicitly with `/skill`, e.g. `/ape-review-blog`.
 | ------------------------------------------ | -------------------------------------------------------------------------- |
 | [ape-review-blog](./ape-review-blog)       | Reviews engineering blog drafts.                                           |
 | [ape-rewrite-blog](./ape-rewrite-blog)     | Rewrites a blog draft by applying every fix from `ape-review-blog`.        |
-| [ape-cut-fluff](./ape-cut-fluff)           | Single-pass surgical editor that strips fluff from text, blogs, or papers. |
 | [ape-commit](./ape-commit)                 | Formats git commit messages with a crisp summary and imperative bullets.   |
-| [ape-style-markdown](./ape-style-markdown) | Applies consistent, professional Markdown formatting rules to any output.  |
+| [ape-style-markdown](./ape-style-markdown)         | Applies consistent, professional Markdown formatting rules to any output.  |
+| [ape-write-pseudocode](./ape-write-pseudocode) | Writes high-level pseudocode for functions and algorithms.                 |
 
 ## License
 
