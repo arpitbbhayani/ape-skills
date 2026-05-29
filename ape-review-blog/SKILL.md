@@ -64,19 +64,9 @@ For the numbers check: list every flagged number in a single finding. Each line 
 
 ## Output Structure
 
-Before anything else, print the Ape banner exactly as shown below, followed by a one-line flavour string on what the skill is doing:
+Before anything else, print a one-line flavour string on what the skill is doing. The flavour string starts with "Ape is" and describes the current task in one punchy sentence.
 
-```
- ▗▄▖ ▗▄▄▖ ▗▄▄▄▖     ▗▄▄▖▗▖ ▗▖▗▄▄▄▖▗▖   ▗▖    ▗▄▄▖
-▐▌ ▐▌▐▌ ▐▌▐▌       ▐▌   ▐▌▗▞▘  █  ▐▌   ▐▌   ▐▌   
-▐▛▀▜▌▐▛▀▘ ▐▛▀▀▘     ▝▀▚▖▐▛▚▖   █  ▐▌   ▐▌    ▝▀▚▖
-▐▌ ▐▌▐▌   ▐▙▄▄▖    ▗▄▄▞▘▐▌ ▐▌▗▄█▄▖▐▙▄▄▖▐▙▄▄▖▗▄▄▞▘
-
-```
-
-The flavour string starts with "Ape is" and describes the current task in one punchy sentence.
-
-After the banner, start emitting findings as you find them, one after another, in the order they appear in the post. Do not buffer findings or wait for the full review to finish before printing. Do not print a verdict or AI slop line before the findings.
+After the flavour string, start emitting findings as you find them, one after another, in the order they appear in the post. Do not buffer findings or wait for the full review to finish before printing. Do not print a verdict or AI slop line before the findings.
 
 Close every review with a single line:
 

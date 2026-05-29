@@ -10,7 +10,7 @@ Produces a revised version of an engineering blog draft by applying every fix su
 ## How to Run
 
 1. Identify the source blog file the user is referring to. It must be a path on disk. If the user only pasted text, ask them for the file path before continuing -- the rewrite needs a real file to suffix.
-2. Check whether `ape-review-blog` has already run on this exact file earlier in the current conversation and the file has not changed since. Signals that the review is already available: the Ape banner and a stream of `**required**` / `**suggested**` findings followed by `Ape done.` appear in the transcript, against the same path. If so, reuse those findings directly -- do not re-run the review, do not re-emit the banner, do not re-print the findings. Skip straight to step 4.
+2. Check whether `ape-review-blog` has already run on this exact file earlier in the current conversation and the file has not changed since. Signals that the review is already available: the flavour string and a stream of `**required**` / `**suggested**` findings followed by `Ape done.` appear in the transcript, against the same path. If so, reuse those findings directly -- do not re-run the review, do not re-print the findings. Skip straight to step 4.
 3. Otherwise, invoke the `ape-review-blog` skill on that file and let it produce its findings end-to-end. Do not skip checks, do not summarise findings, do not collapse the review into a shorter form. The review must run as it normally would.
 4. Apply every finding -- both `required` and `suggested` -- to the original text. Use the `Fix:` line from each finding as the replacement. For findings that describe an action rather than a literal replacement (reorderings, paragraph splits, bridging sentences, removing formatting), perform that action faithfully in the new draft.
 5. Write the rewritten post to a new file alongside the original, with `-ape` appended to the stem. For example, `post.md` becomes `post-ape.md`, `2026-05-distributed-locks.md` becomes `2026-05-distributed-locks-ape.md`. Never overwrite the original. If a file with the `-ape.md` suffix already exists, overwrite it -- this is a regenerated rewrite, not a second variant.
@@ -30,7 +30,7 @@ If the user explicitly asks to "re-review" or "review again before rewriting", t
 
 ## Output Structure
 
-If the review has not been run yet for this file in the current conversation, run `ape-review-blog` first and let its full output stream as normal -- banner, findings, and `Ape done.` line included. Then continue with the rewrite section below.
+If the review has not been run yet for this file in the current conversation, run `ape-review-blog` first and let its full output stream as normal -- flavour string, findings, and `Ape done.` line included. Then continue with the rewrite section below.
 
 If a prior review for this file is already in the transcript, skip the review output entirely and open with a single line acknowledging the reuse:
 
