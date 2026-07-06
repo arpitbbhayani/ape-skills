@@ -23,50 +23,49 @@ def function_name(param1, param2, ...):
 
 ## Body Rules
 
-The body is the core of the pseudocode. Each line describes one logical step at a very high level -- what the step takes as input and what it produces as output. Do not write code. Do not spell out implementation details.
+The body is the core of the pseudocode. Each line is a pythonic, non-functional call that names the operation and its operands -- not English prose. Invent clear, intuitive method or function names. The goal is code that reads like intent, not implementation.
 
-- One line per logical step.
-- Each line states what it receives and what it produces or decides.
-- No variable declarations, no type annotations, no language syntax.
-- No method chains, no intermediate variable names unless a name is essential to connect two steps.
+- One call per logical step.
+- Use `object.verb(args)` or `verb(args)` style -- never English sentences.
+- No type annotations, no real data-structure internals, no language-specific APIs.
+- Intermediate variable names are fine when they connect two steps.
 - Never more than one idea per line.
 
 ## Control Flow
 
-Use `if`, `elif`, `else`, and loops sparingly and only when the branching or iteration is the point of the logic. Use Python-like keywords and colon-terminated headers.
+Use `if`, `elif`, `else`, and loops sparingly and only when the branching or iteration is the point of the logic. Conditions are also written as code-like expressions, not prose.
 
 ```
-if <condition>:
-    <what happens>
+if condition_call(args):
+    ...
 else:
-    <what happens instead>
+    ...
 
-for each <item> in <collection>:
-    <what is done with item>
+for item in collection:
+    ...
 
-while <condition>:
-    <what is repeated>
+while not done():
+    ...
 ```
-
-Keep conditions at the same high level as the rest of the body -- describe the condition in plain words, not code.
 
 ## What to Write on Each Line
 
-Each line should answer: "given what input, produce or decide what output?"
+Each line should look like a call you would recognise but cannot actually run.
 
 Good patterns:
 
-- `filter nodes by reachability from source`
-- `sort entries by timestamp, oldest first`
-- `compute shortest path from source to each node`
-- `pick the candidate with the highest score`
-- `merge left result and right result into sorted list`
+- `nodes.filter_reachable_from(source)`
+- `entries.sort_by(timestamp, order=ASC)`
+- `graph.shortest_path(source)`
+- `candidates.pick_highest_score()`
+- `merge_sorted(left, right)`
 
-Bad patterns (too much detail):
+Bad patterns:
 
-- `dist[v] = dist[u] + weight(u, v)` -- this is code
-- `initialize a min-heap priority queue with (0, source)` -- implementation detail
-- `list.stream().filter(x -> x > 0).collect(...)` -- this is definitely code
+- `"filter nodes by reachability from source"` -- English sentence, not code
+- `dist[v] = dist[u] + weight(u, v)` -- actual implementation code
+- `initialize a min-heap priority queue with (0, source)` -- prose + detail
+- `list.stream().filter(x -> x > 0).collect(...)` -- real language API
 
 ## Examples
 
@@ -77,27 +76,25 @@ def lsm_write(key, value):
     # input:  key and value to store
     # output: acknowledgement that write is recorded
 
-    append key-value pair to memtable
-    if memtable exceeds size threshold:
-        flush memtable to a new SSTable on disk
-        clear memtable
+    memtable.append(key, value)
+    if memtable.exceeds_threshold():
+        sstable = memtable.flush_to_disk()
+        memtable.clear()
 ```
 
 ```python
 def lsm_read(key):
     # input:  key to look up
-    # output: value for key, or not found
+    # output: value for key, or NOT_FOUND
 
-    check memtable for key
-    if found in memtable:
-        return value from memtable
-    for each SSTable from newest to oldest:
-        check bloom filter for key
-        if bloom filter says key may exist:
-            search SSTable for key
-            if found:
+    if memtable.contains(key):
+        return memtable.get(key)
+    for sstable in sstables.newest_first():
+        if sstable.bloom_filter.might_contain(key):
+            value = sstable.search(key)
+            if value:
                 return value
-    return not found
+    return NOT_FOUND
 ```
 
 ```python
@@ -105,21 +102,28 @@ def lsm_compact(sstables):
     # input:  list of SSTables to merge
     # output: single merged SSTable with duplicates resolved
 
-    open a cursor on each SSTable
-    while any cursor has remaining entries:
-        pick the entry with the smallest key across all cursors
-        if same key appears in multiple SSTables:
-            keep only the entry from the newest SSTable
-        write chosen entry to output SSTable
-    return output SSTable
+    cursors = sstables.open_cursors()
+    while cursors.any_remaining():
+        entry = cursors.pick_min_key()
+        if cursors.has_duplicates(entry.key):
+            entry = cursors.keep_newest(entry.key)
+        output.write(entry)
+    return output.finalise()
 ```
 
 **Bad (do not do this):**
 
 ```python
-def lsm_write(key: str, value: bytes):  # typed signature -- not pseudocode
+def lsm_write(key, value):
+    append key-value pair to memtable          # English sentence -- wrong
+    if memtable exceeds size threshold:        # English condition -- wrong
+        flush memtable to a new SSTable        # English sentence -- wrong
+```
+
+```python
+def lsm_write(key: str, value: bytes):  # typed signature + real Python -- wrong
     self.lock.acquire()
-    self.memtable[key] = value          # this is Python code, not pseudocode
+    self.memtable[key] = value
     if len(self.memtable) > self.threshold:
         self.flush()
     self.lock.release()
@@ -127,9 +131,9 @@ def lsm_write(key: str, value: bytes):  # typed signature -- not pseudocode
 
 ## Checklist Before Writing
 
-- Does each line describe logic, not implementation?
-- Can a non-programmer read each line and understand what is happening?
-- Are if/else and loops used only where branching or iteration is the actual point?
+- Are all body lines calls (`object.verb(args)` or `verb(args)`), not English sentences?
+- Are invented names intuitive -- would a reader guess what they do?
+- Are if/else conditions also written as calls or simple expressions, not prose?
 - Is every line a single idea?
 
 If yes, the pseudocode is done.
