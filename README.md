@@ -40,6 +40,7 @@ You can also tag a skill explicitly with `/skill`, e.g. `/ape-review-blog`.
 | [ape-style-markdown](./ape-style-markdown)         | Applies consistent, professional Markdown formatting rules to any output.  |
 | [ape-write-pseudocode](./ape-write-pseudocode) | Writes high-level pseudocode for functions and algorithms.                 |
 | [ape-cut-fluff](./ape-cut-fluff)           | Strips fluff and redundancy to drive writing to the bare minimum word count. |
+| [ape-plan-project](./ape-plan-project)     | Splits a spec into phases, each with a full product + engineering design doc for agent handoff. |
 
 ## License
 
