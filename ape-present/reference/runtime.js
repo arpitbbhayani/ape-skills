@@ -1,6 +1,6 @@
 // ape-present runtime. Copy verbatim into the <script> at the end of <body>.
 // Covers: figure reveals, stat counters, live diagram motion (packets, pulses,
-// cycles) gated on visibility, and theme following. Idempotent: safe to run
+// cycles) gated on visibility, and theme following / present-md integration. Idempotent: safe to run
 // again if the host reloads the frame.
 (() => {
   if (window.__apePresent) return;
@@ -10,17 +10,43 @@
   const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   // --- Theme --------------------------------------------------------------
-  // Follow the OS via CSS; `t` flips it and the choice is remembered.
+  // Follow the OS or present-md theme via CSS; `t` flips it and the choice is remembered.
+  // Responds to postMessage from present-md or parent frames to adapt themes seamlessly.
   {
-    try { const saved = localStorage.getItem('ape-theme'); if (saved) root.setAttribute('data-theme', saved); } catch (_) {}
+    const applyTheme = (t) => {
+      if (!t) return;
+      root.setAttribute('data-theme', t);
+      try { localStorage.setItem('ape-theme', t); } catch (_) {}
+    };
+
+    try {
+      const saved = localStorage.getItem('ape-theme');
+      if (saved) root.setAttribute('data-theme', saved);
+    } catch (_) {}
+
+    // Listen for theme messages from present-md or embedding hosts
+    window.addEventListener('message', (e) => {
+      if (e && e.data && e.data.type === 'theme' && e.data.theme) {
+        applyTheme(e.data.theme);
+      }
+    });
+
+    // Check parent document theme if accessible (same-origin iframe)
+    try {
+      if (window.parent && window.parent !== window && window.parent.document && window.parent.document.documentElement) {
+        const parentTheme = window.parent.document.documentElement.getAttribute('data-theme');
+        if (parentTheme) root.setAttribute('data-theme', parentTheme);
+      }
+    } catch (_) {}
+
     addEventListener('keydown', (e) => {
       if (e.key !== 't' || e.metaKey || e.ctrlKey || e.altKey) return;
       if (e.target && /INPUT|TEXTAREA/.test(e.target.tagName)) return;
-      const dark = root.getAttribute('data-theme') === 'dark' ||
-        (!root.hasAttribute('data-theme') && matchMedia('(prefers-color-scheme: dark)').matches);
-      const next = dark ? 'light' : 'dark';
-      root.setAttribute('data-theme', next);
-      try { localStorage.setItem('ape-theme', next); } catch (_) {}
+      const cur = root.getAttribute('data-theme');
+      const isDark = cur === 'dark' || cur === 'midnight' ||
+        (!cur && matchMedia('(prefers-color-scheme: dark)').matches);
+      const next = isDark ? 'daylight' : 'midnight';
+      applyTheme(next);
     });
   }
 

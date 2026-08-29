@@ -7,7 +7,7 @@ description: Converts a blog post into a single self-contained HTML document -- 
 
 Takes a blog post and produces one HTML file that reads like a well-made internal document: a title, a summary, real headings and short paragraphs, and a figure for every idea -- diagrams that move to show the mechanism, numbers set large, a formula typeset where the formula is the point. The author opens it and walks people through it, or shares the link and people read it alone. Both must work.
 
-It is a document, not a deck. No full-screen sections, no hero, no scroll-snapping, no progress bar, no slide feel. The first screen is the title and the summary, and the page scrolls like any other. Single file, real selectable text, comfortable line length, light and dark themes, and a fixed section skeleton -- summary, context, body, caveats, sources -- so every document has the same shape.
+It is a document, not a deck. No full-screen sections, no hero, no scroll-snapping, no progress bar, no slide feel. The first screen is the title and the summary, and the page scrolls like any other. Single file, real selectable text, comfortable line length with defined width limits (`--measure` for prose column, with visual elements permitted to break out to `--wide` or `--max-width`), full theme support matching `present-md`, and a fixed section skeleton -- summary, context, body, caveats, sources -- so every document has the same shape.
 
 It is not the blog either. The post explained; this document shows. Prose is kept to what the figures cannot carry -- always shorter than the source, and budgeted per idea rather than as a fraction of the post.
 
@@ -30,7 +30,7 @@ Optional modifiers the user may add anywhere in the request:
 
 - **Audience**: "for execs", "for new grads", "for the platform team". Changes how much is assumed and which numbers lead. Default: senior engineers who have not read the post.
 - **Length**: "short" (the claim, the surprising idea, the main mechanism, the biggest number; 4-6 ideas) or "full" (every idea in the post). Default: full.
-- **Accent**: "amber", "teal", or "violet". Default: amber. Databases and systems read well in amber, networking and infra in teal, ML and maths in violet -- follow that if the user gives no preference and the topic is clear.
+- **Theme**: "midnight", "tokyo", "nord", "dracula", "gruvbox", "rosepine", "forest", "neon", "daylight", "arctic", "solarized", "paper", "rosequartz", "swiss" (matching `present-md`), or an accent hue ("amber", "teal", "violet"). Default: matches present-md / daylight on light OS, midnight on dark OS.
 - **Output path**: "write it to ~/docs/wal.html". Default: `<slug-of-title>.html` next to the source file; in the current directory for URL or pasted input.
 
 ## Step 1: Find the Spine
@@ -204,7 +204,7 @@ Then, in order:
    - Anything deliberately dropped from the post and why, one line each.
    - Fidelity: claims checked, drifted fixed, unsupported removed, passes taken.
    - Which `verify.sh` checks were skipped (pasted input has no source to measure against).
-   - How to use it: open in a browser; theme follows the OS, `t` flips it.
+   - How to use it: open in a browser (or present via `present-md`); theme follows the OS or `present-md` theme, `t` flips it.
 
 ## Iteration
 

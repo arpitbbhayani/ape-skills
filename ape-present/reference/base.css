@@ -3,54 +3,1094 @@
    of these tokens; grep for '#' outside the :root blocks and expect zero hits.
 
    The document is a long-form reading page, not a deck: one prose column,
-   real headings, figures inline. Theme follows the OS; `t` flips it. */
+   real headings, figures inline. Theme follows the OS or present-md; `t` flips it.
+   Width has a comfortable measure constraint (--measure) with visual elements
+   allowed to break out beyond it (--wide, --max-width). */
 
-/* ---- Tokens: light (default) ---------------------------------------------- */
-:root {
-  --bg: #fbfbf9;
-  --surface: #ffffff;
-  --line: #e4e4de;
-  --text: #16181c;
-  --muted: #6b7078;
-  --accent: #d98c14;      /* pick ONE per document: #d98c14 amber, #0f9f8f teal, #7c5cd6 violet */
-  --accent-soft: color-mix(in srgb, var(--accent) 14%, transparent);
-  --grid: color-mix(in srgb, var(--accent) 7%, transparent);   /* graph-paper ground */
-  --err: #d64545;
-  --ok: #2f9e5b;
-  --code-k: #7c3aed;
-  --code-s: #15803d;
-  --code-c: #9ca3af;
-  --code-n: #1d4ed8;
-  --serif: "Playfair Display", "Iowan Old Style", "Times New Roman", Georgia, serif;   /* title + headings: newspaper */
-  --mono: "IBM Plex Mono", "SF Mono", Menlo, Consolas, monospace;                       /* everything else */
-  --sans: var(--mono);
-  --ease: cubic-bezier(0.22, 1, 0.36, 1);
-  --measure: 44rem;       /* prose column */
-  --wide: 64rem;          /* figures may break out to this */
+/* ---- Theme: midnight (dark) -------------------------------- */
+:root[data-theme="midnight"],
+:root[data-theme="dark"],
+:root[data-theme="mocha"] {
+  --crust:            #11111b;
+  --mantle:           #181825;
+  --base:             #1e1e2e;
+  --surface0:         #313244;
+  --surface1:         #45475a;
+  --surface2:         #585b70;
+  --overlay0:         #6c7086;
+  --overlay1:         #7f849c;
+  --subtext0:         #a6adc8;
+  --subtext1:         #bac2de;
+  --text:             #cdd6f4;
+  --lavender:         #b4befe;
+  --blue:             #89b4fa;
+  --sapphire:         #74c7ec;
+  --sky:              #89dceb;
+  --teal:             #94e2d5;
+  --green:            #a6e3a1;
+  --yellow:           #f9e2af;
+  --peach:            #fab387;
+  --red:              #f38ba8;
+  --mauve:            #cba6f7;
+  --pink:             #f5c2e7;
+  --accent:           #cba6f7;
+  --accent-2:         #89b4fa;
+  --accent-3:         #89dceb;
+  --accent-soft:      rgba(203, 166, 247, 0.1);
+  --accent-line:      rgba(203, 166, 247, 0.42);
+  --glow:             rgba(203, 166, 247, 0.34);
+  --gradient:         linear-gradient(115deg, #cba6f7, #89b4fa 58%, #89dceb);
+  --accent-fade:      linear-gradient(90deg, #cba6f7, rgba(203, 166, 247, 0.45) 62%, transparent);
+  --surface-soft:     rgba(49, 50, 68, 0.34);
+  --crust-overlay:    rgba(17, 17, 27, 0.84);
+  --scrim:            rgba(0, 0, 0, 0.5);
+  --hairline:         rgba(205, 214, 244, 0.09);
+  --shadow-md:        0 8px 28px rgba(0, 0, 0, 0.42);
+  --shadow-lg:        0 24px 68px rgba(0, 0, 0, 0.52);
+  --code-shadow:      0 6px 26px rgba(0, 0, 0, 0.4);
+  --font-display:     'Space Grotesk', system-ui, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif;
+  --font-body:        'Inter', system-ui, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif;
+  --font-mono:        'IBM Plex Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  --display-weight:   700;
+  --display-tracking: -0.025em;
+  --display-case:     none;
+  --body-tracking:    0;
+  --decor-line:       rgba(205, 214, 244, 0.05);
+  --decor-dot:        rgba(205, 214, 244, 0.085);
+  --decor-glow-1:     rgba(203, 166, 247, 0.2);
+  --decor-glow-2:     rgba(137, 180, 250, 0.16);
+  --decor-glow-3:     rgba(137, 220, 235, 0.13);
+  --bg:               #1e1e2e;
+  --surface:          #181825;
+  --line:             #313244;
+  --muted:            #a6adc8;
+  --grid:             rgba(205, 214, 244, 0.06);
+  --err:              #f38ba8;
+  --ok:               #a6e3a1;
+  --code-k:           #cba6f7;
+  --code-s:           #a6e3a1;
+  --code-c:           #6c7086;
+  --code-n:           #89b4fa;
+  --serif:            'Space Grotesk', system-ui, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif;
+  --mono:             'IBM Plex Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  --sans:             'Inter', system-ui, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif;
+  --ease:             cubic-bezier(0.22, 1, 0.36, 1);
+  --measure:          44rem;
+  --wide:             64rem;
+  --max-width:        72rem;
+  color-scheme: dark;
+}
+
+/* ---- Theme: tokyo night (dark) -------------------------------- */
+:root[data-theme="tokyo"],
+:root[data-theme="tokyo-night"] {
+  --crust:            #16161e;
+  --mantle:           #1a1b26;
+  --base:             #1f2335;
+  --surface0:         #292e42;
+  --surface1:         #3b4261;
+  --surface2:         #545c7e;
+  --overlay0:         #626c96;
+  --overlay1:         #7c86ab;
+  --subtext0:         #a5b0d6;
+  --subtext1:         #b7c0e0;
+  --text:             #c8d3f5;
+  --lavender:         #a9b1ff;
+  --blue:             #7aa2f7;
+  --sapphire:         #2ac3de;
+  --sky:              #7dcfff;
+  --teal:             #73daca;
+  --green:            #9ece6a;
+  --yellow:           #e0af68;
+  --peach:            #ff9e64;
+  --red:              #f7768e;
+  --mauve:            #bb9af7;
+  --pink:             #ff7eb6;
+  --accent:           #2ac3de;
+  --accent-2:         #bb9af7;
+  --accent-3:         #73daca;
+  --accent-soft:      rgba(42, 195, 222, 0.1);
+  --accent-line:      rgba(42, 195, 222, 0.42);
+  --glow:             rgba(42, 195, 222, 0.34);
+  --gradient:         linear-gradient(115deg, #2ac3de, #bb9af7 58%, #73daca);
+  --accent-fade:      linear-gradient(90deg, #2ac3de, rgba(42, 195, 222, 0.45) 62%, transparent);
+  --surface-soft:     rgba(41, 46, 66, 0.34);
+  --crust-overlay:    rgba(22, 22, 30, 0.84);
+  --scrim:            rgba(0, 0, 0, 0.5);
+  --hairline:         rgba(200, 211, 245, 0.09);
+  --shadow-md:        0 8px 28px rgba(0, 0, 0, 0.42);
+  --shadow-lg:        0 24px 68px rgba(0, 0, 0, 0.52);
+  --code-shadow:      0 6px 26px rgba(0, 0, 0, 0.4);
+  --font-display:     'Sora', system-ui, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif;
+  --font-body:        'Inter', system-ui, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif;
+  --font-mono:        'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  --display-weight:   700;
+  --display-tracking: -0.03em;
+  --display-case:     none;
+  --body-tracking:    0;
+  --decor-line:       rgba(200, 211, 245, 0.05);
+  --decor-dot:        rgba(200, 211, 245, 0.085);
+  --decor-glow-1:     rgba(42, 195, 222, 0.2);
+  --decor-glow-2:     rgba(187, 154, 247, 0.16);
+  --decor-glow-3:     rgba(115, 218, 202, 0.13);
+  --bg:               #1f2335;
+  --surface:          #1a1b26;
+  --line:             #292e42;
+  --muted:            #a5b0d6;
+  --grid:             rgba(200, 211, 245, 0.06);
+  --err:              #f7768e;
+  --ok:               #9ece6a;
+  --code-k:           #bb9af7;
+  --code-s:           #9ece6a;
+  --code-c:           #626c96;
+  --code-n:           #7aa2f7;
+  --serif:            'Sora', system-ui, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif;
+  --mono:             'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  --sans:             'Inter', system-ui, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif;
+  --ease:             cubic-bezier(0.22, 1, 0.36, 1);
+  --measure:          44rem;
+  --wide:             64rem;
+  --max-width:        72rem;
+  color-scheme: dark;
+}
+
+/* ---- Theme: nord (dark) -------------------------------- */
+:root[data-theme="nord"] {
+  --crust:            #232831;
+  --mantle:           #2e3440;
+  --base:             #353c4a;
+  --surface0:         #3b4252;
+  --surface1:         #434c5e;
+  --surface2:         #4c566a;
+  --overlay0:         #707d92;
+  --overlay1:         #8e9aae;
+  --subtext0:         #c3ccda;
+  --subtext1:         #d8dee9;
+  --text:             #eceff4;
+  --lavender:         #c9a9c8;
+  --blue:             #81a1c1;
+  --sapphire:         #88c0d0;
+  --sky:              #a3d4e0;
+  --teal:             #8fbcbb;
+  --green:            #a3be8c;
+  --yellow:           #ebcb8b;
+  --peach:            #d08770;
+  --red:              #bf616a;
+  --mauve:            #b48ead;
+  --pink:             #d3a3c6;
+  --accent:           #88c0d0;
+  --accent-2:         #81a1c1;
+  --accent-3:         #8fbcbb;
+  --accent-soft:      rgba(136, 192, 208, 0.1);
+  --accent-line:      rgba(136, 192, 208, 0.42);
+  --glow:             rgba(136, 192, 208, 0.34);
+  --gradient:         linear-gradient(115deg, #88c0d0, #81a1c1 58%, #8fbcbb);
+  --accent-fade:      linear-gradient(90deg, #88c0d0, rgba(136, 192, 208, 0.45) 62%, transparent);
+  --surface-soft:     rgba(59, 66, 82, 0.34);
+  --crust-overlay:    rgba(35, 40, 49, 0.84);
+  --scrim:            rgba(0, 0, 0, 0.5);
+  --hairline:         rgba(236, 239, 244, 0.09);
+  --shadow-md:        0 8px 28px rgba(0, 0, 0, 0.42);
+  --shadow-lg:        0 24px 68px rgba(0, 0, 0, 0.52);
+  --code-shadow:      0 6px 26px rgba(0, 0, 0, 0.4);
+  --font-display:     'Manrope', system-ui, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif;
+  --font-body:        'Manrope', system-ui, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif;
+  --font-mono:        'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  --display-weight:   800;
+  --display-tracking: -0.035em;
+  --display-case:     none;
+  --body-tracking:    0;
+  --decor-line:       rgba(236, 239, 244, 0.05);
+  --decor-dot:        rgba(236, 239, 244, 0.085);
+  --decor-glow-1:     rgba(136, 192, 208, 0.2);
+  --decor-glow-2:     rgba(129, 161, 193, 0.16);
+  --decor-glow-3:     rgba(143, 188, 187, 0.13);
+  --bg:               #353c4a;
+  --surface:          #2e3440;
+  --line:             #3b4252;
+  --muted:            #c3ccda;
+  --grid:             rgba(236, 239, 244, 0.06);
+  --err:              #bf616a;
+  --ok:               #a3be8c;
+  --code-k:           #b48ead;
+  --code-s:           #a3be8c;
+  --code-c:           #707d92;
+  --code-n:           #81a1c1;
+  --serif:            'Manrope', system-ui, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif;
+  --mono:             'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  --sans:             'Manrope', system-ui, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif;
+  --ease:             cubic-bezier(0.22, 1, 0.36, 1);
+  --measure:          44rem;
+  --wide:             64rem;
+  --max-width:        72rem;
+  color-scheme: dark;
+}
+
+/* ---- Theme: dracula (dark) -------------------------------- */
+:root[data-theme="dracula"] {
+  --crust:            #1a1b23;
+  --mantle:           #21222c;
+  --base:             #282a36;
+  --surface0:         #343746;
+  --surface1:         #44475a;
+  --surface2:         #565a70;
+  --overlay0:         #6272a4;
+  --overlay1:         #7b85b6;
+  --subtext0:         #c8cbe0;
+  --subtext1:         #e2e4f0;
+  --text:             #f8f8f2;
+  --lavender:         #d6bcff;
+  --blue:             #79b8ff;
+  --sapphire:         #8be9fd;
+  --sky:              #a4f0fd;
+  --teal:             #66e0c8;
+  --green:            #50fa7b;
+  --yellow:           #f1fa8c;
+  --peach:            #ffb86c;
+  --red:              #ff5555;
+  --mauve:            #bd93f9;
+  --pink:             #ff79c6;
+  --accent:           #bd93f9;
+  --accent-2:         #ff79c6;
+  --accent-3:         #8be9fd;
+  --accent-soft:      rgba(189, 147, 249, 0.1);
+  --accent-line:      rgba(189, 147, 249, 0.42);
+  --glow:             rgba(189, 147, 249, 0.34);
+  --gradient:         linear-gradient(115deg, #bd93f9, #ff79c6 58%, #8be9fd);
+  --accent-fade:      linear-gradient(90deg, #bd93f9, rgba(189, 147, 249, 0.45) 62%, transparent);
+  --surface-soft:     rgba(52, 55, 70, 0.34);
+  --crust-overlay:    rgba(26, 27, 35, 0.84);
+  --scrim:            rgba(0, 0, 0, 0.5);
+  --hairline:         rgba(248, 248, 242, 0.09);
+  --shadow-md:        0 8px 28px rgba(0, 0, 0, 0.42);
+  --shadow-lg:        0 24px 68px rgba(0, 0, 0, 0.52);
+  --code-shadow:      0 6px 26px rgba(0, 0, 0, 0.4);
+  --font-display:     'Syne', system-ui, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif;
+  --font-body:        'Figtree', system-ui, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif;
+  --font-mono:        'Fira Code', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  --display-weight:   800;
+  --display-tracking: -0.02em;
+  --display-case:     none;
+  --body-tracking:    0;
+  --decor-line:       rgba(248, 248, 242, 0.05);
+  --decor-dot:        rgba(248, 248, 242, 0.085);
+  --decor-glow-1:     rgba(189, 147, 249, 0.2);
+  --decor-glow-2:     rgba(255, 121, 198, 0.16);
+  --decor-glow-3:     rgba(139, 233, 253, 0.13);
+  --bg:               #282a36;
+  --surface:          #21222c;
+  --line:             #343746;
+  --muted:            #c8cbe0;
+  --grid:             rgba(248, 248, 242, 0.06);
+  --err:              #ff5555;
+  --ok:               #50fa7b;
+  --code-k:           #bd93f9;
+  --code-s:           #50fa7b;
+  --code-c:           #6272a4;
+  --code-n:           #79b8ff;
+  --serif:            'Syne', system-ui, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif;
+  --mono:             'Fira Code', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  --sans:             'Figtree', system-ui, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif;
+  --ease:             cubic-bezier(0.22, 1, 0.36, 1);
+  --measure:          44rem;
+  --wide:             64rem;
+  --max-width:        72rem;
+  color-scheme: dark;
+}
+
+/* ---- Theme: gruvbox (dark) -------------------------------- */
+:root[data-theme="gruvbox"] {
+  --crust:            #1b1e1f;
+  --mantle:           #232728;
+  --base:             #282828;
+  --surface0:         #32302f;
+  --surface1:         #3c3836;
+  --surface2:         #504945;
+  --overlay0:         #7c6f64;
+  --overlay1:         #928374;
+  --subtext0:         #bdae93;
+  --subtext1:         #d5c4a1;
+  --text:             #ebdbb2;
+  --lavender:         #d3b8c8;
+  --blue:             #83a598;
+  --sapphire:         #7daea3;
+  --sky:              #8ec07c;
+  --teal:             #89b482;
+  --green:            #b8bb26;
+  --yellow:           #fabd2f;
+  --peach:            #fe8019;
+  --red:              #fb4934;
+  --mauve:            #d3869b;
+  --pink:             #e2a3b4;
+  --accent:           #fabd2f;
+  --accent-2:         #fe8019;
+  --accent-3:         #b8bb26;
+  --accent-soft:      rgba(250, 189, 47, 0.1);
+  --accent-line:      rgba(250, 189, 47, 0.42);
+  --glow:             rgba(250, 189, 47, 0.34);
+  --gradient:         linear-gradient(115deg, #fabd2f, #fe8019 58%, #b8bb26);
+  --accent-fade:      linear-gradient(90deg, #fabd2f, rgba(250, 189, 47, 0.45) 62%, transparent);
+  --surface-soft:     rgba(50, 48, 47, 0.34);
+  --crust-overlay:    rgba(27, 30, 31, 0.84);
+  --scrim:            rgba(0, 0, 0, 0.5);
+  --hairline:         rgba(235, 219, 178, 0.09);
+  --shadow-md:        0 8px 28px rgba(0, 0, 0, 0.42);
+  --shadow-lg:        0 24px 68px rgba(0, 0, 0, 0.52);
+  --code-shadow:      0 6px 26px rgba(0, 0, 0, 0.4);
+  --font-display:     'Bricolage Grotesque', system-ui, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif;
+  --font-body:        'Work Sans', system-ui, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif;
+  --font-mono:        'IBM Plex Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  --display-weight:   700;
+  --display-tracking: -0.02em;
+  --display-case:     none;
+  --body-tracking:    0;
+  --decor-line:       rgba(235, 219, 178, 0.05);
+  --decor-dot:        rgba(235, 219, 178, 0.085);
+  --decor-glow-1:     rgba(250, 189, 47, 0.2);
+  --decor-glow-2:     rgba(254, 128, 25, 0.16);
+  --decor-glow-3:     rgba(184, 187, 38, 0.13);
+  --bg:               #282828;
+  --surface:          #232728;
+  --line:             #32302f;
+  --muted:            #bdae93;
+  --grid:             rgba(235, 219, 178, 0.06);
+  --err:              #fb4934;
+  --ok:               #b8bb26;
+  --code-k:           #d3869b;
+  --code-s:           #b8bb26;
+  --code-c:           #7c6f64;
+  --code-n:           #83a598;
+  --serif:            'Bricolage Grotesque', system-ui, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif;
+  --mono:             'IBM Plex Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  --sans:             'Work Sans', system-ui, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif;
+  --ease:             cubic-bezier(0.22, 1, 0.36, 1);
+  --measure:          44rem;
+  --wide:             64rem;
+  --max-width:        72rem;
+  color-scheme: dark;
+}
+
+/* ---- Theme: rosé pine (dark) -------------------------------- */
+:root[data-theme="rosepine"],
+:root[data-theme="rose-pine"] {
+  --crust:            #14121f;
+  --mantle:           #191724;
+  --base:             #1f1d2e;
+  --surface0:         #26233a;
+  --surface1:         #403d52;
+  --surface2:         #524f67;
+  --overlay0:         #6e6a86;
+  --overlay1:         #817c9c;
+  --subtext0:         #b6b2d0;
+  --subtext1:         #cdc9e6;
+  --text:             #e0def4;
+  --lavender:         #d5c4ee;
+  --blue:             #6a9fb5;
+  --sapphire:         #6ba8bf;
+  --sky:              #9ccfd8;
+  --teal:             #86cfc4;
+  --green:            #9ccfa8;
+  --yellow:           #f6c177;
+  --peach:            #f0a882;
+  --red:              #eb6f92;
+  --mauve:            #c4a7e7;
+  --pink:             #ebbcba;
+  --accent:           #c4a7e7;
+  --accent-2:         #9ccfd8;
+  --accent-3:         #f6c177;
+  --accent-soft:      rgba(196, 167, 231, 0.1);
+  --accent-line:      rgba(196, 167, 231, 0.42);
+  --glow:             rgba(196, 167, 231, 0.34);
+  --gradient:         linear-gradient(115deg, #c4a7e7, #9ccfd8 58%, #f6c177);
+  --accent-fade:      linear-gradient(90deg, #c4a7e7, rgba(196, 167, 231, 0.45) 62%, transparent);
+  --surface-soft:     rgba(38, 35, 58, 0.34);
+  --crust-overlay:    rgba(20, 18, 31, 0.84);
+  --scrim:            rgba(0, 0, 0, 0.5);
+  --hairline:         rgba(224, 222, 244, 0.09);
+  --shadow-md:        0 8px 28px rgba(0, 0, 0, 0.42);
+  --shadow-lg:        0 24px 68px rgba(0, 0, 0, 0.52);
+  --code-shadow:      0 6px 26px rgba(0, 0, 0, 0.4);
+  --font-display:     'Fraunces', Georgia, 'Times New Roman', serif;
+  --font-body:        'Newsreader', Georgia, 'Times New Roman', serif;
+  --font-mono:        'IBM Plex Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  --display-weight:   600;
+  --display-tracking: -0.02em;
+  --display-case:     none;
+  --body-tracking:    0.004em;
+  --decor-line:       rgba(224, 222, 244, 0.05);
+  --decor-dot:        rgba(224, 222, 244, 0.085);
+  --decor-glow-1:     rgba(196, 167, 231, 0.2);
+  --decor-glow-2:     rgba(156, 207, 216, 0.16);
+  --decor-glow-3:     rgba(246, 193, 119, 0.13);
+  --bg:               #1f1d2e;
+  --surface:          #191724;
+  --line:             #26233a;
+  --muted:            #b6b2d0;
+  --grid:             rgba(224, 222, 244, 0.06);
+  --err:              #eb6f92;
+  --ok:               #9ccfa8;
+  --code-k:           #c4a7e7;
+  --code-s:           #9ccfa8;
+  --code-c:           #6e6a86;
+  --code-n:           #6a9fb5;
+  --serif:            'Fraunces', Georgia, 'Times New Roman', serif;
+  --mono:             'IBM Plex Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  --sans:             'Newsreader', Georgia, 'Times New Roman', serif;
+  --ease:             cubic-bezier(0.22, 1, 0.36, 1);
+  --measure:          44rem;
+  --wide:             64rem;
+  --max-width:        72rem;
+  color-scheme: dark;
+}
+
+/* ---- Theme: forest (dark) -------------------------------- */
+:root[data-theme="forest"] {
+  --crust:            #232a2e;
+  --mantle:           #2d353b;
+  --base:             #343f44;
+  --surface0:         #3d484d;
+  --surface1:         #475258;
+  --surface2:         #4f585e;
+  --overlay0:         #7a8478;
+  --overlay1:         #9da9a0;
+  --subtext0:         #c2c9bd;
+  --subtext1:         #d3c6aa;
+  --text:             #e5dfd2;
+  --lavender:         #d8b9c8;
+  --blue:             #7fbbb3;
+  --sapphire:         #6fb5ac;
+  --sky:              #9ed3c8;
+  --teal:             #83c092;
+  --green:            #a7c080;
+  --yellow:           #dbbc7f;
+  --peach:            #e69875;
+  --red:              #e67e80;
+  --mauve:            #d699b6;
+  --pink:             #e3aec3;
+  --accent:           #a7c080;
+  --accent-2:         #6fb5ac;
+  --accent-3:         #dbbc7f;
+  --accent-soft:      rgba(167, 192, 128, 0.1);
+  --accent-line:      rgba(167, 192, 128, 0.42);
+  --glow:             rgba(167, 192, 128, 0.34);
+  --gradient:         linear-gradient(115deg, #a7c080, #6fb5ac 58%, #dbbc7f);
+  --accent-fade:      linear-gradient(90deg, #a7c080, rgba(167, 192, 128, 0.45) 62%, transparent);
+  --surface-soft:     rgba(61, 72, 77, 0.34);
+  --crust-overlay:    rgba(35, 42, 46, 0.84);
+  --scrim:            rgba(0, 0, 0, 0.5);
+  --hairline:         rgba(229, 223, 210, 0.09);
+  --shadow-md:        0 8px 28px rgba(0, 0, 0, 0.42);
+  --shadow-lg:        0 24px 68px rgba(0, 0, 0, 0.52);
+  --code-shadow:      0 6px 26px rgba(0, 0, 0, 0.4);
+  --font-display:     'Outfit', system-ui, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif;
+  --font-body:        'Figtree', system-ui, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif;
+  --font-mono:        'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  --display-weight:   600;
+  --display-tracking: -0.025em;
+  --display-case:     none;
+  --body-tracking:    0;
+  --decor-line:       rgba(229, 223, 210, 0.05);
+  --decor-dot:        rgba(229, 223, 210, 0.085);
+  --decor-glow-1:     rgba(167, 192, 128, 0.2);
+  --decor-glow-2:     rgba(111, 181, 172, 0.16);
+  --decor-glow-3:     rgba(219, 188, 127, 0.13);
+  --bg:               #343f44;
+  --surface:          #2d353b;
+  --line:             #3d484d;
+  --muted:            #c2c9bd;
+  --grid:             rgba(229, 223, 210, 0.06);
+  --err:              #e67e80;
+  --ok:               #a7c080;
+  --code-k:           #d699b6;
+  --code-s:           #a7c080;
+  --code-c:           #7a8478;
+  --code-n:           #7fbbb3;
+  --serif:            'Outfit', system-ui, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif;
+  --mono:             'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  --sans:             'Figtree', system-ui, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif;
+  --ease:             cubic-bezier(0.22, 1, 0.36, 1);
+  --measure:          44rem;
+  --wide:             64rem;
+  --max-width:        72rem;
+  color-scheme: dark;
+}
+
+/* ---- Theme: neon (dark) -------------------------------- */
+:root[data-theme="neon"] {
+  --crust:            #050509;
+  --mantle:           #0a0a12;
+  --base:             #0e0e1a;
+  --surface0:         #16162a;
+  --surface1:         #22223c;
+  --surface2:         #2e2e50;
+  --overlay0:         #4f4f78;
+  --overlay1:         #6a6a96;
+  --subtext0:         #a8a8cc;
+  --subtext1:         #c8c8e4;
+  --text:             #f0f0ff;
+  --lavender:         #b39dff;
+  --blue:             #4d9fff;
+  --sapphire:         #22d3ee;
+  --sky:              #38e8ff;
+  --teal:             #2dd4bf;
+  --green:            #4ade80;
+  --yellow:           #fde047;
+  --peach:            #fb923c;
+  --red:              #fb5c7d;
+  --mauve:            #d946ef;
+  --pink:             #ff5cc8;
+  --accent:           #22d3ee;
+  --accent-2:         #ff5cc8;
+  --accent-3:         #38e8ff;
+  --accent-soft:      rgba(34, 211, 238, 0.1);
+  --accent-line:      rgba(34, 211, 238, 0.42);
+  --glow:             rgba(34, 211, 238, 0.34);
+  --gradient:         linear-gradient(115deg, #22d3ee, #ff5cc8 58%, #38e8ff);
+  --accent-fade:      linear-gradient(90deg, #22d3ee, rgba(34, 211, 238, 0.45) 62%, transparent);
+  --surface-soft:     rgba(22, 22, 42, 0.34);
+  --crust-overlay:    rgba(5, 5, 9, 0.84);
+  --scrim:            rgba(0, 0, 0, 0.5);
+  --hairline:         rgba(240, 240, 255, 0.09);
+  --shadow-md:        0 8px 28px rgba(0, 0, 0, 0.42);
+  --shadow-lg:        0 24px 68px rgba(0, 0, 0, 0.52);
+  --code-shadow:      0 6px 26px rgba(0, 0, 0, 0.4);
+  --font-display:     'Space Grotesk', system-ui, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif;
+  --font-body:        'Space Grotesk', system-ui, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif;
+  --font-mono:        'Space Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  --display-weight:   700;
+  --display-tracking: 0.04em;
+  --display-case:     uppercase;
+  --body-tracking:    0;
+  --decor-line:       rgba(240, 240, 255, 0.05);
+  --decor-dot:        rgba(240, 240, 255, 0.085);
+  --decor-glow-1:     rgba(34, 211, 238, 0.2);
+  --decor-glow-2:     rgba(255, 92, 200, 0.16);
+  --decor-glow-3:     rgba(56, 232, 255, 0.13);
+  --bg:               #0e0e1a;
+  --surface:          #0a0a12;
+  --line:             #16162a;
+  --muted:            #a8a8cc;
+  --grid:             rgba(240, 240, 255, 0.06);
+  --err:              #fb5c7d;
+  --ok:               #4ade80;
+  --code-k:           #d946ef;
+  --code-s:           #4ade80;
+  --code-c:           #4f4f78;
+  --code-n:           #4d9fff;
+  --serif:            'Space Grotesk', system-ui, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif;
+  --mono:             'Space Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  --sans:             'Space Grotesk', system-ui, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif;
+  --ease:             cubic-bezier(0.22, 1, 0.36, 1);
+  --measure:          44rem;
+  --wide:             64rem;
+  --max-width:        72rem;
+  color-scheme: dark;
+}
+
+/* ---- Theme: daylight (light) -------------------------------- */
+:root, :root[data-theme="daylight"],
+:root[data-theme="light"],
+:root[data-theme="latte"] {
+  --crust:            #ebebeb;
+  --mantle:           #f5f5f5;
+  --base:             #fafaf8;
+  --surface0:         #ccd0da;
+  --surface1:         #9ca0b0;
+  --surface2:         #8c8fa1;
+  --overlay0:         #6c6f85;
+  --overlay1:         #5c5f77;
+  --subtext0:         #4c4f69;
+  --subtext1:         #3a3c52;
+  --text:             #1e2030;
+  --lavender:         #7287fd;
+  --blue:             #1e66f5;
+  --sapphire:         #209fb5;
+  --sky:              #04a5e5;
+  --teal:             #179299;
+  --green:            #40a02b;
+  --yellow:           #df8e1d;
+  --peach:            #fe640b;
+  --red:              #d20f39;
+  --mauve:            #8839ef;
+  --pink:             #ea76cb;
+  --accent:           #8839ef;
+  --accent-2:         #1e66f5;
+  --accent-3:         #179299;
+  --accent-soft:      rgba(136, 57, 239, 0.09);
+  --accent-line:      rgba(136, 57, 239, 0.34);
+  --glow:             rgba(136, 57, 239, 0.22);
+  --gradient:         linear-gradient(115deg, #8839ef, #1e66f5 58%, #179299);
+  --accent-fade:      linear-gradient(90deg, #8839ef, rgba(136, 57, 239, 0.45) 62%, transparent);
+  --surface-soft:     rgba(204, 208, 218, 0.42);
+  --crust-overlay:    rgba(235, 235, 235, 0.88);
+  --scrim:            rgba(30, 32, 48, 0.26);
+  --hairline:         rgba(30, 32, 48, 0.11);
+  --shadow-md:        0 8px 28px rgba(30, 32, 48, 0.17639999999999997);
+  --shadow-lg:        0 24px 68px rgba(30, 32, 48, 0.2184);
+  --code-shadow:      0 6px 26px rgba(30, 32, 48, 0.168);
+  --font-display:     'Space Grotesk', system-ui, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif;
+  --font-body:        'Inter', system-ui, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif;
+  --font-mono:        'IBM Plex Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  --display-weight:   700;
+  --display-tracking: -0.025em;
+  --display-case:     none;
+  --body-tracking:    0;
+  --decor-line:       rgba(30, 32, 48, 0.07);
+  --decor-dot:        rgba(30, 32, 48, 0.1);
+  --decor-glow-1:     rgba(136, 57, 239, 0.15);
+  --decor-glow-2:     rgba(30, 102, 245, 0.12);
+  --decor-glow-3:     rgba(23, 146, 153, 0.1);
+  --bg:               #fafaf8;
+  --surface:          #f5f5f5;
+  --line:             #ccd0da;
+  --muted:            #4c4f69;
+  --grid:             rgba(30, 32, 48, 0.08);
+  --err:              #d20f39;
+  --ok:               #40a02b;
+  --code-k:           #8839ef;
+  --code-s:           #40a02b;
+  --code-c:           #6c6f85;
+  --code-n:           #1e66f5;
+  --serif:            'Space Grotesk', system-ui, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif;
+  --mono:             'IBM Plex Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  --sans:             'Inter', system-ui, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif;
+  --ease:             cubic-bezier(0.22, 1, 0.36, 1);
+  --measure:          44rem;
+  --wide:             64rem;
+  --max-width:        72rem;
   color-scheme: light;
 }
 
-/* ---- Tokens: dark ----------------------------------------------------------- */
-:root[data-theme="dark"] {
-  --bg: #0f1114;
-  --surface: #171a1f;
-  --line: #272c34;
-  --text: #e6e6e1;
-  --muted: #8b9098;
-  --accent: #f5a623;      /* dark accents: #f5a623 amber, #2dd4bf teal, #a78bfa violet */
-  --err: #f87171;
-  --ok: #4ade80;
-  --code-k: #c792ea;
-  --code-s: #c3e88d;
-  --code-c: #6b7280;
-  --code-n: #82aaff;
-  color-scheme: dark;
+/* ---- Theme: arctic (light) -------------------------------- */
+:root[data-theme="arctic"] {
+  --crust:            #e3e8ef;
+  --mantle:           #eceff4;
+  --base:             #f7f9fc;
+  --surface0:         #dbe1ea;
+  --surface1:         #c2cad6;
+  --surface2:         #a3adbd;
+  --overlay0:         #7b8797;
+  --overlay1:         #5f6b7c;
+  --subtext0:         #445060;
+  --subtext1:         #364150;
+  --text:             #2e3440;
+  --lavender:         #9c6f96;
+  --blue:             #4a7ba7;
+  --sapphire:         #2f7d94;
+  --sky:              #3d8fa8;
+  --teal:             #3b8b8a;
+  --green:            #5d8a45;
+  --yellow:           #b08834;
+  --peach:            #c06a4a;
+  --red:              #b0505a;
+  --mauve:            #96628f;
+  --pink:             #a86a94;
+  --accent:           #2f7d94;
+  --accent-2:         #4a7ba7;
+  --accent-3:         #3b8b8a;
+  --accent-soft:      rgba(47, 125, 148, 0.09);
+  --accent-line:      rgba(47, 125, 148, 0.34);
+  --glow:             rgba(47, 125, 148, 0.22);
+  --gradient:         linear-gradient(115deg, #2f7d94, #4a7ba7 58%, #3b8b8a);
+  --accent-fade:      linear-gradient(90deg, #2f7d94, rgba(47, 125, 148, 0.45) 62%, transparent);
+  --surface-soft:     rgba(219, 225, 234, 0.42);
+  --crust-overlay:    rgba(227, 232, 239, 0.88);
+  --scrim:            rgba(46, 52, 64, 0.26);
+  --hairline:         rgba(46, 52, 64, 0.11);
+  --shadow-md:        0 8px 28px rgba(46, 52, 64, 0.17639999999999997);
+  --shadow-lg:        0 24px 68px rgba(46, 52, 64, 0.2184);
+  --code-shadow:      0 6px 26px rgba(46, 52, 64, 0.168);
+  --font-display:     'Manrope', system-ui, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif;
+  --font-body:        'IBM Plex Sans', system-ui, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif;
+  --font-mono:        'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  --display-weight:   800;
+  --display-tracking: -0.035em;
+  --display-case:     none;
+  --body-tracking:    0;
+  --decor-line:       rgba(46, 52, 64, 0.07);
+  --decor-dot:        rgba(46, 52, 64, 0.1);
+  --decor-glow-1:     rgba(47, 125, 148, 0.15);
+  --decor-glow-2:     rgba(74, 123, 167, 0.12);
+  --decor-glow-3:     rgba(59, 139, 138, 0.1);
+  --bg:               #f7f9fc;
+  --surface:          #eceff4;
+  --line:             #dbe1ea;
+  --muted:            #445060;
+  --grid:             rgba(46, 52, 64, 0.08);
+  --err:              #b0505a;
+  --ok:               #5d8a45;
+  --code-k:           #96628f;
+  --code-s:           #5d8a45;
+  --code-c:           #7b8797;
+  --code-n:           #4a7ba7;
+  --serif:            'Manrope', system-ui, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif;
+  --mono:             'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  --sans:             'IBM Plex Sans', system-ui, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif;
+  --ease:             cubic-bezier(0.22, 1, 0.36, 1);
+  --measure:          44rem;
+  --wide:             64rem;
+  --max-width:        72rem;
+  color-scheme: light;
 }
+
+/* ---- Theme: solarized (light) -------------------------------- */
+:root[data-theme="solarized"] {
+  --crust:            #eee8d5;
+  --mantle:           #f5efdc;
+  --base:             #fdf6e3;
+  --surface0:         #e3ddc8;
+  --surface1:         #c9c3ad;
+  --surface2:         #a8a48e;
+  --overlay0:         #839496;
+  --overlay1:         #657b83;
+  --subtext0:         #586e75;
+  --subtext1:         #3f5b62;
+  --text:             #073642;
+  --lavender:         #8a8fd0;
+  --blue:             #268bd2;
+  --sapphire:         #1f8fa8;
+  --sky:              #2aa198;
+  --teal:             #21958c;
+  --green:            #859900;
+  --yellow:           #b58900;
+  --peach:            #cb4b16;
+  --red:              #dc322f;
+  --mauve:            #6c71c4;
+  --pink:             #d33682;
+  --accent:           #268bd2;
+  --accent-2:         #6c71c4;
+  --accent-3:         #21958c;
+  --accent-soft:      rgba(38, 139, 210, 0.09);
+  --accent-line:      rgba(38, 139, 210, 0.34);
+  --glow:             rgba(38, 139, 210, 0.22);
+  --gradient:         linear-gradient(115deg, #268bd2, #6c71c4 58%, #21958c);
+  --accent-fade:      linear-gradient(90deg, #268bd2, rgba(38, 139, 210, 0.45) 62%, transparent);
+  --surface-soft:     rgba(227, 221, 200, 0.42);
+  --crust-overlay:    rgba(238, 232, 213, 0.88);
+  --scrim:            rgba(7, 54, 66, 0.26);
+  --hairline:         rgba(7, 54, 66, 0.11);
+  --shadow-md:        0 8px 28px rgba(7, 54, 66, 0.17639999999999997);
+  --shadow-lg:        0 24px 68px rgba(7, 54, 66, 0.2184);
+  --code-shadow:      0 6px 26px rgba(7, 54, 66, 0.168);
+  --font-display:     'Outfit', system-ui, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif;
+  --font-body:        'Lora', Georgia, 'Times New Roman', serif;
+  --font-mono:        'Source Code Pro', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  --display-weight:   600;
+  --display-tracking: -0.02em;
+  --display-case:     none;
+  --body-tracking:    0;
+  --decor-line:       rgba(7, 54, 66, 0.07);
+  --decor-dot:        rgba(7, 54, 66, 0.1);
+  --decor-glow-1:     rgba(38, 139, 210, 0.15);
+  --decor-glow-2:     rgba(108, 113, 196, 0.12);
+  --decor-glow-3:     rgba(33, 149, 140, 0.1);
+  --bg:               #fdf6e3;
+  --surface:          #f5efdc;
+  --line:             #e3ddc8;
+  --muted:            #586e75;
+  --grid:             rgba(7, 54, 66, 0.08);
+  --err:              #dc322f;
+  --ok:               #859900;
+  --code-k:           #6c71c4;
+  --code-s:           #859900;
+  --code-c:           #839496;
+  --code-n:           #268bd2;
+  --serif:            'Outfit', system-ui, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif;
+  --mono:             'Source Code Pro', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  --sans:             'Lora', Georgia, 'Times New Roman', serif;
+  --ease:             cubic-bezier(0.22, 1, 0.36, 1);
+  --measure:          44rem;
+  --wide:             64rem;
+  --max-width:        72rem;
+  color-scheme: light;
+}
+
+/* ---- Theme: paper (light) -------------------------------- */
+:root[data-theme="paper"] {
+  --crust:            #efe8dc;
+  --mantle:           #f7f2e9;
+  --base:             #fdfbf5;
+  --surface0:         #e4dccc;
+  --surface1:         #cec4b0;
+  --surface2:         #b0a48d;
+  --overlay0:         #8b8069;
+  --overlay1:         #6e6553;
+  --subtext0:         #4d4535;
+  --subtext1:         #38311f;
+  --text:             #211c11;
+  --lavender:         #6f5ba8;
+  --blue:             #2d5fa8;
+  --sapphire:         #1f7f96;
+  --sky:              #10788f;
+  --teal:             #1c7a6b;
+  --green:            #3f7a2e;
+  --yellow:           #9a6c12;
+  --peach:            #b35311;
+  --red:              #a81f2c;
+  --mauve:            #7a3f9c;
+  --pink:             #a83f77;
+  --accent:           #a81f2c;
+  --accent-2:         #1f7f96;
+  --accent-3:         #9a6c12;
+  --accent-soft:      rgba(168, 31, 44, 0.09);
+  --accent-line:      rgba(168, 31, 44, 0.34);
+  --glow:             rgba(168, 31, 44, 0.22);
+  --gradient:         linear-gradient(115deg, #a81f2c, #1f7f96 58%, #9a6c12);
+  --accent-fade:      linear-gradient(90deg, #a81f2c, rgba(168, 31, 44, 0.45) 62%, transparent);
+  --surface-soft:     rgba(228, 220, 204, 0.42);
+  --crust-overlay:    rgba(239, 232, 220, 0.88);
+  --scrim:            rgba(33, 28, 17, 0.26);
+  --hairline:         rgba(33, 28, 17, 0.11);
+  --shadow-md:        0 8px 28px rgba(33, 28, 17, 0.17639999999999997);
+  --shadow-lg:        0 24px 68px rgba(33, 28, 17, 0.2184);
+  --code-shadow:      0 6px 26px rgba(33, 28, 17, 0.168);
+  --font-display:     'Fraunces', Georgia, 'Times New Roman', serif;
+  --font-body:        'Newsreader', Georgia, 'Times New Roman', serif;
+  --font-mono:        'IBM Plex Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  --display-weight:   700;
+  --display-tracking: -0.02em;
+  --display-case:     none;
+  --body-tracking:    0.003em;
+  --decor-line:       rgba(33, 28, 17, 0.07);
+  --decor-dot:        rgba(33, 28, 17, 0.1);
+  --decor-glow-1:     rgba(168, 31, 44, 0.15);
+  --decor-glow-2:     rgba(31, 127, 150, 0.12);
+  --decor-glow-3:     rgba(154, 108, 18, 0.1);
+  --bg:               #fdfbf5;
+  --surface:          #f7f2e9;
+  --line:             #e4dccc;
+  --muted:            #4d4535;
+  --grid:             rgba(33, 28, 17, 0.08);
+  --err:              #a81f2c;
+  --ok:               #3f7a2e;
+  --code-k:           #7a3f9c;
+  --code-s:           #3f7a2e;
+  --code-c:           #8b8069;
+  --code-n:           #2d5fa8;
+  --serif:            'Fraunces', Georgia, 'Times New Roman', serif;
+  --mono:             'IBM Plex Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  --sans:             'Newsreader', Georgia, 'Times New Roman', serif;
+  --ease:             cubic-bezier(0.22, 1, 0.36, 1);
+  --measure:          44rem;
+  --wide:             64rem;
+  --max-width:        72rem;
+  color-scheme: light;
+}
+
+/* ---- Theme: rose quartz (light) -------------------------------- */
+:root[data-theme="rosequartz"],
+:root[data-theme="rose-quartz"] {
+  --crust:            #f2e9e1;
+  --mantle:           #faf4ed;
+  --base:             #fffaf3;
+  --surface0:         #ece0d8;
+  --surface1:         #d8ccc6;
+  --surface2:         #bdb0ae;
+  --overlay0:         #9893a5;
+  --overlay1:         #7d7791;
+  --subtext0:         #625b7d;
+  --subtext1:         #55506e;
+  --text:             #423d5c;
+  --lavender:         #a68fc0;
+  --blue:             #286983;
+  --sapphire:         #2f7d92;
+  --sky:              #56949f;
+  --teal:             #4a9188;
+  --green:            #5a8f52;
+  --yellow:           #ea9d34;
+  --peach:            #d7827e;
+  --red:              #b4637a;
+  --mauve:            #907aa9;
+  --pink:             #c4759a;
+  --accent:           #b4637a;
+  --accent-2:         #907aa9;
+  --accent-3:         #56949f;
+  --accent-soft:      rgba(180, 99, 122, 0.09);
+  --accent-line:      rgba(180, 99, 122, 0.34);
+  --glow:             rgba(180, 99, 122, 0.22);
+  --gradient:         linear-gradient(115deg, #b4637a, #907aa9 58%, #56949f);
+  --accent-fade:      linear-gradient(90deg, #b4637a, rgba(180, 99, 122, 0.45) 62%, transparent);
+  --surface-soft:     rgba(236, 224, 216, 0.42);
+  --crust-overlay:    rgba(242, 233, 225, 0.88);
+  --scrim:            rgba(66, 61, 92, 0.26);
+  --hairline:         rgba(66, 61, 92, 0.11);
+  --shadow-md:        0 8px 28px rgba(66, 61, 92, 0.17639999999999997);
+  --shadow-lg:        0 24px 68px rgba(66, 61, 92, 0.2184);
+  --code-shadow:      0 6px 26px rgba(66, 61, 92, 0.168);
+  --font-display:     'Playfair Display', Georgia, 'Times New Roman', serif;
+  --font-body:        'Figtree', system-ui, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif;
+  --font-mono:        'IBM Plex Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  --display-weight:   700;
+  --display-tracking: -0.02em;
+  --display-case:     none;
+  --body-tracking:    0;
+  --decor-line:       rgba(66, 61, 92, 0.07);
+  --decor-dot:        rgba(66, 61, 92, 0.1);
+  --decor-glow-1:     rgba(180, 99, 122, 0.15);
+  --decor-glow-2:     rgba(144, 122, 169, 0.12);
+  --decor-glow-3:     rgba(86, 148, 159, 0.1);
+  --bg:               #fffaf3;
+  --surface:          #faf4ed;
+  --line:             #ece0d8;
+  --muted:            #625b7d;
+  --grid:             rgba(66, 61, 92, 0.08);
+  --err:              #b4637a;
+  --ok:               #5a8f52;
+  --code-k:           #907aa9;
+  --code-s:           #5a8f52;
+  --code-c:           #9893a5;
+  --code-n:           #286983;
+  --serif:            'Playfair Display', Georgia, 'Times New Roman', serif;
+  --mono:             'IBM Plex Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  --sans:             'Figtree', system-ui, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif;
+  --ease:             cubic-bezier(0.22, 1, 0.36, 1);
+  --measure:          44rem;
+  --wide:             64rem;
+  --max-width:        72rem;
+  color-scheme: light;
+}
+
+/* ---- Theme: swiss (light) -------------------------------- */
+:root[data-theme="swiss"] {
+  --crust:            #f0f0f0;
+  --mantle:           #f8f8f8;
+  --base:             #ffffff;
+  --surface0:         #dcdcdc;
+  --surface1:         #bebebe;
+  --surface2:         #9a9a9a;
+  --overlay0:         #767676;
+  --overlay1:         #5a5a5a;
+  --subtext0:         #3a3a3a;
+  --subtext1:         #222222;
+  --text:             #0a0a0a;
+  --lavender:         #4b4b8f;
+  --blue:             #1a4fd6;
+  --sapphire:         #0a6e8a;
+  --sky:              #0e7490;
+  --teal:             #0f766e;
+  --green:            #15803d;
+  --yellow:           #a16207;
+  --peach:            #c2410c;
+  --red:              #e01b24;
+  --mauve:            #5b21b6;
+  --pink:             #be185d;
+  --accent:           #e01b24;
+  --accent-2:         #0a0a0a;
+  --accent-3:         #5a5a5a;
+  --accent-soft:      rgba(224, 27, 36, 0.09);
+  --accent-line:      rgba(224, 27, 36, 0.34);
+  --glow:             rgba(224, 27, 36, 0.22);
+  --gradient:         linear-gradient(115deg, #e01b24, #0a0a0a 58%, #5a5a5a);
+  --accent-fade:      linear-gradient(90deg, #e01b24, rgba(224, 27, 36, 0.45) 62%, transparent);
+  --surface-soft:     rgba(220, 220, 220, 0.42);
+  --crust-overlay:    rgba(240, 240, 240, 0.88);
+  --scrim:            rgba(10, 10, 10, 0.26);
+  --hairline:         rgba(10, 10, 10, 0.11);
+  --shadow-md:        0 8px 28px rgba(10, 10, 10, 0.17639999999999997);
+  --shadow-lg:        0 24px 68px rgba(10, 10, 10, 0.2184);
+  --code-shadow:      0 6px 26px rgba(10, 10, 10, 0.168);
+  --font-display:     'Archivo', system-ui, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif;
+  --font-body:        'Inter', system-ui, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif;
+  --font-mono:        'IBM Plex Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  --display-weight:   900;
+  --display-tracking: -0.045em;
+  --display-case:     none;
+  --body-tracking:    0;
+  --decor-line:       rgba(10, 10, 10, 0.07);
+  --decor-dot:        rgba(10, 10, 10, 0.1);
+  --decor-glow-1:     rgba(224, 27, 36, 0.15);
+  --decor-glow-2:     rgba(10, 10, 10, 0.12);
+  --decor-glow-3:     rgba(90, 90, 90, 0.1);
+  --bg:               #ffffff;
+  --surface:          #f8f8f8;
+  --line:             #dcdcdc;
+  --muted:            #3a3a3a;
+  --grid:             rgba(10, 10, 10, 0.08);
+  --err:              #e01b24;
+  --ok:               #15803d;
+  --code-k:           #5b21b6;
+  --code-s:           #15803d;
+  --code-c:           #767676;
+  --code-n:           #1a4fd6;
+  --serif:            'Archivo', system-ui, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif;
+  --mono:             'IBM Plex Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  --sans:             'Inter', system-ui, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif;
+  --ease:             cubic-bezier(0.22, 1, 0.36, 1);
+  --measure:          44rem;
+  --wide:             64rem;
+  --max-width:        72rem;
+  color-scheme: light;
+}
+
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme]) {
-    --bg: #0f1114; --surface: #171a1f; --line: #272c34; --text: #e6e6e1; --muted: #8b9098;
-    --accent: #f5a623; --err: #f87171; --ok: #4ade80;
-    --code-k: #c792ea; --code-s: #c3e88d; --code-c: #6b7280; --code-n: #82aaff;
+  --crust:            #11111b;
+  --mantle:           #181825;
+  --base:             #1e1e2e;
+  --surface0:         #313244;
+  --surface1:         #45475a;
+  --surface2:         #585b70;
+  --overlay0:         #6c7086;
+  --overlay1:         #7f849c;
+  --subtext0:         #a6adc8;
+  --subtext1:         #bac2de;
+  --text:             #cdd6f4;
+  --lavender:         #b4befe;
+  --blue:             #89b4fa;
+  --sapphire:         #74c7ec;
+  --sky:              #89dceb;
+  --teal:             #94e2d5;
+  --green:            #a6e3a1;
+  --yellow:           #f9e2af;
+  --peach:            #fab387;
+  --red:              #f38ba8;
+  --mauve:            #cba6f7;
+  --pink:             #f5c2e7;
+  --accent:           #cba6f7;
+  --accent-2:         #89b4fa;
+  --accent-3:         #89dceb;
+  --accent-soft:      rgba(203, 166, 247, 0.1);
+  --accent-line:      rgba(203, 166, 247, 0.42);
+  --glow:             rgba(203, 166, 247, 0.34);
+  --gradient:         linear-gradient(115deg, #cba6f7, #89b4fa 58%, #89dceb);
+  --accent-fade:      linear-gradient(90deg, #cba6f7, rgba(203, 166, 247, 0.45) 62%, transparent);
+  --surface-soft:     rgba(49, 50, 68, 0.34);
+  --crust-overlay:    rgba(17, 17, 27, 0.84);
+  --scrim:            rgba(0, 0, 0, 0.5);
+  --hairline:         rgba(205, 214, 244, 0.09);
+  --shadow-md:        0 8px 28px rgba(0, 0, 0, 0.42);
+  --shadow-lg:        0 24px 68px rgba(0, 0, 0, 0.52);
+  --code-shadow:      0 6px 26px rgba(0, 0, 0, 0.4);
+  --font-display:     'Space Grotesk', system-ui, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif;
+  --font-body:        'Inter', system-ui, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif;
+  --font-mono:        'IBM Plex Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  --display-weight:   700;
+  --display-tracking: -0.025em;
+  --display-case:     none;
+  --body-tracking:    0;
+  --decor-line:       rgba(205, 214, 244, 0.05);
+  --decor-dot:        rgba(205, 214, 244, 0.085);
+  --decor-glow-1:     rgba(203, 166, 247, 0.2);
+  --decor-glow-2:     rgba(137, 180, 250, 0.16);
+  --decor-glow-3:     rgba(137, 220, 235, 0.13);
+  --bg:               #1e1e2e;
+  --surface:          #181825;
+  --line:             #313244;
+  --muted:            #a6adc8;
+  --grid:             rgba(205, 214, 244, 0.06);
+  --err:              #f38ba8;
+  --ok:               #a6e3a1;
+  --code-k:           #cba6f7;
+  --code-s:           #a6e3a1;
+  --code-c:           #6c7086;
+  --code-n:           #89b4fa;
+  --serif:            'Space Grotesk', system-ui, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif;
+  --mono:             'IBM Plex Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  --sans:             'Inter', system-ui, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif;
+  --ease:             cubic-bezier(0.22, 1, 0.36, 1);
+  --measure:          44rem;
+  --wide:             64rem;
+  --max-width:        72rem;
     color-scheme: dark;
   }
 }
@@ -76,9 +1116,23 @@ svg text { font-family: var(--mono); fill: var(--text); }
 code, pre, .num { font-family: var(--mono); }
 p code, li code, td code { font-size: 0.95em; background: var(--surface); border: 1px solid var(--line); border-radius: 4px; padding: 0.05em 0.35em; }
 
-/* ---- Document column --------------------------------------------------------- */
+/* ---- Document column & width limits ------------------------------------------ */
 .doc { max-width: var(--measure); margin: 0 auto; padding: clamp(2rem, 5vw, 4rem) clamp(1.25rem, 4vw, 2.5rem) 6rem; }
 .doc > *, .doc section > * { min-width: 0; max-width: 100%; overflow-wrap: anywhere; }
+
+/* Visual elements breakout: permitted to go beyond the prose column up to --wide or --max-width */
+figure.wide, .wide, .breakout {
+  width: min(var(--wide), 100vw - 2.5rem);
+  max-width: none;
+  margin-left: 50%;
+  transform: translateX(-50%);
+}
+.full-bleed {
+  width: min(var(--max-width), 100vw - 2.5rem);
+  max-width: none;
+  margin-left: 50%;
+  transform: translateX(-50%);
+}
 
 /* Chrome bar: running head above the title. Mono, uppercase, hairline. */
 .chrome { display: flex; justify-content: space-between; gap: 1rem; font-family: var(--mono); font-size: 0.72rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); padding-bottom: 0.6rem; border-bottom: 1.5px solid var(--text); margin-bottom: 2.5rem; }
@@ -95,12 +1149,12 @@ p code, li code, td code { font-size: 0.95em; background: var(--surface); border
 .doc-header > :nth-child(3) { animation-delay: 380ms; }
 .doc-header > :nth-child(4) { animation-delay: 500ms; }
 .eyebrow { font-size: 0.72rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--accent); margin: 0 0 0.75rem; }
-h1 { font-family: var(--serif); font-weight: 700; font-size: clamp(2.25rem, 4.5vw, 3.25rem); line-height: 1.08; letter-spacing: -0.01em; margin: 0 0 0.9rem; }
+h1 { font-family: var(--serif); font-weight: var(--display-weight, 700); font-size: clamp(2.25rem, 4.5vw, 3.25rem); line-height: 1.08; letter-spacing: var(--display-tracking, -0.01em); text-transform: var(--display-case, none); margin: 0 0 0.9rem; }
 .dek { font-family: var(--serif); font-style: italic; font-size: 1.35rem; line-height: 1.45; color: var(--muted); margin: 0 0 1.25rem; }
 .meta { color: var(--muted); font-size: 0.9rem; margin: 0; }
 
-h2 { font-family: var(--serif); font-weight: 700; font-size: 1.75rem; line-height: 1.2; letter-spacing: 0; margin: 3rem 0 1rem; position: relative; }
-h3 { font-family: var(--serif); font-weight: 700; font-size: 1.3rem; line-height: 1.3; margin: 2rem 0 0.75rem; position: relative; }
+h2 { font-family: var(--serif); font-weight: var(--display-weight, 700); font-size: 1.75rem; line-height: 1.2; letter-spacing: var(--display-tracking, 0); margin: 3rem 0 1rem; position: relative; }
+h3 { font-family: var(--serif); font-weight: var(--display-weight, 700); font-size: 1.3rem; line-height: 1.3; margin: 2rem 0 0.75rem; position: relative; }
 /* Stub rule: the 36px accent hairline under every idea heading. The system's small punctuation mark. */
 h2::after, h3::after { content: ""; display: block; width: 36px; height: 2px; background: var(--accent); margin-top: 0.6rem; }
 /* Folio: idea number in the left margin, mono. <h2 data-n="03"> */
@@ -111,7 +1165,7 @@ h2::after, h3::after { content: ""; display: block; width: 36px; height: 2px; ba
 /* Magazine end mark after the last idea. */
 .end-mark { text-align: center; color: var(--accent); font-size: 0.9rem; margin: 3rem 0 0; letter-spacing: 0.4em; }
 h2 + p, h3 + p { margin-top: 0; }
-p { margin: 0 0 1.1rem; }
+p { margin: 0 0 1.1rem; letter-spacing: var(--body-tracking, normal); }
 ul, ol { padding-left: 1.4rem; margin: 0 0 1.1rem; }
 li { margin: 0.3rem 0; }
 ul { list-style: none; padding-left: 1.4rem; }
@@ -122,7 +1176,7 @@ mark { background: var(--accent-soft); color: var(--text); padding: 0 0.15em; bo
 hr { border: 0; border-top: 1px solid var(--line); margin: 3rem 0; }
 
 /* Summary block (TL;DR). */
-.summary { background: var(--surface); border: 1px solid var(--line); border-left: 3px solid var(--accent); border-radius: 0 8px 8px 0; padding: 1.1rem 1.4rem; margin: 0 0 2rem; }
+.summary { background: var(--surface); border: 1px solid var(--line); border-left: 3px solid var(--accent); border-radius: 0 8px 8px 0; padding: 1.1rem 1.4rem; margin: 0 0 2rem; box-shadow: var(--shadow-md); }
 .summary p:last-child { margin-bottom: 0; }
 
 /* Aside: a caveat, an "only when". */
@@ -133,14 +1187,13 @@ hr { border: 0; border-top: 1px solid var(--line); margin: 3rem 0; }
 /* ---- Figures -------------------------------------------------------------------- */
 figure { margin: 2rem 0; }
 figure > svg { width: 100%; }                 /* viewBox-only SVGs otherwise render at 300px */
-figure.wide { width: min(var(--wide), 100vw - 2.5rem); max-width: none; margin-left: 50%; transform: translateX(-50%); }
 figcaption { color: var(--muted); font-size: 0.95rem; line-height: 1.5; margin-top: 0.75rem; text-align: center; max-width: 40rem; margin-left: auto; margin-right: auto; }
 figcaption strong { color: var(--text); font-weight: 600; }
 
 /* ---- Reveal (gentle; figures only) --------------------------------------------- */
 figure, .stats, .summary { opacity: 0; transform: translateY(12px); transition: opacity 500ms var(--ease), transform 500ms var(--ease); }
 .in { opacity: 1 !important; transform: translateY(0) !important; }
-figure.wide.in { transform: translateX(-50%) !important; }
+figure.wide.in, .wide.in, .breakout.in, .full-bleed.in { transform: translateX(-50%) !important; }
 /* Arrows draw themselves once the figure is in. */
 .draw { stroke-dasharray: 1000; stroke-dashoffset: 1000; transition: stroke-dashoffset 800ms var(--ease); transition-delay: calc(var(--i, 0) * 120ms + 200ms); }
 .in .draw { stroke-dashoffset: 0; }
@@ -167,7 +1220,7 @@ figure.wide.in { transform: translateX(-50%) !important; }
 
 /* ---- Components ------------------------------------------------------------------ */
 .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(11rem, 1fr)); gap: 1.5rem; margin: 2rem 0; }
-.stat { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 1.25rem 1.25rem 1rem; }
+.stat { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 1.25rem 1.25rem 1rem; box-shadow: var(--shadow-md); }
 .stat .num { font-family: var(--serif); font-size: clamp(2.5rem, 4.5vw, 3.75rem); line-height: 1; color: var(--accent); font-weight: 700; letter-spacing: -0.02em; }
 .stat .unit { color: var(--muted); font-size: 0.95rem; margin-top: 0.5rem; }
 
@@ -175,7 +1228,7 @@ figure.wide.in { transform: translateX(-50%) !important; }
 .quote em { color: var(--accent); font-style: normal; }
 
 .panels { display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; }
-.panel { text-align: left; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 1.1rem 1.25rem; }
+.panel { text-align: left; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 1.1rem 1.25rem; box-shadow: var(--shadow-md); }
 .panel h4 { margin: 0 0 0.6rem; font-size: 0.8rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); font-weight: 600; }
 .panel.after { border-color: var(--accent); }
 .panel .hl { color: var(--accent); }
@@ -211,12 +1264,12 @@ figure.wide.in { transform: translateX(-50%) !important; }
 
 pre {
   text-align: left; background: var(--surface); border: 1px solid var(--line); border-radius: 10px;
-  padding: 1.1rem 1.25rem; overflow-x: auto; font-size: 0.92rem; line-height: 1.6; margin: 0;
+  padding: 1.1rem 1.25rem; overflow-x: auto; font-size: 0.92rem; line-height: 1.6; margin: 0; box-shadow: var(--code-shadow);
 }
 pre .k { color: var(--code-k); } pre .s { color: var(--code-s); } pre .c { color: var(--code-c); } pre .n { color: var(--code-n); }
 pre .hl { display: inline-block; width: 100%; background: var(--accent-soft); box-shadow: -1.25rem 0 0 var(--accent-soft), 1.25rem 0 0 var(--accent-soft); }
 
-figure:has(> .matrix) { overflow-x: auto; }
+figure:has(> .matrix), .matrix-wrap { overflow-x: auto; }
 .matrix { border-collapse: collapse; width: 100%; font-size: 0.98rem; overflow-wrap: normal; }
 .matrix th, .matrix td { padding: 0.7rem 0.9rem; text-align: left; border-bottom: 1px solid var(--line); vertical-align: top; white-space: nowrap; }
 .matrix thead th { color: var(--muted); font-size: 0.75rem; letter-spacing: 0.1em; text-transform: uppercase; font-weight: 600; }
@@ -242,8 +1295,8 @@ mjx-container > svg { display: inline-block; max-width: 100%; height: auto; }   
 /* ---- Responsive -------------------------------------------------------------------- */
 @media (max-width: 48rem) {
   .panels { grid-template-columns: 1fr; }
-  figure.wide { width: 100%; margin-left: 0; transform: none; }
-  figure.wide.in { transform: none !important; }
+  figure.wide, .wide, .breakout, .full-bleed { width: 100%; margin-left: 0; transform: none; }
+  figure.wide.in, .wide.in, .breakout.in, .full-bleed.in { transform: none !important; }
 }
 
 /* ---- Print ------------------------------------------------------------------------- */
@@ -254,6 +1307,7 @@ mjx-container > svg { display: inline-block; max-width: 100%; height: auto; }   
   .draw { stroke-dashoffset: 0 !important; }
   .grow { transform: none !important; }
   .doc { padding: 0; max-width: 100%; }
+  figure.wide, .wide, .breakout, .full-bleed { width: 100%; margin-left: 0; transform: none !important; }
 }
 
 /* ---- Reduced motion: everything visible, nothing moves --------------------------- */
@@ -261,7 +1315,7 @@ mjx-container > svg { display: inline-block; max-width: 100%; height: auto; }   
   *, *::before, *::after { animation: none !important; transition: none !important; }
   figure, .stats, .summary, .pop, .grow { opacity: 1 !important; transform: none !important; }
   .chrome, .doc-header > * { animation: none; opacity: 1; }
-  figure.wide { transform: translateX(-50%) !important; }
+  figure.wide, .wide, .breakout, .full-bleed { transform: translateX(-50%) !important; }
   .draw { stroke-dashoffset: 0 !important; }
   html { scroll-behavior: auto; }
 }
