@@ -1,0 +1,267 @@
+/* ape-present base stylesheet. Copy verbatim into <style>, then add
+   per-document rules beneath it. Every colour in the document must be one
+   of these tokens; grep for '#' outside the :root blocks and expect zero hits.
+
+   The document is a long-form reading page, not a deck: one prose column,
+   real headings, figures inline. Theme follows the OS; `t` flips it. */
+
+/* ---- Tokens: light (default) ---------------------------------------------- */
+:root {
+  --bg: #fbfbf9;
+  --surface: #ffffff;
+  --line: #e4e4de;
+  --text: #16181c;
+  --muted: #6b7078;
+  --accent: #d98c14;      /* pick ONE per document: #d98c14 amber, #0f9f8f teal, #7c5cd6 violet */
+  --accent-soft: color-mix(in srgb, var(--accent) 14%, transparent);
+  --grid: color-mix(in srgb, var(--accent) 7%, transparent);   /* graph-paper ground */
+  --err: #d64545;
+  --ok: #2f9e5b;
+  --code-k: #7c3aed;
+  --code-s: #15803d;
+  --code-c: #9ca3af;
+  --code-n: #1d4ed8;
+  --serif: "Playfair Display", "Iowan Old Style", "Times New Roman", Georgia, serif;   /* title + headings: newspaper */
+  --mono: "IBM Plex Mono", "SF Mono", Menlo, Consolas, monospace;                       /* everything else */
+  --sans: var(--mono);
+  --ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --measure: 44rem;       /* prose column */
+  --wide: 64rem;          /* figures may break out to this */
+  color-scheme: light;
+}
+
+/* ---- Tokens: dark ----------------------------------------------------------- */
+:root[data-theme="dark"] {
+  --bg: #0f1114;
+  --surface: #171a1f;
+  --line: #272c34;
+  --text: #e6e6e1;
+  --muted: #8b9098;
+  --accent: #f5a623;      /* dark accents: #f5a623 amber, #2dd4bf teal, #a78bfa violet */
+  --err: #f87171;
+  --ok: #4ade80;
+  --code-k: #c792ea;
+  --code-s: #c3e88d;
+  --code-c: #6b7280;
+  --code-n: #82aaff;
+  color-scheme: dark;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme]) {
+    --bg: #0f1114; --surface: #171a1f; --line: #272c34; --text: #e6e6e1; --muted: #8b9098;
+    --accent: #f5a623; --err: #f87171; --ok: #4ade80;
+    --code-k: #c792ea; --code-s: #c3e88d; --code-c: #6b7280; --code-n: #82aaff;
+    color-scheme: dark;
+  }
+}
+
+/* ---- Reset + page ----------------------------------------------------------- */
+*, *::before, *::after { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0;
+  background: var(--bg);
+  /* Permanent graph-paper ground: 32px squares in faint accent. Ties the diagrams' grid to the page. */
+  background-image: linear-gradient(to right, var(--grid) 1px, transparent 1px), linear-gradient(to bottom, var(--grid) 1px, transparent 1px);
+  background-size: 32px 32px;
+  color: var(--text);
+  font: 1rem/1.7 var(--mono);
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+a { color: var(--accent); text-decoration: underline; text-decoration-color: color-mix(in srgb, var(--accent) 40%, transparent); text-underline-offset: 0.15em; }
+a:hover { text-decoration-color: var(--accent); }
+svg { display: block; max-width: 100%; height: auto; }
+svg text { font-family: var(--mono); fill: var(--text); }
+code, pre, .num { font-family: var(--mono); }
+p code, li code, td code { font-size: 0.95em; background: var(--surface); border: 1px solid var(--line); border-radius: 4px; padding: 0.05em 0.35em; }
+
+/* ---- Document column --------------------------------------------------------- */
+.doc { max-width: var(--measure); margin: 0 auto; padding: clamp(2rem, 5vw, 4rem) clamp(1.25rem, 4vw, 2.5rem) 6rem; }
+.doc > *, .doc section > * { min-width: 0; max-width: 100%; overflow-wrap: anywhere; }
+
+/* Chrome bar: running head above the title. Mono, uppercase, hairline. */
+.chrome { display: flex; justify-content: space-between; gap: 1rem; font-family: var(--mono); font-size: 0.72rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); padding-bottom: 0.6rem; border-bottom: 1.5px solid var(--text); margin-bottom: 2.5rem; }
+.chrome b { color: var(--text); font-weight: 500; }
+.tag { display: inline-block; border: 1px solid var(--accent); color: var(--accent); border-radius: 3px; padding: 0.15em 0.55em; font-family: var(--mono); font-size: 0.7rem; letter-spacing: 0.1em; text-transform: uppercase; vertical-align: middle; }
+
+/* Header: useful first screen, not a hero. Staggers in once on load (the one orchestrated entrance). */
+.doc-header { padding-bottom: 2rem; border-bottom: 1px solid var(--line); margin-bottom: 2.5rem; }
+@keyframes rise { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+.chrome, .doc-header > * { animation: rise 700ms var(--ease) both; }
+.chrome { animation-delay: 0ms; }
+.doc-header > :nth-child(1) { animation-delay: 120ms; }
+.doc-header > :nth-child(2) { animation-delay: 240ms; }
+.doc-header > :nth-child(3) { animation-delay: 380ms; }
+.doc-header > :nth-child(4) { animation-delay: 500ms; }
+.eyebrow { font-size: 0.72rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--accent); margin: 0 0 0.75rem; }
+h1 { font-family: var(--serif); font-weight: 700; font-size: clamp(2.25rem, 4.5vw, 3.25rem); line-height: 1.08; letter-spacing: -0.01em; margin: 0 0 0.9rem; }
+.dek { font-family: var(--serif); font-style: italic; font-size: 1.35rem; line-height: 1.45; color: var(--muted); margin: 0 0 1.25rem; }
+.meta { color: var(--muted); font-size: 0.9rem; margin: 0; }
+
+h2 { font-family: var(--serif); font-weight: 700; font-size: 1.75rem; line-height: 1.2; letter-spacing: 0; margin: 3rem 0 1rem; position: relative; }
+h3 { font-family: var(--serif); font-weight: 700; font-size: 1.3rem; line-height: 1.3; margin: 2rem 0 0.75rem; position: relative; }
+/* Stub rule: the 36px accent hairline under every idea heading. The system's small punctuation mark. */
+h2::after, h3::after { content: ""; display: block; width: 36px; height: 2px; background: var(--accent); margin-top: 0.6rem; }
+/* Folio: idea number in the left margin, mono. <h2 data-n="03"> */
+[data-n]::before { content: attr(data-n); white-space: nowrap; position: absolute; right: 100%; margin-right: 1rem; top: 0.45em; font-family: var(--mono); font-weight: 400; font-size: 0.75rem; letter-spacing: 0.1em; color: var(--accent); }
+@media (max-width: 64rem) { [data-n]::before { position: static; display: block; margin: 0 0 0.35rem; } }
+/* Drop cap on the first paragraph of the context section. */
+.dropcap::first-letter { font-family: var(--serif); font-weight: 700; font-size: 3.4em; line-height: 0.8; float: left; margin: 0.08em 0.12em 0 0; color: var(--accent); }
+/* Magazine end mark after the last idea. */
+.end-mark { text-align: center; color: var(--accent); font-size: 0.9rem; margin: 3rem 0 0; letter-spacing: 0.4em; }
+h2 + p, h3 + p { margin-top: 0; }
+p { margin: 0 0 1.1rem; }
+ul, ol { padding-left: 1.4rem; margin: 0 0 1.1rem; }
+li { margin: 0.3rem 0; }
+ul { list-style: none; padding-left: 1.4rem; }
+ul > li { position: relative; }
+ul > li::before { content: "—"; position: absolute; left: -1.4rem; color: var(--accent); font-family: var(--mono); }   /* newspaper dash, never a dot */
+ol li::marker { color: var(--accent); font-family: var(--mono); }
+mark { background: var(--accent-soft); color: var(--text); padding: 0 0.15em; border-radius: 2px; box-decoration-break: clone; -webkit-box-decoration-break: clone; }
+hr { border: 0; border-top: 1px solid var(--line); margin: 3rem 0; }
+
+/* Summary block (TL;DR). */
+.summary { background: var(--surface); border: 1px solid var(--line); border-left: 3px solid var(--accent); border-radius: 0 8px 8px 0; padding: 1.1rem 1.4rem; margin: 0 0 2rem; }
+.summary p:last-child { margin-bottom: 0; }
+
+/* Aside: a caveat, an "only when". */
+.aside { margin: 1.25rem 0; padding: 0.8rem 1.1rem; border-left: 3px solid var(--accent); background: var(--accent-soft); font-size: 0.98rem; border-radius: 0 6px 6px 0; }
+.aside.err { border-color: var(--err); background: color-mix(in srgb, var(--err) 12%, transparent); }
+.aside p:last-child { margin-bottom: 0; }
+
+/* ---- Figures -------------------------------------------------------------------- */
+figure { margin: 2rem 0; }
+figure > svg { width: 100%; }                 /* viewBox-only SVGs otherwise render at 300px */
+figure.wide { width: min(var(--wide), 100vw - 2.5rem); max-width: none; margin-left: 50%; transform: translateX(-50%); }
+figcaption { color: var(--muted); font-size: 0.95rem; line-height: 1.5; margin-top: 0.75rem; text-align: center; max-width: 40rem; margin-left: auto; margin-right: auto; }
+figcaption strong { color: var(--text); font-weight: 600; }
+
+/* ---- Reveal (gentle; figures only) --------------------------------------------- */
+figure, .stats, .summary { opacity: 0; transform: translateY(12px); transition: opacity 500ms var(--ease), transform 500ms var(--ease); }
+.in { opacity: 1 !important; transform: translateY(0) !important; }
+figure.wide.in { transform: translateX(-50%) !important; }
+/* Arrows draw themselves once the figure is in. */
+.draw { stroke-dasharray: 1000; stroke-dashoffset: 1000; transition: stroke-dashoffset 800ms var(--ease); transition-delay: calc(var(--i, 0) * 120ms + 200ms); }
+.in .draw { stroke-dashoffset: 0; }
+/* .pop animates opacity only: a CSS transform would override the SVG transform attribute. */
+.pop { opacity: 0; transition: opacity 400ms var(--ease); transition-delay: calc(var(--i, 0) * 120ms); }
+.in .pop { opacity: 1; }
+.grow { transform: scaleY(0); transform-origin: bottom; transition: transform 700ms var(--ease); transition-delay: calc(var(--i, 0) * 100ms + 200ms); transform-box: fill-box; }
+.in .grow { transform: none; }
+
+/* ---- Live motion (loops only while the figure is on screen: .live) ------------- */
+.packet { fill: var(--accent); }
+.packet.err { fill: var(--err); }
+.packet.ok { fill: var(--ok); }
+@keyframes pulse { 0%, 100% { stroke-width: 1.5; } 50% { stroke-width: 3.5; } }
+.live .pulse > rect, .live .pulse > circle, .live .pulse > path { animation: pulse 1.8s var(--ease) infinite; stroke: var(--accent); }
+.lit > rect, .lit > circle, .lit > path.node { stroke: var(--accent) !important; fill: var(--accent-soft) !important; }
+.lit > text { fill: var(--text); }
+.step.lit strong, .cell.lit { color: var(--accent); }
+.cell.lit { background: var(--accent-soft); border-color: var(--accent); }
+[data-cycle] > * { transition: fill 300ms var(--ease), stroke 300ms var(--ease), color 300ms var(--ease), background 300ms var(--ease), border-color 300ms var(--ease); }
+[data-cycle] > * > rect, [data-cycle] > * > circle { transition: fill 300ms var(--ease), stroke 300ms var(--ease); }
+@keyframes dash { to { stroke-dashoffset: -24; } }
+.live .flowing { stroke-dasharray: 6 6; animation: dash 1s linear infinite; }
+
+/* ---- Components ------------------------------------------------------------------ */
+.stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(11rem, 1fr)); gap: 1.5rem; margin: 2rem 0; }
+.stat { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 1.25rem 1.25rem 1rem; }
+.stat .num { font-family: var(--serif); font-size: clamp(2.5rem, 4.5vw, 3.75rem); line-height: 1; color: var(--accent); font-weight: 700; letter-spacing: -0.02em; }
+.stat .unit { color: var(--muted); font-size: 0.95rem; margin-top: 0.5rem; }
+
+.quote { font-family: var(--serif); font-style: italic; font-size: 1.45rem; line-height: 1.4; margin: 2rem 0; padding-left: 1.25rem; border-left: 3px solid var(--accent); }
+.quote em { color: var(--accent); font-style: normal; }
+
+.panels { display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; }
+.panel { text-align: left; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 1.1rem 1.25rem; }
+.panel h4 { margin: 0 0 0.6rem; font-size: 0.8rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); font-weight: 600; }
+.panel.after { border-color: var(--accent); }
+.panel .hl { color: var(--accent); }
+.panel p:last-child, .panel ul:last-child { margin-bottom: 0; }
+
+/* Steps: ordered, sequential. Rules: unordered principles/requirements. Same shape, different marker. */
+.steps, .rules { display: grid; gap: 0.9rem; counter-reset: step; padding: 0; margin: 0; list-style: none; }
+.step, .rule { display: grid; grid-template-columns: 2.25rem 1fr; column-gap: 0.75rem; align-items: start; }
+.step::before { counter-increment: step; content: counter(step, decimal-leading-zero); }
+.rule::before { content: "—"; }
+.step::before, .rule::before { grid-column: 1; grid-row: 1 / span 2; font-family: var(--mono); color: var(--accent); font-size: 0.95rem; padding-top: 0.2rem; }
+.step > *, .rule > * { grid-column: 2; }
+.step strong, .rule strong { display: block; }
+.step span, .rule span { color: var(--muted); }
+
+.cells { display: grid; grid-template-columns: repeat(auto-fill, minmax(2.75rem, 1fr)); gap: 4px; }
+/* Record / byte layout: one row of labelled fields, widths proportional to content. */
+.cells.row { grid-template-columns: none; grid-auto-flow: column; grid-auto-columns: minmax(3.5rem, auto); }
+.cells.row .cell { aspect-ratio: auto; padding: 0.55rem 0.8rem; font-size: 0.8rem; white-space: nowrap; }
+.cells.row .cell.var { min-width: 8rem; }
+.cell { aspect-ratio: 1; display: grid; place-items: center; background: var(--surface); border: 1px solid var(--line); border-radius: 6px; font-family: var(--mono); font-size: 0.85rem; color: var(--muted); }
+.cell.on { background: var(--accent-soft); border-color: var(--accent); color: var(--text); }
+.cell.bad { background: color-mix(in srgb, var(--err) 16%, transparent); border-color: var(--err); color: var(--text); }
+
+/* Pixel-stack bars: a bar chart built from grid cells; cells light bottom-up on reveal. */
+.pixbars { display: flex; align-items: flex-end; justify-content: center; gap: clamp(1rem, 4vw, 2.5rem); padding: 0.5rem 0 0; }
+.pixbar { display: flex; flex-direction: column-reverse; gap: 3px; align-items: stretch; width: clamp(2.5rem, 7vw, 4rem); }
+.pixbar .px { height: 10px; background: var(--grid); border-radius: 2px; transition: background 300ms var(--ease); transition-delay: calc(var(--i, 0) * 60ms); }
+.in .pixbar .px.on { background: var(--muted); }
+.in .pixbar.accent .px.on { background: var(--accent); }
+.pixbar .val { order: 1; text-align: center; font-family: var(--mono); font-size: 0.95rem; margin-bottom: 0.4rem; color: var(--text); }
+.pixbar .lbl { order: -1; text-align: center; font-family: var(--mono); font-size: 0.75rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); margin-top: 0.5rem; }
+
+pre {
+  text-align: left; background: var(--surface); border: 1px solid var(--line); border-radius: 10px;
+  padding: 1.1rem 1.25rem; overflow-x: auto; font-size: 0.92rem; line-height: 1.6; margin: 0;
+}
+pre .k { color: var(--code-k); } pre .s { color: var(--code-s); } pre .c { color: var(--code-c); } pre .n { color: var(--code-n); }
+pre .hl { display: inline-block; width: 100%; background: var(--accent-soft); box-shadow: -1.25rem 0 0 var(--accent-soft), 1.25rem 0 0 var(--accent-soft); }
+
+figure:has(> .matrix) { overflow-x: auto; }
+.matrix { border-collapse: collapse; width: 100%; font-size: 0.98rem; overflow-wrap: normal; }
+.matrix th, .matrix td { padding: 0.7rem 0.9rem; text-align: left; border-bottom: 1px solid var(--line); vertical-align: top; white-space: nowrap; }
+.matrix thead th { color: var(--muted); font-size: 0.75rem; letter-spacing: 0.1em; text-transform: uppercase; font-weight: 600; }
+.matrix tbody th { font-weight: 500; }
+.matrix td { font-family: var(--mono); font-size: 0.9rem; color: var(--muted); }
+.matrix tr.chosen { background: var(--accent-soft); }
+.matrix tr.chosen th, .matrix tr.chosen td { color: var(--text); }
+.matrix tr.chosen th::after { content: "chosen"; color: var(--accent); font-size: 0.7rem; letter-spacing: 0.1em; text-transform: uppercase; margin-left: 0.6rem; }
+
+.formula { font-size: clamp(1.25rem, 2.2vw, 1.75rem); line-height: 1.4; text-align: center; padding: 1rem 0; }
+.formula mjx-container { color: var(--text); }
+.formula mjx-container[display="true"] { display: block !important; text-align: center !important; margin: 0 auto !important; max-width: 100%; overflow-x: auto; }
+mjx-container > svg { display: inline-block; max-width: 100%; height: auto; }   /* base svg{display:block} would pin it left */
+.formula .term { color: var(--accent); }
+.formula-legend { display: flex; flex-wrap: wrap; justify-content: center; gap: 0.4rem 1.5rem; color: var(--muted); font-size: 0.95rem; margin-top: 0.5rem; }
+.formula-legend code { color: var(--text); }
+.formula:not(.typeset)::after { content: attr(data-plain); display: block; font-family: var(--mono); font-size: 0.65em; color: var(--muted); }
+.formula.typeset::after { display: none; }
+
+.sources { font-size: 0.95rem; color: var(--muted); }
+.sources li { margin: 0.35rem 0; }
+
+/* ---- Responsive -------------------------------------------------------------------- */
+@media (max-width: 48rem) {
+  .panels { grid-template-columns: 1fr; }
+  figure.wide { width: 100%; margin-left: 0; transform: none; }
+  figure.wide.in { transform: none !important; }
+}
+
+/* ---- Print ------------------------------------------------------------------------- */
+@media print {
+  body { background-image: none; }
+  .chrome, .doc-header > * { animation: none; }
+  figure, .stats, .summary, .pop { opacity: 1 !important; transform: none !important; }
+  .draw { stroke-dashoffset: 0 !important; }
+  .grow { transform: none !important; }
+  .doc { padding: 0; max-width: 100%; }
+}
+
+/* ---- Reduced motion: everything visible, nothing moves --------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+  figure, .stats, .summary, .pop, .grow { opacity: 1 !important; transform: none !important; }
+  .chrome, .doc-header > * { animation: none; opacity: 1; }
+  figure.wide { transform: translateX(-50%) !important; }
+  .draw { stroke-dashoffset: 0 !important; }
+  html { scroll-behavior: auto; }
+}

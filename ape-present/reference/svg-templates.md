@@ -1,0 +1,364 @@
+# SVG Templates
+
+Copy the template for the idea shape, change only the labels, counts, and highlighted
+elements. Do not change stroke widths, radii, font sizes, or the grid. The visuals look
+good because they all obey the same grammar; a "creative" deviation is what makes a
+document look amateur.
+
+## Grammar (applies to every diagram)
+
+- `viewBox` on an 8px grid. Widths: `960` for full-width diagrams, `640` for narrow.
+  Height as needed, usually 240-420. Never set `width`/`height` attributes; CSS sizes it.
+- Boxes: `rx="10"`, `stroke-width="1.5"`, `fill="var(--surface)"`, `stroke="var(--line)"`.
+  The box the idea is about: `stroke="var(--accent)"`, `fill="var(--accent-soft)"`.
+  A failing box: `stroke="var(--err)"`.
+- Box size: `w=160 h=64` default. Text centred: `text-anchor="middle" dominant-baseline="middle"`.
+- Text: `font-size="18"` for labels inside boxes, `font-size="14" fill="var(--muted)"`
+  for arrow labels and annotations. Never below 13. A box label is at most 14 characters
+  at `w=160`; longer labels use the `w=192` positions below or a shorter word. Never more
+  than 3 words in a box.
+- Arrow labels: at most 8 characters, centred above the arrow's midpoint (`y = arrow_y - 14`).
+  A label that will not fit in 8 characters goes in the figcaption instead.
+- Arrows: `stroke="var(--muted)" stroke-width="1.5" fill="none" marker-end="url(#arr)"`,
+  class `draw`. Orthogonal or straight only; a diagonal arrow means the layout is wrong.
+  The arrow the idea is about: `stroke="var(--accent)"` with `marker-end="url(#arr-a)"`.
+- Gap between boxes: 64 horizontally, 48 vertically. Max 7 boxes per diagram; if the
+  system has more, the diagram is about a subsystem.
+- Every diagram: `role="img"` and `aria-label` stating the idea, not the shapes.
+- Every diagram sits inside `<figure>` (add `class="wide"` for 960-wide diagrams so they
+  break out of the prose column) with a `<figcaption>` beneath it.
+- Stagger: `data-i`/`style="--i:n"` on each `.pop` and `.draw` in reading order.
+
+Marker definitions -- include once per SVG that has arrows:
+
+```html
+<defs>
+  <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+    <path d="M0 0L10 5L0 10z" fill="var(--muted)"/>
+  </marker>
+  <marker id="arr-a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+    <path d="M0 0L10 5L0 10z" fill="var(--accent)"/>
+  </marker>
+</defs>
+```
+
+Box + label group (repeat, translate to position):
+
+```html
+<g class="pop" style="--i:0" transform="translate(40 88)">
+  <rect width="160" height="64" rx="10" fill="var(--surface)" stroke="var(--line)" stroke-width="1.5"/>
+  <text x="80" y="32" text-anchor="middle" dominant-baseline="middle" font-size="18">Client</text>
+</g>
+```
+
+## 1. Pipeline / request flow (left to right)
+
+Three to five boxes on one row, arrows labelled with what flows.
+
+```html
+<svg viewBox="0 0 960 240" role="img" aria-label="Writes go to the log before the table">
+  <defs>
+    <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M0 0L10 5L0 10z" fill="var(--muted)"/>
+    </marker>
+    <marker id="arr-a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M0 0L10 5L0 10z" fill="var(--accent)"/>
+    </marker>
+  </defs>
+  <g class="pop" style="--i:0" transform="translate(40 88)"><rect width="160" height="64" rx="10" fill="var(--surface)" stroke="var(--line)" stroke-width="1.5"/><text x="80" y="32" text-anchor="middle" dominant-baseline="middle" font-size="18">Client</text></g>
+  <path class="draw" style="--i:1" d="M200 120H264" stroke="var(--muted)" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
+  <text x="232" y="106" text-anchor="middle" font-size="14" fill="var(--muted)">write</text>
+  <g class="pop" style="--i:2" transform="translate(264 88)"><rect width="160" height="64" rx="10" fill="var(--accent-soft)" stroke="var(--accent)" stroke-width="1.5"/><text x="80" y="32" text-anchor="middle" dominant-baseline="middle" font-size="18">WAL</text></g>
+  <path class="draw" style="--i:3" d="M424 120H488" stroke="var(--accent)" stroke-width="1.5" fill="none" marker-end="url(#arr-a)"/>
+  <text x="456" y="106" text-anchor="middle" font-size="14" fill="var(--muted)">fsync</text>
+  <g class="pop" style="--i:4" transform="translate(488 88)"><rect width="160" height="64" rx="10" fill="var(--surface)" stroke="var(--line)" stroke-width="1.5"/><text x="80" y="32" text-anchor="middle" dominant-baseline="middle" font-size="18">Memtable</text></g>
+  <path class="draw" style="--i:5" d="M648 120H712" stroke="var(--muted)" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
+  <text x="680" y="106" text-anchor="middle" font-size="14" fill="var(--muted)">flush</text>
+  <g class="pop" style="--i:6" transform="translate(712 88)"><rect width="160" height="64" rx="10" fill="var(--surface)" stroke="var(--line)" stroke-width="1.5"/><text x="80" y="32" text-anchor="middle" dominant-baseline="middle" font-size="18">SSTable</text></g>
+</svg>
+```
+
+Positions for N boxes across 960 wide (w=160, gap=64): start `x = (960 - (N*160 + (N-1)*64)) / 2`, then `x += 224` each.
+N=3: 176, 400, 624. N=4: 64, 288, 512, 736. N=5: use `w=144 gap=48`: 40, 232, 424, 616, 808.
+Long labels (`w=192 gap=64`): N=3: 96, 352, 608. N=4: not possible at 960 -- shorten the labels.
+
+### 1b. Branching pipeline (one source, two targets)
+
+Source box on the left, vertically centred; two targets stacked on the right; orthogonal
+elbows. The taken or important branch is accent.
+
+```html
+<svg viewBox="0 0 640 240" role="img" aria-label="A put writes the file and then the index">
+  <defs>
+    <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M0 0L10 5L0 10z" fill="var(--muted)"/>
+    </marker>
+    <marker id="arr-a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M0 0L10 5L0 10z" fill="var(--accent)"/>
+    </marker>
+  </defs>
+  <g class="pop" style="--i:0" transform="translate(40 88)"><rect width="160" height="64" rx="10" fill="var(--surface)" stroke="var(--line)" stroke-width="1.5"/><text x="80" y="32" text-anchor="middle" dominant-baseline="middle" font-size="18">put(k, v)</text></g>
+  <path class="draw" style="--i:1" d="M200 120H280V56H396" stroke="var(--accent)" stroke-width="1.5" fill="none" marker-end="url(#arr-a)"/>
+  <text x="338" y="42" text-anchor="middle" font-size="14" fill="var(--muted)">append</text>
+  <path class="draw" style="--i:2" d="M200 120H280V184H396" stroke="var(--muted)" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
+  <text x="338" y="170" text-anchor="middle" font-size="14" fill="var(--muted)">update</text>
+  <g class="pop" style="--i:3" transform="translate(400 24)"><rect width="160" height="64" rx="10" fill="var(--accent-soft)" stroke="var(--accent)" stroke-width="1.5"/><text x="80" y="32" text-anchor="middle" dominant-baseline="middle" font-size="18">datafile</text></g>
+  <g class="pop" style="--i:4" transform="translate(400 152)"><rect width="160" height="64" rx="10" fill="var(--surface)" stroke="var(--line)" stroke-width="1.5"/><text x="80" y="32" text-anchor="middle" dominant-baseline="middle" font-size="18">keydir</text></g>
+</svg>
+```
+
+For two sources into one target, mirror it: targets become sources on the left, the merge
+box on the right.
+
+## 2. Sequence diagram (two or three actors, time downward)
+
+Use for request/response, handshake, consensus round, race.
+
+```html
+<svg viewBox="0 0 960 360" role="img" aria-label="Leader replicates to a follower before acknowledging">
+  <defs>
+    <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M0 0L10 5L0 10z" fill="var(--muted)"/>
+    </marker>
+    <marker id="arr-a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M0 0L10 5L0 10z" fill="var(--accent)"/>
+    </marker>
+  </defs>
+  <!-- actor headers -->
+  <g class="pop" style="--i:0" transform="translate(120 24)"><rect width="160" height="48" rx="10" fill="var(--surface)" stroke="var(--line)" stroke-width="1.5"/><text x="80" y="24" text-anchor="middle" dominant-baseline="middle" font-size="18">Client</text></g>
+  <g class="pop" style="--i:0" transform="translate(400 24)"><rect width="160" height="48" rx="10" fill="var(--accent-soft)" stroke="var(--accent)" stroke-width="1.5"/><text x="80" y="24" text-anchor="middle" dominant-baseline="middle" font-size="18">Leader</text></g>
+  <g class="pop" style="--i:0" transform="translate(680 24)"><rect width="160" height="48" rx="10" fill="var(--surface)" stroke="var(--line)" stroke-width="1.5"/><text x="80" y="24" text-anchor="middle" dominant-baseline="middle" font-size="18">Follower</text></g>
+  <!-- lifelines -->
+  <path d="M200 72V336 M480 72V336 M760 72V336" stroke="var(--line)" stroke-width="1.5" stroke-dasharray="4 6"/>
+  <!-- messages: y increases 56 per step -->
+  <path class="draw" style="--i:1" d="M200 120H476" stroke="var(--muted)" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
+  <text x="340" y="108" text-anchor="middle" font-size="14" fill="var(--muted)">put(k, v)</text>
+  <path class="draw" style="--i:2" d="M480 176H756" stroke="var(--accent)" stroke-width="1.5" fill="none" marker-end="url(#arr-a)"/>
+  <text x="620" y="164" text-anchor="middle" font-size="14" fill="var(--muted)">append</text>
+  <path class="draw" style="--i:3" d="M760 232H484" stroke="var(--muted)" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
+  <text x="620" y="220" text-anchor="middle" font-size="14" fill="var(--muted)">ack</text>
+  <path class="draw" style="--i:4" d="M480 288H204" stroke="var(--muted)" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
+  <text x="340" y="276" text-anchor="middle" font-size="14" fill="var(--muted)">ok</text>
+</svg>
+```
+
+For a race / bug: two message arrows that cross, both in `var(--err)` with `url(#arr-e)`
+(define a third marker with `fill="var(--err)"`), and one annotation in `var(--err)`
+naming the bad state.
+
+## 3. Bar chart (comparison of magnitudes)
+
+Label bars directly. No axes lines except a baseline. No legend. Bars `class="grow"`.
+
+```html
+<svg viewBox="0 0 960 320" role="img" aria-label="p99 latency: 41 ms before, 12 ms after">
+  <line x1="80" y1="260" x2="880" y2="260" stroke="var(--line)" stroke-width="1.5"/>
+  <!-- bar: x centres evenly; height ∝ value; max bar height 200; bottom at y=260 -->
+  <rect class="grow" style="--i:0" x="280" y="60" width="120" height="200" rx="6" fill="var(--muted)"/>
+  <text x="340" y="44" text-anchor="middle" font-size="18" font-family="var(--mono)">41 ms</text>
+  <text x="340" y="292" text-anchor="middle" font-size="14" fill="var(--muted)">before</text>
+  <rect class="grow" style="--i:1" x="560" y="201" width="120" height="59" rx="6" fill="var(--accent)"/>
+  <text x="620" y="185" text-anchor="middle" font-size="18" font-family="var(--mono)">12 ms</text>
+  <text x="620" y="292" text-anchor="middle" font-size="14" fill="var(--muted)">after</text>
+</svg>
+```
+
+Bar height = `200 * value / max`. Bar y = `260 - height`. Value label y = bar y - 16.
+The bar the idea is about is `var(--accent)`; all others `var(--muted)`.
+
+### 3a. Pixel-stack bars (HTML, preferred for 2-6 magnitudes)
+
+Bars made of grid cells, lighting bottom-up on reveal. Ten cells per bar; the largest value
+gets all ten `.on`, the others `round(10 * value / max)`. The bar the idea is about gets
+`class="pixbar accent"`. Labels are mono; values sit above the bar. Template in
+`skeleton.html`. Use the SVG bar chart (§3) only when there are more than six bars.
+
+### 3b. Function curve (a quantity against another)
+
+One accent curve, a baseline and a left axis in `--line`, two or three labelled points.
+No grid, no ticks beyond the labelled points. The curve is `class="draw"` so it draws
+itself; a `packet` can ride it to show direction of travel.
+
+```html
+<svg viewBox="0 0 640 320" role="img" aria-label="IDF falls as document frequency rises and reaches zero when every document has the term">
+  <line x1="72" y1="272" x2="600" y2="272" stroke="var(--line)" stroke-width="1.5"/>
+  <line x1="72" y1="32" x2="72" y2="272" stroke="var(--line)" stroke-width="1.5"/>
+  <text x="600" y="296" text-anchor="end" font-size="14" fill="var(--muted)">df(t) →</text>
+  <text x="60" y="40" text-anchor="end" font-size="14" fill="var(--muted)">idf</text>
+  <path id="c1" class="draw" style="--i:0" d="M96 48 C 160 200, 320 250, 584 268" stroke="var(--accent)" stroke-width="2" fill="none"/>
+  <circle cx="96" cy="48" r="5" fill="var(--accent)"/><text x="112" y="52" font-size="14" fill="var(--muted)">rare term</text>
+  <circle cx="584" cy="268" r="5" fill="var(--muted)"/><text x="572" y="256" text-anchor="end" font-size="14" fill="var(--muted)">in every doc: 0</text>
+  <circle class="packet" r="5"><animateMotion dur="3s" repeatCount="indefinite"><mpath href="#c1"/></animateMotion></circle>
+</svg>
+```
+
+Plot area is `x 72-600`, `y 32-272`. Map the function into it by hand; the shape must be
+right (monotone, concave, asymptotic) even if the scale is not labelled. Two curves
+compared: second curve in `var(--muted)`, both labelled at their right end.
+
+## 4. Tree / hash / linked structure
+
+Nodes are circles `r="28"` on the same grid; edges are plain lines (no arrowheads unless
+direction matters). Depth spacing 96. The node the idea is about is accent.
+
+```html
+<svg viewBox="0 0 640 320" role="img" aria-label="Lookup walks root to leaf in three hops">
+  <path class="draw" style="--i:1" d="M320 64L192 160 M320 64L448 160 M192 160L128 256 M192 160L256 256" stroke="var(--line)" stroke-width="1.5" fill="none"/>
+  <g class="pop" style="--i:0"><circle cx="320" cy="64" r="28" fill="var(--accent-soft)" stroke="var(--accent)" stroke-width="1.5"/><text x="320" y="64" text-anchor="middle" dominant-baseline="middle" font-size="18">50</text></g>
+  <g class="pop" style="--i:2"><circle cx="192" cy="160" r="28" fill="var(--accent-soft)" stroke="var(--accent)" stroke-width="1.5"/><text x="192" y="160" text-anchor="middle" dominant-baseline="middle" font-size="18">20</text></g>
+  <g class="pop" style="--i:2"><circle cx="448" cy="160" r="28" fill="var(--surface)" stroke="var(--line)" stroke-width="1.5"/><text x="448" y="160" text-anchor="middle" dominant-baseline="middle" font-size="18">70</text></g>
+  <g class="pop" style="--i:3"><circle cx="128" cy="256" r="28" fill="var(--surface)" stroke="var(--line)" stroke-width="1.5"/><text x="128" y="256" text-anchor="middle" dominant-baseline="middle" font-size="18">10</text></g>
+  <g class="pop" style="--i:3"><circle cx="256" cy="256" r="28" fill="var(--accent-soft)" stroke="var(--accent)" stroke-width="1.5"/><text x="256" y="256" text-anchor="middle" dominant-baseline="middle" font-size="18">30</text></g>
+</svg>
+```
+
+## 5. Options compared, one chosen (matrix)
+
+Use HTML, not SVG. A table where rows are options, columns are criteria, cells are
+`✓` / `✗` / a short value, and the chosen row has `class="chosen"`.
+
+```html
+<table class="matrix">
+  <thead><tr><th></th><th>Latency</th><th>Durability</th><th>Ops cost</th></tr></thead>
+  <tbody>
+    <tr style="--i:0"><th>Sync replication</th><td>✗ high</td><td>✓</td><td>✓</td></tr>
+    <tr style="--i:1" class="chosen"><th>Async + WAL</th><td>✓ low</td><td>✓</td><td>✓</td></tr>
+    <tr style="--i:2"><th>Fire and forget</th><td>✓ low</td><td>✗</td><td>✓</td></tr>
+  </tbody>
+</table>
+```
+
+CSS for `.matrix` is in `base.css`. A matrix with more than three data columns goes in
+`<figure class="wide">`; otherwise it clips the last column at desktop width.
+
+## 6. Memory / byte layout
+
+HTML `.cells` grid from `base.css`. One `.cell` per slot; `.on` for the cells the idea
+touches; `.bad` for a collision or overflow. Put the index or value inside. Keep to
+one or two rows (max 32 cells); the point is the highlighted region, not the whole array.
+
+For a **record or header layout** (named fields of different widths) use the row variant:
+
+```html
+<div class="cells row">
+  <div class="cell">crc</div><div class="cell">tstamp</div><div class="cell">ksz</div><div class="cell on">vsz</div>
+  <div class="cell var">key</div><div class="cell var">value</div>
+</div>
+```
+
+Cell text is the field name, at most 8 characters; sizes and offsets go in the figcaption.
+
+## 7. Flowchart (decision)
+
+Diamonds for decisions, boxes for actions, top to bottom. Yes/no labels on the arrows.
+Diamond is a rotated square: `<path d="M80 0L160 40L80 80L0 40z">` inside a translated group.
+
+```html
+<svg viewBox="0 0 640 400" role="img" aria-label="A read checks the keydir before touching disk">
+  <defs>
+    <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M0 0L10 5L0 10z" fill="var(--muted)"/>
+    </marker>
+    <marker id="arr-a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M0 0L10 5L0 10z" fill="var(--accent)"/>
+    </marker>
+  </defs>
+  <g class="pop" style="--i:0" transform="translate(240 16)"><rect width="160" height="56" rx="10" fill="var(--surface)" stroke="var(--line)" stroke-width="1.5"/><text x="80" y="28" text-anchor="middle" dominant-baseline="middle" font-size="18">get(key)</text></g>
+  <path id="f1" class="draw" style="--i:1" d="M320 72V120" stroke="var(--muted)" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
+  <g class="pop pulse" style="--i:2" transform="translate(240 124)"><path d="M80 0L160 40L80 80L0 40z" fill="var(--accent-soft)" stroke="var(--accent)" stroke-width="1.5"/><text x="80" y="40" text-anchor="middle" dominant-baseline="middle" font-size="16">in keydir?</text></g>
+  <path id="f2" class="draw" style="--i:3" d="M240 164H128V232" stroke="var(--muted)" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
+  <text x="176" y="154" text-anchor="middle" font-size="14" fill="var(--muted)">no</text>
+  <path id="f3" class="draw" style="--i:3" d="M400 164H512V232" stroke="var(--accent)" stroke-width="1.5" fill="none" marker-end="url(#arr-a)"/>
+  <text x="464" y="154" text-anchor="middle" font-size="14" fill="var(--muted)">yes</text>
+  <g class="pop" style="--i:4" transform="translate(48 236)"><rect width="160" height="56" rx="10" fill="var(--surface)" stroke="var(--line)" stroke-width="1.5"/><text x="80" y="28" text-anchor="middle" dominant-baseline="middle" font-size="18">not found</text></g>
+  <g class="pop" style="--i:4" transform="translate(432 236)"><rect width="160" height="56" rx="10" fill="var(--surface)" stroke="var(--line)" stroke-width="1.5"/><text x="80" y="28" text-anchor="middle" dominant-baseline="middle" font-size="18">1 disk seek</text></g>
+  <circle class="packet" r="5"><animateMotion dur="2.4s" repeatCount="indefinite" keyPoints="0;1" keyTimes="0;1"><mpath href="#f3"/></animateMotion></circle>
+</svg>
+```
+
+## 8. State machine
+
+Circles are states (`r="44"`, labels of at most 9 characters at `font-size="16"`), arrows are transitions labelled with the event. A self-loop is a
+small arc. The current state gets `pulse`; the whole state group gets `data-cycle` so states
+light in order (see §10).
+
+```html
+<svg viewBox="0 0 960 300" role="img" aria-label="A file moves from active to immutable to merged">
+  <defs>
+    <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M0 0L10 5L0 10z" fill="var(--muted)"/>
+    </marker>
+    <marker id="arr-a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M0 0L10 5L0 10z" fill="var(--accent)"/>
+    </marker>
+  </defs>
+  <g data-cycle="1400">
+    <g class="pop" style="--i:0"><circle cx="160" cy="150" r="44" fill="var(--surface)" stroke="var(--line)" stroke-width="1.5"/><text x="160" y="150" text-anchor="middle" dominant-baseline="middle" font-size="16">active</text></g>
+    <g class="pop" style="--i:2"><circle cx="480" cy="150" r="44" fill="var(--surface)" stroke="var(--line)" stroke-width="1.5"/><text x="480" y="150" text-anchor="middle" dominant-baseline="middle" font-size="16">immutable</text></g>
+    <g class="pop" style="--i:4"><circle cx="800" cy="150" r="44" fill="var(--surface)" stroke="var(--line)" stroke-width="1.5"/><text x="800" y="150" text-anchor="middle" dominant-baseline="middle" font-size="16">merged</text></g>
+  </g>
+  <path class="draw" style="--i:1" d="M204 150H436" stroke="var(--muted)" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
+  <text x="318" y="136" text-anchor="middle" font-size="14" fill="var(--muted)">size &gt; limit</text>
+  <path class="draw" style="--i:3" d="M524 150H756" stroke="var(--muted)" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
+  <text x="638" y="136" text-anchor="middle" font-size="14" fill="var(--muted)">compaction</text>
+  <!-- self loop on active: writes -->
+  <path class="draw" style="--i:1" d="M136 108C112 48 208 48 184 106" stroke="var(--muted)" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
+  <text x="160" y="52" text-anchor="middle" font-size="14" fill="var(--muted)">put()</text>
+</svg>
+```
+
+## 9. Timeline (history, phases over time)
+
+A horizontal line with dots; label above, year or duration below. Max 6 points. The point the
+idea is about is accent. Use `.grow`-free static dots with `pop` stagger.
+
+```html
+<svg viewBox="0 0 960 200" role="img" aria-label="Three generations of the storage engine">
+  <line class="draw" x1="80" y1="110" x2="880" y2="110" stroke="var(--line)" stroke-width="1.5"/>
+  <g class="pop" style="--i:1"><circle cx="160" cy="110" r="8" fill="var(--muted)"/><text x="160" y="80" text-anchor="middle" font-size="16">B-tree</text><text x="160" y="146" text-anchor="middle" font-size="14" fill="var(--muted)">2016</text></g>
+  <g class="pop" style="--i:2"><circle cx="480" cy="110" r="8" fill="var(--muted)"/><text x="480" y="80" text-anchor="middle" font-size="16">LSM</text><text x="480" y="146" text-anchor="middle" font-size="14" fill="var(--muted)">2019</text></g>
+  <g class="pop" style="--i:3"><circle cx="800" cy="110" r="10" fill="var(--accent)"/><text x="800" y="80" text-anchor="middle" font-size="16">Bitcask</text><text x="800" y="146" text-anchor="middle" font-size="14" fill="var(--muted)">2022</text></g>
+</svg>
+```
+
+## 10. Making a diagram move
+
+Every diagram that shows a *mechanism* -- pipeline, sequence, flowchart, state machine, tree
+lookup, cell grid -- animates continuously while on screen, not just on reveal. The motion
+shows what flows where. Three primitives, all in `base.css` / `runtime.js`:
+
+**Packet** -- a dot travelling along an arrow. `class="packet"` is accent; `packet ok` green
+(an acknowledgement); `packet err` red (a failing message). Give the arrow path an `id`, then:
+
+```html
+<circle class="packet" r="5">
+  <animateMotion dur="1.8s" repeatCount="indefinite" begin="0.3s"><mpath href="#p1"/></animateMotion>
+</circle>
+```
+
+`class="packet err"` for a failing message, `packet ok` for an acknowledgement. For a
+multi-hop path, chain: one packet per hop, `begin` offsets summing to a rhythm
+(`0s`, `0.9s`, `1.8s` for three hops of `dur="0.9s"` each, with `repeatCount="indefinite"`
+and a shared period via `dur` on all = total). Simpler: one packet along a single combined
+path `d="M… H… V…"` that spans the hops.
+
+**Pulse** -- `class="pulse"` on the box/circle group that the mechanism is "at". At most one
+per diagram; it draws the eye, and two eyes pull apart.
+
+**Cycle** -- `data-cycle="900"` on a parent; its children take `.lit` in turn every 900 ms,
+forever, while on screen. Use on: pipeline boxes (data marching through), stepper `.steps`,
+`.cells` (a scan or probe sequence), state-machine states, sequence messages. Children must
+be direct children of the host.
+
+**Flowing channel** -- `class="flowing"` on a path: a moving dashed stroke for a link that is
+always carrying traffic (replication stream, network link).
+
+Rules:
+
+- Motion is a loop with a period of 1.5-4 s. Nothing faster; it becomes noise.
+- At most three moving things per diagram (e.g., one packet, one pulse, one cycle).
+- Motion runs only while the section is on screen (`.live`, handled by the runtime) and stops
+  entirely under reduced-motion (packets are paused via `svg.pauseAnimations()`).
+- Motion shows the mechanism, never decorates. A packet goes where the data goes. If the
+  idea is static -- a comparison, a number, a definition -- the visual stays still.
+- The reveal (`pop`/`draw` stagger) still happens first; motion begins as the section enters.

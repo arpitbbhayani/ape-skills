@@ -1,0 +1,157 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{TITLE}}</title>
+<!-- Fonts: the one permitted external stylesheet. Fallbacks in base.css keep the page readable offline. -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,500;0,600;1,400&family=Playfair+Display:ital,wght@0,700;1,400&display=swap">
+<style>
+/* 1. Paste reference/base.css here verbatim.                                    */
+/* 2. If a different accent suits the topic, change ONLY the two --accent lines. */
+/* 3. Add document-specific rules below this comment; never restyle base.        */
+</style>
+</head>
+<body>
+<article class="doc">
+
+<div class="chrome"><span><b>{{SERIES or PUBLICATION, e.g. "Engineering explorations"}}</b> · {{TOPIC, e.g. "Storage"}}</span><span>{{DATE from frontmatter, else omit}} · <span class="tag">{{Kind, e.g. "Deep dive"}}</span></span></div>
+
+<header class="doc-header">
+  <p class="eyebrow">{{EYEBROW e.g. "Datastores · Bitcask"}}</p>
+  <h1>{{TITLE}}</h1>
+  <p class="dek">{{ONE-LINE CLAIM — the whole post in one sentence}}</p>
+  <p class="meta">{{AUTHOR, if named}} · adapted from <a href="{{SOURCE_URL}}">{{SOURCE_HOST}}</a></p>
+  <!-- No URL known (local file without one in its frontmatter)? Then: adapted from <code>filename.md</code> — never guess a URL. -->
+</header>
+
+<section id="summary">
+  <div class="summary">
+    <p>{{TL;DR — 3 to 5 sentences: the claim, the strongest evidence with its number, the biggest caveat.}}</p>
+  </div>
+</section>
+
+<section id="context">
+  <h2>{{CONTEXT HEADING as a sentence, e.g. "Riak needed a store that never seeks on write"}}</h2>
+  <p class="dropcap">{{1-3 short paragraphs: what the reader must already hold to follow the body. No figure needed unless the setup itself is a system.}}</p>
+</section>
+
+<section id="body">
+
+  <!-- ONE HEADING PER IDEA: h2 when the body is flat; h3 under short h2 part headings
+       when there are more than 8 ideas (see SKILL.md Step 1). Each idea: heading as a
+       sentence, 1-3 short paragraphs, one figure with a caption, optional aside. Pattern: -->
+  <h2 data-n="01">{{IDEA AS A READ-ALOUD SENTENCE}}</h2>
+  <p>{{The mechanism in prose: what happens, in what order, and why it works. 40-120 words. Real sentences, not caption fragments.}}</p>
+  <figure class="wide">
+    {{VISUAL — one SVG from svg-templates.md, with motion from §10 if it is a mechanism}}
+    <figcaption><strong>{{Figure label, 3-6 words.}}</strong> {{One sentence naming what the picture shows the reader that the prose cannot.}}</figcaption>
+  </figure>
+  <p>{{Optional: the consequence or the trade-off, 1-2 sentences.}}</p>
+  <div class="aside"><p>{{ONLY IF THE POST HAD IT: the caveat, the "only when", the "except if".}}</p></div>
+
+  <!-- EXAMPLES BELOW: every block carrying data-example is deleted before the file is written.
+       verify.sh fails if any data-example survives. -->
+
+  <!-- Numbers: only when the post gives the figures. No number, no stat. -->
+  <h2 data-n="02" data-example>{{SENTENCE}}</h2>
+  <p>{{PROSE}}</p>
+  <div class="stats" data-example>
+    <div class="stat"><div class="num" data-to="3.2" data-decimals="1" data-suffix="x">0</div><div class="unit">faster reads</div></div>
+    <div class="stat"><div class="num" data-to="11" data-suffix="%">0</div><div class="unit">slower writes</div></div>
+  </div>
+
+  <!-- Key insight -->
+  <h2 data-example>{{SENTENCE}}</h2>
+  <p data-example>{{PROSE}}</p>
+  <p class="quote" data-example>{{ONE OR TWO SENTENCES, the key phrase in <em>…</em>}}</p>
+
+  <!-- Code: hand-wrapped spans only. k=keyword s=string c=comment n=number/name. -->
+  <h2 data-example>{{SENTENCE}}</h2>
+  <p data-example>{{PROSE}}</p>
+  <figure data-example>
+<pre><code><span class="k">def</span> <span class="n">append</span>(entry):
+    <span class="c"># durability comes from this one line</span>
+<span class="hl">    log.write(entry); log.fsync()</span>
+    memtable.put(entry)
+    ...</code></pre>
+    <figcaption><strong>{{Label.}}</strong> {{What the highlighted line does.}}</figcaption>
+  </figure>
+
+  <!-- Formula. Include ONLY if the document has at least one .formula: the MathJax
+       tags at the bottom too. -->
+  <h2 data-example>{{SENTENCE}}</h2>
+  <p data-example>{{PROSE}}</p>
+  <figure data-example>
+    <div class="formula" data-plain="idf(t) = log( N / df(t) )">
+      \[ \mathrm{idf}(t) = \log \frac{N}{\class{term}{\mathrm{df}(t)}} \]
+    </div>
+    <div class="formula-legend"><span><code>N</code> documents in corpus</span><span><code>df(t)</code> documents containing <code>t</code></span></div>
+    <figcaption><strong>{{Label.}}</strong> {{What the formula says in words.}}</figcaption>
+  </figure>
+
+  <!-- Options compared -->
+  <h2 data-example>{{SENTENCE}}</h2>
+  <p data-example>{{PROSE}}</p>
+  <figure data-example>
+    <table class="matrix">
+      <thead><tr><th></th><th>Latency</th><th>Durability</th><th>Ops cost</th></tr></thead>
+      <tbody>
+        <tr><th>Sync replication</th><td>✗ high</td><td>✓</td><td>✓</td></tr>
+        <tr class="chosen"><th>Async + WAL</th><td>✓ low</td><td>✓</td><td>✓</td></tr>
+        <tr><th>Fire and forget</th><td>✓ low</td><td>✗</td><td>✓</td></tr>
+      </tbody>
+    </table>
+    <figcaption><strong>{{Label.}}</strong> {{Why the chosen row won.}}</figcaption>
+  </figure>
+
+  <!-- Pixel-stack bars: magnitudes as stacks of grid cells. 10 cells = the max value. -->
+  <h2 data-example>{{SENTENCE}}</h2>
+  <p data-example>{{PROSE}}</p>
+  <figure data-example>
+    <div class="pixbars">
+      <div class="pixbar"><span class="lbl">before</span><span class="val">41 ms</span>
+        <i class="px on" style="--i:0"></i><i class="px on" style="--i:1"></i><i class="px on" style="--i:2"></i><i class="px on" style="--i:3"></i><i class="px on" style="--i:4"></i><i class="px on" style="--i:5"></i><i class="px on" style="--i:6"></i><i class="px on" style="--i:7"></i><i class="px on" style="--i:8"></i><i class="px on" style="--i:9"></i></div>
+      <div class="pixbar accent"><span class="lbl">after</span><span class="val">12 ms</span>
+        <i class="px on" style="--i:0"></i><i class="px on" style="--i:1"></i><i class="px on" style="--i:2"></i><i class="px" ></i><i class="px"></i><i class="px"></i><i class="px"></i><i class="px"></i><i class="px"></i><i class="px"></i></div>
+    </div>
+    <figcaption><strong>{{Label.}}</strong> {{What the difference means.}}</figcaption>
+  </figure>
+
+  <p class="end-mark">■</p>
+</section>
+
+<section id="caveats">
+  <h2>Where this stops being true</h2>
+  <ul>
+    <li>{{CAVEAT from the post, one line}}</li>
+    <li>{{LIMIT, one line}}</li>
+    <li>{{What the post explicitly does not cover}}</li>
+  </ul>
+</section>
+
+<section id="sources">
+  <h2>Sources</h2>
+  <ul class="sources">
+    <li cite="{{SOURCE_URL}}"><a href="{{SOURCE_URL}}">{{TITLE}}</a> — {{AUTHOR}}, the post this document is adapted from.</li>
+    <li cite="{{URL}}">{{Any paper, system, or doc the post itself cites and this document mentions.}}</li>
+  </ul>
+</section>
+
+</article>
+
+<!-- ONLY when a .formula exists. With the fonts link above, the only permitted externals. -->
+<script>
+  window.MathJax = { tex: { displayMath: [['\\[', '\\]']], inlineMath: [['\\(', '\\)']] },
+    startup: { pageReady: () => MathJax.startup.defaultPageReady().then(() =>
+      document.querySelectorAll('.formula').forEach((f) => f.classList.add('typeset'))) } };
+</script>
+<script async src="https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-svg.js"></script>
+
+<script>
+/* Paste reference/runtime.js here verbatim. Do not add other scripts. */
+</script>
+</body>
+</html>
