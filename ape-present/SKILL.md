@@ -9,7 +9,7 @@ Takes a blog post and produces one HTML file that reads like a well-made interna
 
 It is a document, not a deck. No full-screen sections, no hero, no scroll-snapping, no progress bar, no slide feel. The first screen is the title and the summary, and the page scrolls like any other. Single file, real selectable text, comfortable line length with defined width limits (`--measure` for prose column, with visual elements permitted to break out to `--wide` or `--max-width`), full theme support matching `present-md`, and a fixed section skeleton -- summary, context, body, caveats, sources -- so every document has the same shape.
 
-It is not the blog either. The post explained; this document shows. Prose is kept to what the figures cannot carry -- always shorter than the source, and budgeted per idea rather than as a fraction of the post.
+It is not the blog either. The post explained; this document shows and teaches. Ensure a natural flow optimized for human understanding. Be empathetic to the reader's cognitive load, making sure every section is well explained. Add more details and clarifying context if required to make sure we help people truly understand the concepts, prioritizing clarity and comprehension over strict brevity.
 
 ## The one rule that makes it look good
 
@@ -59,11 +59,18 @@ Every figure comes from one of these. The template reference is where to copy fr
 | Idea shape | Visual | Template |
 |---|---|---|
 | System, pipeline, request flow | Boxes and arrows, left to right, packets moving along it | `svg-templates.md` §1 + §10 |
+| Data flow across complex components (stream processing, multi-stage routing) | Data Flow Graph, multiple components with fanning packets | §1c + §10 |
+| Pub/Sub Broadcast, central message bus, hub-and-spoke | Central broker radiating out to multiple subscribers | §1d + §10 |
 | Request/response, handshake, consensus round, race condition | Sequence diagram, time downward, packets per message | §2 + §10 (race: crossing `--err` arrows) |
+| Parallel execution, blocking vs async, concurrency | Gantt / Swimlane diagram over time | §2b |
 | Comparison of 2-6 magnitudes, before/after numbers | Pixel-stack bars (cells light bottom-up) | §3a + `skeleton.html` |
 | Comparison of more than 6 magnitudes | SVG bar chart, labels on bars, no legend | §3 |
-| One quantity against another, a function's shape, a plot in the post | Function curve, one accent path, labelled endpoints | §3b |
+| Comparison of two conflicting axes (e.g. Write vs Read) | 2x2 Trade-off Matrix / Quadrants | §3b |
+| Architecture Stack/Layer Breakdown (system overview, multi-tier comp) | Stack diagram of logical layers / modules | §3c + §10 |
+| One quantity against another, a function's shape, a plot in the post | Function curve, one accent path, labelled endpoints | §3d |
 | Tree, hash, linked, graph structure | Node-and-edge diagram | §4 |
+| Circular distribution, consistent hashing, peer-to-peer rings | Ring Topology / Distributed Ring | §4b + §10 |
+| Nested environments, Virtual Machines, Containers, sandboxes | Nested Boundaries / Containment Structure | §4c |
 | Decision, branching logic, "if X then Y" | Flowchart with diamonds, packet on the taken branch | §7 + §10 |
 | Lifecycle, modes, status transitions | State machine, states cycling | §8 + §10 |
 | History, phases, "first we…, then we…" | Timeline | §9 |
@@ -107,12 +114,12 @@ Follow `skeleton.html` exactly. Direct start (no chrome bars, eyebrows, or autho
 Per-idea rules:
 
 - **Heading** (`h2`, or `h3` under parts): carries `data-n="NN"` (two digits, numbered across the whole body) so the folio prints in the margin; the idea as a full sentence. "Every write goes to the log first", not "Write path". Stable across versions -- reviewers anchor comments to headings.
-- **Prose**: 40-110 words. What happens, in what order, why it works. Real sentences with the numbers in them. This is a document; it must read well without anyone talking over it. At most one `<mark>` per idea, on the phrase the reader must not miss; most ideas need none.
+- **Prose**: Write empathetic, well-explained paragraphs with a natural flow. What happens, in what order, why it works. Add extra details or bridging explanations if they help the reader understand the core idea. Real sentences with the numbers in them. This is a document; it must read well without anyone talking over it and never leave the reader struggling to connect the dots.
 - **Figure**: from Step 2. The figcaption opens with a bold 3-6 word label, then one sentence saying what the picture shows that the prose cannot. A `.formula` figure also carries a `.formula-legend` naming each symbol in one phrase (`N documents in corpus`), and its `\class{term}{…}` marks the one term the idea is about.
 - **Aside**: only if the post had a caveat for this idea. Never drop a caveat to make a section cleaner. `.aside.err` for a failure condition.
 - **Stagger**: `style="--i:n"` on each `.pop`/`.draw` inside an SVG, in reading order. Nothing else needs `--i`.
 
-Word budget: the whole document (summary to sources, captions and diagram labels included) is **70-130 words per idea plus 150-300** for summary, context, caveats, and sources -- and always fewer words than the source. Ten ideas: 850-1,600 words. `verify.sh` computes the range from the heading count. Over budget: cut second examples and recap sentences first, prose around figures second, never the summary or the caveats.
+Word budget: the whole document (summary to sources, captions and diagram labels included) is generally **100-250 words per idea plus 200-400** for summary, context, caveats, and sources. Use as many words as needed to ensure the explanation is empathetic, thorough, and completely clear to the reader. `verify.sh` will compute a baseline, but you may exceed it if the extra detail is genuinely needed for human understanding.
 
 ## Step 4: What Not To Do
 
@@ -150,7 +157,7 @@ Verification -- run the verifier and fix until every line is PASS:
 bash <skill-dir>/reference/verify.sh out.html source.md
 ```
 
-It checks, portably on macOS and Linux: the word budget from the heading count and that the document is shorter than the source; leftover `data-example` blocks; hex colours outside `:root`; external resources beyond the fonts link and MathJax; MathJax present only with a `.formula`; `<img>`/`<iframe>`; emoji; unfilled `{{slots}}`, `TODO`, `TBD`, placeholders; the five sections (`summary`, `context`, `body`, `caveats`, `sources`), one `h1`, at least one source entry; every `<figure>` captioned; every `<svg>` with `role="img"` and `aria-label`; the count of motion primitives (must be at least the number of mechanism diagrams -- check this by eye); `h2`s that look like topics; every number in prose present in the source; and that `base.css` (accent aside) and `runtime.js` are embedded verbatim. Skip `source.md` for pasted input and state that the word budget and number checks were not run. There is no rendering step: the templates are the tested layout, so a document that passes `verify.sh` and the fidelity pass is done.
+It checks, portably on macOS and Linux: the word budget from the heading count (though you may exceed it for clarity); leftover `data-example` blocks; hex colours outside `:root`; external resources beyond the fonts link and MathJax; MathJax present only with a `.formula`; `<img>`/`<iframe>`; emoji; unfilled `{{slots}}`, `TODO`, `TBD`, placeholders; the five sections (`summary`, `context`, `body`, `caveats`, `sources`), one `h1`, at least one source entry; every `<figure>` captioned; every `<svg>` with `role="img"` and `aria-label`; the count of motion primitives (must be at least the number of mechanism diagrams -- check this by eye); `h2`s that look like topics; every number in prose present in the source; and that `base.css` (accent aside) and `runtime.js` are embedded verbatim. Skip `source.md` for pasted input and state that the word budget and number checks were not run. There is no rendering step: the templates are the tested layout, so a document that passes `verify.sh` and the fidelity pass is done.
 
 ## Step 6: Fidelity Pass
 
@@ -167,7 +174,7 @@ The document says only what the post says. After the build verifies clean, check
 
 `verify.sh` backstops this mechanically: every number in the document's prose must appear in the source text. It cannot check words -- that is what this pass is for.
 
-Do not pad the document to "stay faithful". Fidelity means nothing false, not everything true; a shorter document that says less is preferred to one that says more than the post.
+Do not pad the document with fluff, but do add bridging explanations and explanatory context if they improve human understanding. Fidelity means nothing false, not everything true. Adding empathetic detail to ensure clarity is permitted, even if the final document ends up around the same length or slightly longer than the source.
 
 ## Checklist
 
@@ -176,11 +183,11 @@ Every item is checked by the commands above or by opening the file; none is tick
 - [ ] One figure per idea, from a template, obeying the grammar; every figure captioned.
 - [ ] Every mechanism diagram has at least one motion primitive; none has more than three.
 - [ ] Every idea heading is a sentence a reader could be wrong about (part headings, when used, are exempt).
-- [ ] Prose per idea is 40-110 words and reads without a presenter.
+- [ ] Prose per idea is sufficiently detailed to be fully understood, empathetic to the reader, and reads smoothly without a presenter.
 - [ ] Every number that matters is present, exact, in prose and as a stat or on a chart.
 - [ ] Every caveat survives as an aside on its idea and in risks-or-caveats.
-- [ ] Fidelity pass completed with zero drifted or unsupported claims on the final pass; every number in prose appears in the source (`verify.sh`).
-- [ ] Word count measured and within the per-idea budget; fewer words than the source.
+- [ ] Fidelity pass completed to ensure accuracy without sacrificing necessary bridging explanations; every number in prose appears in the source (`verify.sh`).
+- [ ] Word count measured, but sufficient detail was included to ensure comprehensive understanding.
 - [ ] All five sections present; exactly one `h1`; at least one source entry.
 - [ ] Zero hex outside `:root`, zero network references beyond the fonts link and MathJax (only with a `.formula`), zero `<img>`, zero emoji, zero `{{` -- by command.
 - [ ] `base.css` and `runtime.js` pasted unmodified except `--accent`.

@@ -110,6 +110,84 @@ elbows. The taken or important branch is accent.
 For two sources into one target, mirror it: targets become sources on the left, the merge
 box on the right.
 
+### 1c. Data Flow Graph (Complex tracking through components)
+
+Use for illustrating how data is processed, transformed, or routed through multiple components in a system. Perfect for showing stream processing or event-driven architectures.
+
+```html
+<svg viewBox="0 0 960 360" role="img" aria-label="Events are validated, enriched, and fanned out to storage and analytics">
+  <defs>
+    <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M0 0L10 5L0 10z" fill="var(--muted)"/>
+    </marker>
+    <marker id="arr-a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M0 0L10 5L0 10z" fill="var(--accent)"/>
+    </marker>
+  </defs>
+  <!-- Nodes -->
+  <g class="pop" style="--i:0" transform="translate(40 148)"><rect width="160" height="64" rx="10" fill="var(--surface)" stroke="var(--line)" stroke-width="1.5"/><text x="80" y="32" text-anchor="middle" dominant-baseline="middle" font-size="18">Ingress API</text></g>
+  <g class="pop" style="--i:1" transform="translate(280 148)"><circle cx="80" cy="32" r="32" fill="var(--surface0)" stroke="var(--line)" stroke-width="1.5"/><text x="80" y="32" text-anchor="middle" dominant-baseline="middle" font-size="14">Validate</text></g>
+  <g class="pop" style="--i:2" transform="translate(460 148)"><rect width="160" height="64" rx="10" fill="var(--accent-soft)" stroke="var(--accent)" stroke-width="1.5"/><text x="80" y="32" text-anchor="middle" dominant-baseline="middle" font-size="18">Event Bus</text></g>
+  <g class="pop" style="--i:3" transform="translate(720 52)"><rect width="160" height="64" rx="10" fill="var(--surface)" stroke="var(--line)" stroke-width="1.5"/><text x="80" y="32" text-anchor="middle" dominant-baseline="middle" font-size="18">Data Lake</text></g>
+  <g class="pop" style="--i:4" transform="translate(720 244)"><rect width="160" height="64" rx="10" fill="var(--surface)" stroke="var(--line)" stroke-width="1.5"/><text x="80" y="32" text-anchor="middle" dominant-baseline="middle" font-size="18">Real-time DB</text></g>
+  <!-- Edges -->
+  <path id="df1" class="draw" style="--i:5" d="M200 180H280" stroke="var(--muted)" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
+  <path id="df2" class="draw" style="--i:6" d="M360 180H460" stroke="var(--accent)" stroke-width="1.5" fill="none" marker-end="url(#arr-a)"/>
+  <path id="df3" class="draw" style="--i:7" d="M620 180H670V84H720" stroke="var(--muted)" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
+  <path id="df4" class="draw" style="--i:8" d="M620 180H670V276H720" stroke="var(--muted)" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
+  <text x="670" y="156" text-anchor="middle" font-size="14" fill="var(--muted)">fan-out</text>
+  <!-- Moving Data Packets -->
+  <circle class="packet" r="5"><animateMotion dur="4s" repeatCount="indefinite" begin="0s" keyPoints="0;1" keyTimes="0;1"><mpath href="#df1"/></animateMotion></circle>
+  <circle class="packet" r="5"><animateMotion dur="4s" repeatCount="indefinite" begin="1s" keyPoints="0;1" keyTimes="0;1"><mpath href="#df2"/></animateMotion></circle>
+  <circle class="packet" r="5"><animateMotion dur="4s" repeatCount="indefinite" begin="2.5s" keyPoints="0;1" keyTimes="0;1"><mpath href="#df3"/></animateMotion></circle>
+  <circle class="packet" r="5"><animateMotion dur="4s" repeatCount="indefinite" begin="2.5s" keyPoints="0;1" keyTimes="0;1"><mpath href="#df4"/></animateMotion></circle>
+</svg>
+```
+
+### 1d. Hub-and-Spoke / Pub-Sub Broadcast
+
+Use for message brokers, load balancing, fan-in/fan-out, or pub/sub topics (e.g. Kafka, RabbitMQ).
+
+```html
+<svg viewBox="0 0 640 360" role="img" aria-label="A central message broker routes events to multiple subscribers">
+  <defs>
+    <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M0 0L10 5L0 10z" fill="var(--muted)"/>
+    </marker>
+    <marker id="arr-a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M0 0L10 5L0 10z" fill="var(--accent)"/>
+    </marker>
+  </defs>
+
+  <!-- Producers -->
+  <g class="pop" style="--i:0" transform="translate(60 100)"><rect width="120" height="48" rx="8" fill="var(--surface)" stroke="var(--line)" stroke-width="1.5"/><text x="60" y="24" text-anchor="middle" dominant-baseline="middle" font-size="15">Producer A</text></g>
+  <g class="pop" style="--i:0" transform="translate(60 212)"><rect width="120" height="48" rx="8" fill="var(--surface)" stroke="var(--line)" stroke-width="1.5"/><text x="60" y="24" text-anchor="middle" dominant-baseline="middle" font-size="15">Producer B</text></g>
+
+  <!-- The Broker -->
+  <g class="pop" style="--i:1" transform="translate(260 148)"><rect width="120" height="64" rx="10" fill="var(--accent-soft)" stroke="var(--accent)" stroke-width="1.5"/><text x="60" y="32" text-anchor="middle" dominant-baseline="middle" font-size="18">Broker</text></g>
+
+  <!-- Subscribers -->
+  <g class="pop" style="--i:2" transform="translate(460 48)"><rect width="120" height="48" rx="8" fill="var(--surface)" stroke="var(--line)" stroke-width="1.5"/><text x="60" y="24" text-anchor="middle" dominant-baseline="middle" font-size="15">Sub 1</text></g>
+  <g class="pop" style="--i:2" transform="translate(460 156)"><rect width="120" height="48" rx="8" fill="var(--surface)" stroke="var(--line)" stroke-width="1.5"/><text x="60" y="24" text-anchor="middle" dominant-baseline="middle" font-size="15">Sub 2</text></g>
+  <g class="pop" style="--i:2" transform="translate(460 264)"><rect width="120" height="48" rx="8" fill="var(--surface)" stroke="var(--line)" stroke-width="1.5"/><text x="60" y="24" text-anchor="middle" dominant-baseline="middle" font-size="15">Sub 3</text></g>
+
+  <!-- Arrows -->
+  <path id="hub1" class="draw" style="--i:3" d="M180 124 L 260 160" stroke="var(--muted)" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
+  <path id="hub2" class="draw" style="--i:4" d="M180 236 L 260 200" stroke="var(--muted)" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
+  
+  <path id="hub3" class="draw" style="--i:5" d="M380 160 L 460 72" stroke="var(--accent)" stroke-width="1.5" fill="none" marker-end="url(#arr-a)"/>
+  <path id="hub4" class="draw" style="--i:6" d="M380 180 L 460 180" stroke="var(--accent)" stroke-width="1.5" fill="none" marker-end="url(#arr-a)"/>
+  <path id="hub5" class="draw" style="--i:7" d="M380 200 L 460 288" stroke="var(--accent)" stroke-width="1.5" fill="none" marker-end="url(#arr-a)"/>
+
+  <!-- Moving Messages -->
+  <circle class="packet" r="5"><animateMotion dur="2s" repeatCount="indefinite" begin="0s"><mpath href="#hub1"/></animateMotion></circle>
+  <circle class="packet" r="5"><animateMotion dur="2s" repeatCount="indefinite" begin="1s"><mpath href="#hub2"/></animateMotion></circle>
+  <circle class="packet" r="5"><animateMotion dur="2s" repeatCount="indefinite" begin="2.5s"><mpath href="#hub3"/></animateMotion></circle>
+  <circle class="packet" r="5"><animateMotion dur="2s" repeatCount="indefinite" begin="2.5s"><mpath href="#hub4"/></animateMotion></circle>
+  <circle class="packet" r="5"><animateMotion dur="2s" repeatCount="indefinite" begin="2.5s"><mpath href="#hub5"/></animateMotion></circle>
+</svg>
+```
+
 ## 2. Sequence diagram (two or three actors, time downward)
 
 Use for request/response, handshake, consensus round, race.
@@ -148,6 +226,50 @@ Use for request/response, handshake, consensus round, race.
 ```
 
 For a race / bug: two message arrows that cross, both in `var(--err)` with `url(#arr-e)` (define a third marker with `fill="var(--err)"`), and one annotation in `var(--err)` naming the bad state.
+
+### 2b. Parallel Execution / Concurrency Swimlanes
+
+Use for illustrating asynchronous tasks, blocking vs non-blocking I/O, parallelism, and latency bottlenecks. Time flows left-to-right.
+
+```html
+<svg viewBox="0 0 640 240" role="img" aria-label="Async I/O allows Thread A to do other work instead of blocking">
+  <!-- Axis -->
+  <line x1="120" y1="200" x2="600" y2="200" stroke="var(--line)" stroke-width="1.5" stroke-dasharray="4 4"/>
+  <text x="600" y="222" text-anchor="end" font-size="12" fill="var(--muted)">Time →</text>
+  <!-- Labels -->
+  <text x="100" y="44" text-anchor="end" dominant-baseline="middle" font-size="14">Thread A</text>
+  <text x="100" y="104" text-anchor="end" dominant-baseline="middle" font-size="14">Thread B</text>
+  <text x="100" y="164" text-anchor="end" dominant-baseline="middle" font-size="14">Network I/O</text>
+
+  <!-- Thread A tasks -->
+  <g class="pop" style="--i:0">
+    <rect x="120" y="28" width="60" height="32" rx="4" fill="var(--accent-soft)" stroke="var(--accent)" stroke-width="1.5"/>
+    <text x="150" y="44" text-anchor="middle" dominant-baseline="middle" font-size="12" fill="var(--accent)">Req 1</text>
+  </g>
+  <!-- Network starts after Req 1 -->
+  <path class="draw" style="--i:1" d="M180 44 L 190 44 L 190 164 L 200 164" stroke="var(--muted)" stroke-width="1.5" fill="none"/>
+  <g class="pop" style="--i:2">
+    <rect x="200" y="148" width="200" height="32" rx="4" fill="var(--surface0)" stroke="var(--line)" stroke-width="1.5"/>
+    <text x="300" y="164" text-anchor="middle" dominant-baseline="middle" font-size="12">Wait (async)</text>
+  </g>
+  <!-- Thread A does other work while Network is waiting -->
+  <g class="pop" style="--i:3">
+    <rect x="200" y="28" width="80" height="32" rx="4" fill="var(--surface)" stroke="var(--line)" stroke-width="1.5"/>
+    <text x="240" y="44" text-anchor="middle" dominant-baseline="middle" font-size="12">Req 2</text>
+  </g>
+  <!-- Thread B picks up processing -->
+  <g class="pop" style="--i:4">
+    <rect x="290" y="88" width="100" height="32" rx="4" fill="var(--surface)" stroke="var(--line)" stroke-width="1.5"/>
+    <text x="340" y="104" text-anchor="middle" dominant-baseline="middle" font-size="12">Process 2</text>
+  </g>
+  <!-- Network completes, Thread A handles response -->
+  <path class="draw" style="--i:5" d="M400 164 L 410 164 L 410 44 L 420 44" stroke="var(--muted)" stroke-width="1.5" fill="none"/>
+  <g class="pop" style="--i:6">
+    <rect x="420" y="28" width="60" height="32" rx="4" fill="var(--accent-soft)" stroke="var(--accent)" stroke-width="1.5"/>
+    <text x="450" y="44" text-anchor="middle" dominant-baseline="middle" font-size="12" fill="var(--accent)">Resp 1</text>
+  </g>
+</svg>
+```
 
 ## 3. Bar chart (comparison of magnitudes)
 
@@ -221,7 +343,50 @@ Ideal for comparing systems across two conflicting axes (e.g. Write Throughput v
 </svg>
 ```
 
-### 3c. Function curve (a quantity against another)
+### 3c. Architecture Stack/Layer Breakdown
+
+Use for system overviews, stack architectures, or layered compositions (e.g. App -> API -> Cache -> DB).
+
+```html
+<svg viewBox="0 0 640 420" role="img" aria-label="A modern three-tier web architecture">
+  <defs>
+    <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M0 0L10 5L0 10z" fill="var(--muted)"/>
+    </marker>
+  </defs>
+  <!-- Base layer (DB / Storage) -->
+  <g class="pop" style="--i:0" transform="translate(160 300)">
+    <rect width="320" height="80" rx="10" fill="var(--surface)" stroke="var(--line)" stroke-width="1.5"/>
+    <text x="160" y="40" text-anchor="middle" dominant-baseline="middle" font-size="18">Database (Persistent)</text>
+  </g>
+  <!-- Middle layer (API / Logic) with split elements -->
+  <g class="pop" style="--i:1" transform="translate(160 170)">
+    <rect width="320" height="100" rx="10" fill="var(--surface)" stroke="var(--line)" stroke-width="1.5" stroke-dasharray="4 4"/>
+    <text x="160" y="24" text-anchor="middle" dominant-baseline="middle" font-size="14" fill="var(--muted)">Application Layer</text>
+  </g>
+  <g class="pop" style="--i:2" transform="translate(180 200)">
+    <rect width="130" height="48" rx="8" fill="var(--surface0)" stroke="var(--line)" stroke-width="1.5"/>
+    <text x="65" y="24" text-anchor="middle" dominant-baseline="middle" font-size="15">API Service</text>
+  </g>
+  <g class="pop" style="--i:3" transform="translate(330 200)">
+    <rect width="130" height="48" rx="8" fill="var(--accent-soft)" stroke="var(--accent)" stroke-width="1.5"/>
+    <text x="65" y="24" text-anchor="middle" dominant-baseline="middle" font-size="15" fill="var(--accent)">Cache</text>
+  </g>
+  <!-- Top layer (Client / Front-end) -->
+  <g class="pop" style="--i:4" transform="translate(200 40)">
+    <rect width="240" height="70" rx="10" fill="var(--surface)" stroke="var(--line)" stroke-width="1.5"/>
+    <text x="120" y="35" text-anchor="middle" dominant-baseline="middle" font-size="18">Client Application</text>
+  </g>
+  <!-- Connectors -->
+  <path id="arch1" class="draw" style="--i:5" d="M320 110V170" stroke="var(--muted)" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
+  <path id="arch2" class="draw" style="--i:6" d="M320 270V300" stroke="var(--muted)" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
+  <!-- Motion -->
+  <circle class="packet" r="5"><animateMotion dur="2.8s" repeatCount="indefinite" begin="0.2s"><mpath href="#arch1"/></animateMotion></circle>
+  <circle class="packet" r="5"><animateMotion dur="2.8s" repeatCount="indefinite" begin="1.4s"><mpath href="#arch2"/></animateMotion></circle>
+</svg>
+```
+
+### 3d. Function curve (a quantity against another)
 
 One accent curve, a baseline and a left axis in `--line`, two or three labelled points.
 
@@ -248,6 +413,74 @@ One accent curve, a baseline and a left axis in `--line`, two or three labelled 
   <g class="pop" style="--i:2"><circle cx="448" cy="160" r="28" fill="var(--surface)" stroke="var(--line)" stroke-width="1.5"/><text x="448" y="160" text-anchor="middle" dominant-baseline="middle" font-size="18">70</text></g>
   <g class="pop" style="--i:3"><circle cx="128" cy="256" r="28" fill="var(--surface)" stroke="var(--line)" stroke-width="1.5"/><text x="128" y="256" text-anchor="middle" dominant-baseline="middle" font-size="18">10</text></g>
   <g class="pop" style="--i:3"><circle cx="256" cy="256" r="28" fill="var(--accent-soft)" stroke="var(--accent)" stroke-width="1.5"/><text x="256" y="256" text-anchor="middle" dominant-baseline="middle" font-size="18">30</text></g>
+</svg>
+```
+
+### 4b. Ring Topology (Consistent Hashing / Distributed Nodes)
+
+Use for distributed hashing partitions, leader election rings, or circular peer-to-peer relationships.
+
+```html
+<svg viewBox="0 0 400 400" role="img" aria-label="Consistent hashing ring distributes keys across three nodes">
+  <!-- The Ring -->
+  <circle cx="200" cy="200" r="120" fill="none" stroke="var(--line)" stroke-width="2" stroke-dasharray="6 6"/>
+  <!-- Highlight region for N1 -->
+  <path class="draw" style="--i:3" d="M 96 260 A 120 120 0 0 1 200 80" fill="none" stroke="var(--accent)" stroke-width="4"/>
+  <!-- Node N1: Top -->
+  <g class="pop" style="--i:0" transform="translate(200 80)">
+    <circle cx="0" cy="0" r="28" fill="var(--accent-soft)" stroke="var(--accent)" stroke-width="1.5"/>
+    <text x="0" y="2" text-anchor="middle" dominant-baseline="middle" font-size="14" font-weight="bold" fill="var(--accent)">N1</text>
+  </g>
+  <!-- Node N2: Bottom Right -->
+  <g class="pop" style="--i:1" transform="translate(304 260)">
+    <circle cx="0" cy="0" r="28" fill="var(--surface)" stroke="var(--line)" stroke-width="1.5"/>
+    <text x="0" y="2" text-anchor="middle" dominant-baseline="middle" font-size="14" font-weight="bold">N2</text>
+  </g>
+  <!-- Node N3: Bottom Left -->
+  <g class="pop" style="--i:2" transform="translate(96 260)">
+    <circle cx="0" cy="0" r="28" fill="var(--surface)" stroke="var(--line)" stroke-width="1.5"/>
+    <text x="0" y="2" text-anchor="middle" dominant-baseline="middle" font-size="14" font-weight="bold">N3</text>
+  </g>
+  <!-- An incoming Key assignment -->
+  <g class="pop pulse" style="--i:4" transform="translate(105 110)">
+    <circle cx="0" cy="0" r="8" fill="var(--accent)"/>
+    <text x="-12" y="-4" text-anchor="end" font-size="14" fill="var(--accent)" font-family="var(--mono)">Key K</text>
+  </g>
+  <text x="200" y="200" text-anchor="middle" dominant-baseline="middle" font-size="15" fill="var(--muted)">Hash Space</text>
+</svg>
+```
+
+### 4c. Nested Boundaries / Containment Structure
+
+Use for Virtual Machines, Docker containers, Kubernetes pods, sandbox isolation, or Domain-Driven Design bounding contexts.
+
+```html
+<svg viewBox="0 0 640 400" role="img" aria-label="A physical node hosts multiple pods, which contain application containers">
+  <!-- Outer Boundary (e.g. Node) -->
+  <rect style="--i:0" class="pop" x="40" y="40" width="560" height="320" rx="12" fill="var(--surface0)" stroke="var(--muted)" stroke-width="2" stroke-dasharray="6 6"/>
+  <text style="--i:0" class="pop" x="60" y="70" font-size="14" fill="var(--muted)" font-family="var(--mono)" letter-spacing="0.1em" text-transform="uppercase">Physical Host Node</text>
+
+  <!-- Level 2 Boundary: Pod A -->
+  <g class="pop" style="--i:1" transform="translate(80 100)">
+    <rect width="220" height="220" rx="8" fill="var(--surface)" stroke="var(--line)" stroke-width="1.5"/>
+    <text x="20" y="30" font-size="14" font-weight="bold">Pod A</text>
+    
+    <!-- Level 3 Boundary: Containers -->
+    <rect class="pop" style="--i:2" x="20" y="50" width="180" height="70" rx="6" fill="var(--accent-soft)" stroke="var(--accent)" stroke-width="1.5"/>
+    <text class="pop" style="--i:2" x="110" y="85" text-anchor="middle" dominant-baseline="middle" font-size="16" fill="var(--accent)">App Container</text>
+
+    <rect class="pop" style="--i:3" x="20" y="130" width="180" height="70" rx="6" fill="var(--surface0)" stroke="var(--line)" stroke-width="1.5"/>
+    <text class="pop" style="--i:3" x="110" y="165" text-anchor="middle" dominant-baseline="middle" font-size="16">Sidecar</text>
+  </g>
+
+  <!-- Level 2 Boundary: Pod B -->
+  <g class="pop" style="--i:4" transform="translate(340 100)">
+    <rect width="220" height="120" rx="8" fill="var(--surface)" stroke="var(--line)" stroke-width="1.5"/>
+    <text x="20" y="30" font-size="14" font-weight="bold">Pod B</text>
+    
+    <rect class="pop" style="--i:5" x="20" y="50" width="180" height="50" rx="6" fill="var(--accent-soft)" stroke="var(--accent)" stroke-width="1.5"/>
+    <text class="pop" style="--i:5" x="110" y="75" text-anchor="middle" dominant-baseline="middle" font-size="16" fill="var(--accent)">Data Service</text>
+  </g>
 </svg>
 ```
 
