@@ -90,14 +90,13 @@ Rules:
 
 ## Step 3: Document Structure
 
-Follow `skeleton.html` exactly. Shape:
+Follow `skeleton.html` exactly. Direct start (no chrome bars, eyebrows, or author clutter at the top):
 
 ```
 <article class="doc">
-  <div class="chrome">               running head: series · topic on the left, date · kind tag on the right (only facts from the source)
-  <header class="doc-header">        eyebrow · h1 · dek (the claim) · meta (author if named, source link) -- staggers in on load
+  <header class="doc-header">        h1 · dek (the one-line claim) -- clean, immediate start
   <section id="summary">            .summary: 3-5 sentences
-  <section id="context">            h2 + 1-3 short paragraphs, the first with class="dropcap"
+  <section id="context">            h2 + 1-3 short paragraphs, the first with class="dropcap", optional .inspect-node links
   <section id="body">               one heading per idea with data-n="NN" (margin folio): prose · figure + figcaption · optional aside; ends with <p class="end-mark">■</p>
   <section id="caveats">            h2 "Where this stops being true" + list
   <section id="sources">            h2 + <li cite="…"> one per source

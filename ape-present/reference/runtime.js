@@ -1,7 +1,7 @@
 // ape-present runtime. Copy verbatim into the <script> at the end of <body>.
 // Covers: figure reveals, stat counters, live diagram motion (packets, pulses,
-// cycles) gated on visibility, and theme following / present-md integration. Idempotent: safe to run
-// again if the host reloads the frame.
+// cycles, streaming channels), meter animations, inspect-node cross-highlighting,
+// interactive step-by-step walkthroughs, and theme switching.
 (() => {
   if (window.__apePresent) return;
   window.__apePresent = true;
@@ -10,8 +10,6 @@
   const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   // --- Theme --------------------------------------------------------------
-  // Follow the OS or present-md theme via CSS; `t` flips it and the choice is remembered.
-  // Responds to postMessage from present-md or parent frames to adapt themes seamlessly.
   {
     const applyTheme = (t) => {
       if (!t) return;
@@ -24,14 +22,12 @@
       if (saved) root.setAttribute('data-theme', saved);
     } catch (_) {}
 
-    // Listen for theme messages from present-md or embedding hosts
     window.addEventListener('message', (e) => {
       if (e && e.data && e.data.type === 'theme' && e.data.theme) {
         applyTheme(e.data.theme);
       }
     });
 
-    // Check parent document theme if accessible (same-origin iframe)
     try {
       if (window.parent && window.parent !== window && window.parent.document && window.parent.document.documentElement) {
         const parentTheme = window.parent.document.documentElement.getAttribute('data-theme');
@@ -51,7 +47,6 @@
   }
 
   // --- Counters -----------------------------------------------------------
-  // <span class="num" data-to="3200" data-suffix="x" data-decimals="1">0</span>
   const countUp = (el) => {
     if (el.dataset.done) return;
     el.dataset.done = '1';
@@ -60,7 +55,7 @@
     const fmt = (v) => (el.dataset.prefix || '') + v.toLocaleString(undefined, {
       minimumFractionDigits: decimals, maximumFractionDigits: decimals,
     }) + (el.dataset.suffix || '');
-    if (reduced) { el.textContent = fmt(to); return; }
+    if (reduced || isNaN(to)) { el.textContent = fmt(isNaN(to) ? 0 : to); return; }
     const start = performance.now(), dur = 1200;
     const tick = (now) => {
       const p = Math.min(1, (now - start) / dur);
@@ -70,17 +65,24 @@
     requestAnimationFrame(tick);
   };
 
+  // --- Meter / Race Bars ----------------------------------------------------
+  const animateMeter = (el) => {
+    const pct = el.dataset.pct || el.style.getPropertyValue('--pct') || '0%';
+    el.style.setProperty('--target-pct', pct);
+    el.classList.add('filled');
+  };
+
   // --- Reveal once ----------------------------------------------------------
-  // Figures, stat rows and the summary fade in when 20% visible, then stay.
-  const targets = [...document.querySelectorAll('figure, .stats, .summary')];
+  const targets = [...document.querySelectorAll('figure, .stats, .summary, .callout, .race-bars, .quadrant')];
   const io = new IntersectionObserver((entries) => {
     for (const e of entries) {
       if (!e.isIntersecting) continue;
       e.target.classList.add('in');
       e.target.querySelectorAll('.num[data-to]').forEach(countUp);
+      e.target.querySelectorAll('.meter-fill, .race-fill').forEach(animateMeter);
       io.unobserve(e.target);
     }
-  }, { threshold: 0.2 });
+  }, { threshold: 0.15 });
   targets.forEach((t) => io.observe(t));
 
   // --- Live motion: run only while the figure is on screen ------------------
@@ -93,7 +95,7 @@
       });
     }
   }, { threshold: 0.1 });
-  document.querySelectorAll('figure').forEach((f) => live.observe(f));
+  document.querySelectorAll('figure, .live-host').forEach((f) => live.observe(f));
 
   // --- Cycles: [data-cycle="900"] lights its children in turn, forever ------
   document.querySelectorAll('[data-cycle]').forEach((host) => {
@@ -103,10 +105,65 @@
     let i = 0;
     if (reduced) { kids[0].classList.add('lit'); return; }
     setInterval(() => {
-      if (!host.closest('.live')) return;
+      if (!host.closest('.live') && !host.classList.contains('live')) return;
       kids.forEach((k) => k.classList.remove('lit'));
       kids[i % kids.length].classList.add('lit');
       i++;
     }, step);
+  });
+
+  // --- Inspect-Node Cross-Highlighting (Prose <-> Diagram) ------------------
+  document.querySelectorAll('.inspect-node[data-target]').forEach((pill) => {
+    const targetId = pill.dataset.target;
+    const targetEl = document.getElementById(targetId);
+    if (!targetEl) return;
+
+    const svg = targetEl.closest('svg');
+
+    const activate = () => {
+      pill.classList.add('inspecting');
+      if (svg) svg.classList.add('inspect-active');
+      targetEl.classList.add('inspected');
+    };
+
+    const deactivate = () => {
+      pill.classList.remove('inspecting');
+      if (svg) svg.classList.remove('inspect-active');
+      targetEl.classList.remove('inspected');
+    };
+
+    pill.addEventListener('mouseenter', activate);
+    pill.addEventListener('mouseleave', deactivate);
+    pill.addEventListener('focus', activate);
+    pill.addEventListener('blur', deactivate);
+  });
+
+  // --- Interactive Step-by-Step Steppers -----------------------------------
+  document.querySelectorAll('.stepper').forEach((stepper) => {
+    const panes = [...stepper.querySelectorAll('.step-pane')];
+    const indicator = stepper.querySelector('.step-count');
+    const prevBtn = stepper.querySelector('.step-prev');
+    const nextBtn = stepper.querySelector('.step-next');
+    const targetSvgId = stepper.dataset.svg;
+    const svg = targetSvgId ? document.getElementById(targetSvgId) : null;
+    let current = 0;
+
+    const render = () => {
+      panes.forEach((p, idx) => p.classList.toggle('active', idx === current));
+      if (indicator) indicator.textContent = `${current + 1} / ${panes.length}`;
+      if (prevBtn) prevBtn.disabled = current === 0;
+      if (nextBtn) nextBtn.disabled = current === panes.length - 1;
+
+      if (svg) {
+        svg.querySelectorAll('[data-step]').forEach((el) => {
+          const stepVal = parseInt(el.dataset.step, 10);
+          el.classList.toggle('active-step', stepVal === current + 1);
+        });
+      }
+    };
+
+    if (prevBtn) prevBtn.addEventListener('click', () => { if (current > 0) { current--; render(); } });
+    if (nextBtn) nextBtn.addEventListener('click', () => { if (current < panes.length - 1) { current++; render(); } });
+    render();
   });
 })();

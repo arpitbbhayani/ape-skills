@@ -17,14 +17,9 @@
 <body>
 <article class="doc">
 
-<div class="chrome"><span><b>{{SERIES or PUBLICATION, e.g. "Engineering explorations"}}</b> · {{TOPIC, e.g. "Storage"}}</span><span>{{DATE from frontmatter, else omit}} · <span class="tag">{{Kind, e.g. "Deep dive"}}</span></span></div>
-
 <header class="doc-header">
-  <p class="eyebrow">{{EYEBROW e.g. "Datastores · Bitcask"}}</p>
   <h1>{{TITLE}}</h1>
   <p class="dek">{{ONE-LINE CLAIM — the whole post in one sentence}}</p>
-  <p class="meta">{{AUTHOR, if named}} · adapted from <a href="{{SOURCE_URL}}">{{SOURCE_HOST}}</a></p>
-  <!-- No URL known (local file without one in its frontmatter)? Then: adapted from <code>filename.md</code> — never guess a URL. -->
 </header>
 
 <section id="summary">
@@ -35,7 +30,7 @@
 
 <section id="context">
   <h2>{{CONTEXT HEADING as a sentence, e.g. "Riak needed a store that never seeks on write"}}</h2>
-  <p class="dropcap">{{1-3 short paragraphs: what the reader must already hold to follow the body. No figure needed unless the setup itself is a system.}}</p>
+  <p class="dropcap">{{1-3 short paragraphs: what the reader must already hold to follow the body. Use <span class="inspect-node" data-target="fig-node-1">terms</span> to link prose to diagrams.}}</p>
 </section>
 
 <section id="body">
@@ -44,7 +39,7 @@
        when there are more than 8 ideas (see SKILL.md Step 1). Each idea: heading as a
        sentence, 1-3 short paragraphs, one figure with a caption, optional aside. Pattern: -->
   <h2 data-n="01">{{IDEA AS A READ-ALOUD SENTENCE}}</h2>
-  <p>{{The mechanism in prose: what happens, in what order, and why it works. 40-120 words. Real sentences, not caption fragments.}}</p>
+  <p>{{The mechanism in prose: what happens, in what order, and why it works. 40-120 words. Use <span class="inspect-node" data-target="box-wal">WAL</span> to highlight diagram parts.}}</p>
   <figure class="wide">
     {{VISUAL — one SVG from svg-templates.md, with motion from §10 if it is a mechanism}}
     <figcaption><strong>{{Figure label, 3-6 words.}}</strong> {{One sentence naming what the picture shows the reader that the prose cannot.}}</figcaption>
@@ -55,18 +50,46 @@
   <!-- EXAMPLES BELOW: every block carrying data-example is deleted before the file is written.
        verify.sh fails if any data-example survives. -->
 
-  <!-- Numbers: only when the post gives the figures. No number, no stat. -->
+  <!-- Numbers & Deltas: only when the post gives the figures. No number, no stat. -->
   <h2 data-n="02" data-example>{{SENTENCE}}</h2>
-  <p>{{PROSE}}</p>
+  <p data-example>{{PROSE}}</p>
   <div class="stats" data-example>
-    <div class="stat"><div class="num" data-to="3.2" data-decimals="1" data-suffix="x">0</div><div class="unit">faster reads</div></div>
-    <div class="stat"><div class="num" data-to="11" data-suffix="%">0</div><div class="unit">slower writes</div></div>
+    <div class="stat">
+      <div class="num" data-to="3.2" data-decimals="1" data-suffix="x">0</div>
+      <div class="unit">faster reads <span class="delta up">+220%</span></div>
+    </div>
+    <div class="stat">
+      <div class="num" data-to="11" data-suffix="%">0</div>
+      <div class="unit">slower writes <span class="delta down">-11%</span></div>
+    </div>
   </div>
 
-  <!-- Key insight -->
+  <!-- Benchmark Race Bars -->
   <h2 data-example>{{SENTENCE}}</h2>
   <p data-example>{{PROSE}}</p>
-  <p class="quote" data-example>{{ONE OR TWO SENTENCES, the key phrase in <em>…</em>}}</p>
+  <figure data-example>
+    <div class="race-bars">
+      <div class="race-item">
+        <span class="race-label">Bitcask (Append)</span>
+        <div class="race-track"><div class="race-fill accent" data-pct="92%"></div></div>
+        <span class="race-val">41.2 kops/s</span>
+      </div>
+      <div class="race-item">
+        <span class="race-label">B-Tree (In-place)</span>
+        <div class="race-track"><div class="race-fill" data-pct="28%"></div></div>
+        <span class="race-val">12.5 kops/s</span>
+      </div>
+    </div>
+    <figcaption><strong>{{Label.}}</strong> {{What the benchmark comparison illustrates.}}</figcaption>
+  </figure>
+
+  <!-- Key insight Callout -->
+  <h2 data-example>{{SENTENCE}}</h2>
+  <p data-example>{{PROSE}}</p>
+  <div class="callout insight" data-example>
+    <h4>Core Takeaway</h4>
+    <p>{{ONE OR TWO SENTENCES, the key takeaway with <span class="hl-pill">highlighted terms</span>}}</p>
+  </div>
 
   <!-- Code: hand-wrapped spans only. k=keyword s=string c=comment n=number/name. -->
   <h2 data-example>{{SENTENCE}}</h2>
@@ -92,7 +115,7 @@
     <figcaption><strong>{{Label.}}</strong> {{What the formula says in words.}}</figcaption>
   </figure>
 
-  <!-- Options compared -->
+  <!-- Options compared (Matrix) -->
   <h2 data-example>{{SENTENCE}}</h2>
   <p data-example>{{PROSE}}</p>
   <figure data-example>
@@ -105,19 +128,6 @@
       </tbody>
     </table>
     <figcaption><strong>{{Label.}}</strong> {{Why the chosen row won.}}</figcaption>
-  </figure>
-
-  <!-- Pixel-stack bars: magnitudes as stacks of grid cells. 10 cells = the max value. -->
-  <h2 data-example>{{SENTENCE}}</h2>
-  <p data-example>{{PROSE}}</p>
-  <figure data-example>
-    <div class="pixbars">
-      <div class="pixbar"><span class="lbl">before</span><span class="val">41 ms</span>
-        <i class="px on" style="--i:0"></i><i class="px on" style="--i:1"></i><i class="px on" style="--i:2"></i><i class="px on" style="--i:3"></i><i class="px on" style="--i:4"></i><i class="px on" style="--i:5"></i><i class="px on" style="--i:6"></i><i class="px on" style="--i:7"></i><i class="px on" style="--i:8"></i><i class="px on" style="--i:9"></i></div>
-      <div class="pixbar accent"><span class="lbl">after</span><span class="val">12 ms</span>
-        <i class="px on" style="--i:0"></i><i class="px on" style="--i:1"></i><i class="px on" style="--i:2"></i><i class="px" ></i><i class="px"></i><i class="px"></i><i class="px"></i><i class="px"></i><i class="px"></i><i class="px"></i></div>
-    </div>
-    <figcaption><strong>{{Label.}}</strong> {{What the difference means.}}</figcaption>
   </figure>
 
   <p class="end-mark">■</p>

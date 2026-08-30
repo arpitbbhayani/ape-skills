@@ -131,20 +131,23 @@ Use for request/response, handshake, consensus round, race.
   <!-- lifelines -->
   <path d="M200 72V336 M480 72V336 M760 72V336" stroke="var(--line)" stroke-width="1.5" stroke-dasharray="4 6"/>
   <!-- messages: y increases 56 per step -->
-  <path class="draw" style="--i:1" d="M200 120H476" stroke="var(--muted)" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
+  <path id="seq1" class="draw" style="--i:1" d="M200 120H476" stroke="var(--muted)" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
   <text x="340" y="108" text-anchor="middle" font-size="14" fill="var(--muted)">put(k, v)</text>
-  <path class="draw" style="--i:2" d="M480 176H756" stroke="var(--accent)" stroke-width="1.5" fill="none" marker-end="url(#arr-a)"/>
+  <path id="seq2" class="draw" style="--i:2" d="M480 176H756" stroke="var(--accent)" stroke-width="1.5" fill="none" marker-end="url(#arr-a)"/>
   <text x="620" y="164" text-anchor="middle" font-size="14" fill="var(--muted)">append</text>
-  <path class="draw" style="--i:3" d="M760 232H484" stroke="var(--muted)" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
+  <path id="seq3" class="draw" style="--i:3" d="M760 232H484" stroke="var(--muted)" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
   <text x="620" y="220" text-anchor="middle" font-size="14" fill="var(--muted)">ack</text>
-  <path class="draw" style="--i:4" d="M480 288H204" stroke="var(--muted)" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
+  <path id="seq4" class="draw" style="--i:4" d="M480 288H204" stroke="var(--muted)" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
   <text x="340" y="276" text-anchor="middle" font-size="14" fill="var(--muted)">ok</text>
+  <!-- multi-hop packet loop -->
+  <circle class="packet" r="5"><animateMotion dur="2.4s" begin="0.2s" repeatCount="indefinite"><mpath href="#seq1"/></animateMotion></circle>
+  <circle class="packet" r="5"><animateMotion dur="2.4s" begin="0.8s" repeatCount="indefinite"><mpath href="#seq2"/></animateMotion></circle>
+  <circle class="packet ok" r="5"><animateMotion dur="2.4s" begin="1.4s" repeatCount="indefinite"><mpath href="#seq3"/></animateMotion></circle>
+  <circle class="packet ok" r="5"><animateMotion dur="2.4s" begin="1.9s" repeatCount="indefinite"><mpath href="#seq4"/></animateMotion></circle>
 </svg>
 ```
 
-For a race / bug: two message arrows that cross, both in `var(--err)` with `url(#arr-e)`
-(define a third marker with `fill="var(--err)"`), and one annotation in `var(--err)`
-naming the bad state.
+For a race / bug: two message arrows that cross, both in `var(--err)` with `url(#arr-e)` (define a third marker with `fill="var(--err)"`), and one annotation in `var(--err)` naming the bad state.
 
 ## 3. Bar chart (comparison of magnitudes)
 
@@ -153,7 +156,6 @@ Label bars directly. No axes lines except a baseline. No legend. Bars `class="gr
 ```html
 <svg viewBox="0 0 960 320" role="img" aria-label="p99 latency: 41 ms before, 12 ms after">
   <line x1="80" y1="260" x2="880" y2="260" stroke="var(--line)" stroke-width="1.5"/>
-  <!-- bar: x centres evenly; height ∝ value; max bar height 200; bottom at y=260 -->
   <rect class="grow" style="--i:0" x="280" y="60" width="120" height="200" rx="6" fill="var(--muted)"/>
   <text x="340" y="44" text-anchor="middle" font-size="18" font-family="var(--mono)">41 ms</text>
   <text x="340" y="292" text-anchor="middle" font-size="14" fill="var(--muted)">before</text>
@@ -163,21 +165,65 @@ Label bars directly. No axes lines except a baseline. No legend. Bars `class="gr
 </svg>
 ```
 
-Bar height = `200 * value / max`. Bar y = `260 - height`. Value label y = bar y - 16.
-The bar the idea is about is `var(--accent)`; all others `var(--muted)`.
+### 3a. Benchmark Race Bars (HTML/CSS, preferred for throughput/speed comparisons)
 
-### 3a. Pixel-stack bars (HTML, preferred for 2-6 magnitudes)
+Animated horizontal meters that race across to target positions on reveal.
 
-Bars made of grid cells, lighting bottom-up on reveal. Ten cells per bar; the largest value
-gets all ten `.on`, the others `round(10 * value / max)`. The bar the idea is about gets
-`class="pixbar accent"`. Labels are mono; values sit above the bar. Template in
-`skeleton.html`. Use the SVG bar chart (§3) only when there are more than six bars.
+```html
+<div class="race-bars">
+  <div class="race-item">
+    <span class="race-label">Bitcask</span>
+    <div class="race-track"><div class="race-fill accent" data-pct="92%"></div></div>
+    <span class="race-val">41.2 kops/s</span>
+  </div>
+  <div class="race-item">
+    <span class="race-label">LevelDB</span>
+    <div class="race-track"><div class="race-fill" data-pct="54%"></div></div>
+    <span class="race-val">24.1 kops/s</span>
+  </div>
+  <div class="race-item">
+    <span class="race-label">B-Tree</span>
+    <div class="race-track"><div class="race-fill" data-pct="28%"></div></div>
+    <span class="race-val">12.5 kops/s</span>
+  </div>
+</div>
+```
 
-### 3b. Function curve (a quantity against another)
+### 3b. 2x2 Trade-off Matrix / Quadrants
+
+Ideal for comparing systems across two conflicting axes (e.g. Write Throughput vs Read Latency, Consistency vs Availability).
+
+```html
+<svg viewBox="0 0 640 400" role="img" aria-label="Trade-off space: Append-only stores maximize write throughput with low write latency" class="quadrant-svg">
+  <!-- Outer border -->
+  <rect x="40" y="40" width="560" height="320" rx="10" fill="var(--surface)" stroke="var(--line)" stroke-width="1.5"/>
+  <!-- Crosshair axes -->
+  <line x1="40" y1="200" x2="600" y2="200" stroke="var(--line)" stroke-width="1.5" stroke-dasharray="4 4"/>
+  <line x1="320" y1="40" x2="320" y2="360" stroke="var(--line)" stroke-width="1.5" stroke-dasharray="4 4"/>
+  <!-- Quadrant Labels -->
+  <text x="60" y="66" font-size="12" fill="var(--muted)" font-family="var(--mono)" letter-spacing="0.08em" text-transform="uppercase">High Cost / High Durability</text>
+  <text x="580" y="66" text-anchor="end" font-size="12" fill="var(--accent)" font-family="var(--mono)" letter-spacing="0.08em" text-transform="uppercase">Target: Low Latency + Fast Writes</text>
+  <text x="60" y="344" font-size="12" fill="var(--muted)" font-family="var(--mono)" letter-spacing="0.08em" text-transform="uppercase">Simple / Ephemeral</text>
+  <text x="580" y="344" text-anchor="end" font-size="12" fill="var(--muted)" font-family="var(--mono)" letter-spacing="0.08em" text-transform="uppercase">High Seek Overhead</text>
+  <!-- Positioned System Nodes -->
+  <g class="pop quadrant-node" style="--i:1" transform="translate(180 280)">
+    <circle cx="0" cy="0" r="24" fill="var(--surface0)" stroke="var(--line)" stroke-width="1.5"/>
+    <text x="0" y="4" text-anchor="middle" font-size="14">B-Tree</text>
+  </g>
+  <g class="pop quadrant-node" style="--i:2" transform="translate(260 120)">
+    <circle cx="0" cy="0" r="24" fill="var(--surface0)" stroke="var(--line)" stroke-width="1.5"/>
+    <text x="0" y="4" text-anchor="middle" font-size="14">LSM</text>
+  </g>
+  <g class="pop quadrant-node" style="--i:3" transform="translate(480 110)">
+    <circle cx="0" cy="0" r="28" fill="var(--accent-soft)" stroke="var(--accent)" stroke-width="2"/>
+    <text x="0" y="4" text-anchor="middle" font-size="15" font-weight="600" fill="var(--accent)">Bitcask</text>
+  </g>
+</svg>
+```
+
+### 3c. Function curve (a quantity against another)
 
 One accent curve, a baseline and a left axis in `--line`, two or three labelled points.
-No grid, no ticks beyond the labelled points. The curve is `class="draw"` so it draws
-itself; a `packet` can ride it to show direction of travel.
 
 ```html
 <svg viewBox="0 0 640 320" role="img" aria-label="IDF falls as document frequency rises and reaches zero when every document has the term">
@@ -192,14 +238,7 @@ itself; a `packet` can ride it to show direction of travel.
 </svg>
 ```
 
-Plot area is `x 72-600`, `y 32-272`. Map the function into it by hand; the shape must be
-right (monotone, concave, asymptotic) even if the scale is not labelled. Two curves
-compared: second curve in `var(--muted)`, both labelled at their right end.
-
 ## 4. Tree / hash / linked structure
-
-Nodes are circles `r="28"` on the same grid; edges are plain lines (no arrowheads unless
-direction matters). Depth spacing 96. The node the idea is about is accent.
 
 ```html
 <svg viewBox="0 0 640 320" role="img" aria-label="Lookup walks root to leaf in three hops">
@@ -212,10 +251,7 @@ direction matters). Depth spacing 96. The node the idea is about is accent.
 </svg>
 ```
 
-## 5. Options compared, one chosen (matrix)
-
-Use HTML, not SVG. A table where rows are options, columns are criteria, cells are
-`✓` / `✗` / a short value, and the chosen row has `class="chosen"`.
+## 5. Options compared (Matrix)
 
 ```html
 <table class="matrix">
@@ -228,16 +264,7 @@ Use HTML, not SVG. A table where rows are options, columns are criteria, cells a
 </table>
 ```
 
-CSS for `.matrix` is in `base.css`. A matrix with more than three data columns goes in
-`<figure class="wide">`; otherwise it clips the last column at desktop width.
-
-## 6. Memory / byte layout
-
-HTML `.cells` grid from `base.css`. One `.cell` per slot; `.on` for the cells the idea
-touches; `.bad` for a collision or overflow. Put the index or value inside. Keep to
-one or two rows (max 32 cells); the point is the highlighted region, not the whole array.
-
-For a **record or header layout** (named fields of different widths) use the row variant:
+## 6. Memory / buffer layout & compaction
 
 ```html
 <div class="cells row">
@@ -246,12 +273,7 @@ For a **record or header layout** (named fields of different widths) use the row
 </div>
 ```
 
-Cell text is the field name, at most 8 characters; sizes and offsets go in the figcaption.
-
 ## 7. Flowchart (decision)
-
-Diamonds for decisions, boxes for actions, top to bottom. Yes/no labels on the arrows.
-Diamond is a rotated square: `<path d="M80 0L160 40L80 80L0 40z">` inside a translated group.
 
 ```html
 <svg viewBox="0 0 640 400" role="img" aria-label="A read checks the keydir before touching disk">
@@ -278,10 +300,6 @@ Diamond is a rotated square: `<path d="M80 0L160 40L80 80L0 40z">` inside a tran
 
 ## 8. State machine
 
-Circles are states (`r="44"`, labels of at most 9 characters at `font-size="16"`), arrows are transitions labelled with the event. A self-loop is a
-small arc. The current state gets `pulse`; the whole state group gets `data-cycle` so states
-light in order (see §10).
-
 ```html
 <svg viewBox="0 0 960 300" role="img" aria-label="A file moves from active to immutable to merged">
   <defs>
@@ -301,16 +319,12 @@ light in order (see §10).
   <text x="318" y="136" text-anchor="middle" font-size="14" fill="var(--muted)">size &gt; limit</text>
   <path class="draw" style="--i:3" d="M524 150H756" stroke="var(--muted)" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
   <text x="638" y="136" text-anchor="middle" font-size="14" fill="var(--muted)">compaction</text>
-  <!-- self loop on active: writes -->
   <path class="draw" style="--i:1" d="M136 108C112 48 208 48 184 106" stroke="var(--muted)" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
   <text x="160" y="52" text-anchor="middle" font-size="14" fill="var(--muted)">put()</text>
 </svg>
 ```
 
 ## 9. Timeline (history, phases over time)
-
-A horizontal line with dots; label above, year or duration below. Max 6 points. The point the
-idea is about is accent. Use `.grow`-free static dots with `pop` stagger.
 
 ```html
 <svg viewBox="0 0 960 200" role="img" aria-label="Three generations of the storage engine">
@@ -323,42 +337,17 @@ idea is about is accent. Use `.grow`-free static dots with `pop` stagger.
 
 ## 10. Making a diagram move
 
-Every diagram that shows a *mechanism* -- pipeline, sequence, flowchart, state machine, tree
-lookup, cell grid -- animates continuously while on screen, not just on reveal. The motion
-shows what flows where. Three primitives, all in `base.css` / `runtime.js`:
+Every diagram that shows a *mechanism* animates continuously while on screen:
 
-**Packet** -- a dot travelling along an arrow. `class="packet"` is accent; `packet ok` green
-(an acknowledgement); `packet err` red (a failing message). Give the arrow path an `id`, then:
-
+**Packet** -- a dot travelling along an arrow:
 ```html
 <circle class="packet" r="5">
   <animateMotion dur="1.8s" repeatCount="indefinite" begin="0.3s"><mpath href="#p1"/></animateMotion>
 </circle>
 ```
 
-`class="packet err"` for a failing message, `packet ok` for an acknowledgement. For a
-multi-hop path, chain: one packet per hop, `begin` offsets summing to a rhythm
-(`0s`, `0.9s`, `1.8s` for three hops of `dur="0.9s"` each, with `repeatCount="indefinite"`
-and a shared period via `dur` on all = total). Simpler: one packet along a single combined
-path `d="M… H… V…"` that spans the hops.
+**Pulse & Glow** -- `class="pulse"` or `class="pulse-glow"` on the active component.
 
-**Pulse** -- `class="pulse"` on the box/circle group that the mechanism is "at". At most one
-per diagram; it draws the eye, and two eyes pull apart.
+**Cycle** -- `data-cycle="900"` on a parent; its children take `.lit` in turn.
 
-**Cycle** -- `data-cycle="900"` on a parent; its children take `.lit` in turn every 900 ms,
-forever, while on screen. Use on: pipeline boxes (data marching through), stepper `.steps`,
-`.cells` (a scan or probe sequence), state-machine states, sequence messages. Children must
-be direct children of the host.
-
-**Flowing channel** -- `class="flowing"` on a path: a moving dashed stroke for a link that is
-always carrying traffic (replication stream, network link).
-
-Rules:
-
-- Motion is a loop with a period of 1.5-4 s. Nothing faster; it becomes noise.
-- At most three moving things per diagram (e.g., one packet, one pulse, one cycle).
-- Motion runs only while the section is on screen (`.live`, handled by the runtime) and stops
-  entirely under reduced-motion (packets are paused via `svg.pauseAnimations()`).
-- Motion shows the mechanism, never decorates. A packet goes where the data goes. If the
-  idea is static -- a comparison, a number, a definition -- the visual stays still.
-- The reveal (`pop`/`draw` stagger) still happens first; motion begins as the section enters.
+**Streaming channel** -- `class="stream-channel"` or `class="flowing"` on continuous pipeline paths.
