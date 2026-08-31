@@ -11,14 +11,21 @@
 
   // --- Theme --------------------------------------------------------------
   {
+    // The theme the document was built with (data-theme on <html>, or none = follow OS).
+    const builtTheme = root.getAttribute('data-theme');
+    const DARK = ['midnight', 'dark', 'mocha', 'tokyo', 'tokyo-night', 'nord', 'dracula',
+      'gruvbox', 'rosepine', 'rose-pine', 'forest', 'neon'];
+    // Scoped per document so toggling one doc never restyles another on the same origin.
+    const KEY = 'ape-theme:' + (location.pathname.split('/').pop() || 'doc');
+
     const applyTheme = (t) => {
       if (!t) return;
       root.setAttribute('data-theme', t);
-      try { localStorage.setItem('ape-theme', t); } catch (_) {}
+      try { localStorage.setItem(KEY, t); } catch (_) {}
     };
 
     try {
-      const saved = localStorage.getItem('ape-theme');
+      const saved = localStorage.getItem(KEY);
       if (saved) root.setAttribute('data-theme', saved);
     } catch (_) {}
 
@@ -35,14 +42,17 @@
       }
     } catch (_) {}
 
+    // `t` flips polarity but remembers the built theme: a nord document goes
+    // nord -> daylight -> nord, not nord -> midnight.
     addEventListener('keydown', (e) => {
       if (e.key !== 't' || e.metaKey || e.ctrlKey || e.altKey) return;
       if (e.target && /INPUT|TEXTAREA/.test(e.target.tagName)) return;
       const cur = root.getAttribute('data-theme');
-      const isDark = cur === 'dark' || cur === 'midnight' ||
-        (!cur && matchMedia('(prefers-color-scheme: dark)').matches);
-      const next = isDark ? 'daylight' : 'midnight';
-      applyTheme(next);
+      const isDark = cur ? DARK.includes(cur)
+        : matchMedia('(prefers-color-scheme: dark)').matches;
+      const darkHome = builtTheme && DARK.includes(builtTheme) ? builtTheme : 'midnight';
+      const lightHome = builtTheme && !DARK.includes(builtTheme) ? builtTheme : 'daylight';
+      applyTheme(isDark ? lightHome : darkHome);
     });
   }
 
@@ -136,6 +146,9 @@
     pill.addEventListener('mouseleave', deactivate);
     pill.addEventListener('focus', activate);
     pill.addEventListener('blur', deactivate);
+    // Touch / click: toggle, so the highlight is reachable without hover or a keyboard.
+    pill.addEventListener('click', () =>
+      pill.classList.contains('inspecting') ? deactivate() : activate());
   });
 
   // --- Interactive Step-by-Step Steppers -----------------------------------

@@ -403,6 +403,146 @@ One accent curve, a baseline and a left axis in `--line`, two or three labelled 
 </svg>
 ```
 
+### 3e. Latency waterfall (where the time goes)
+
+Sequential spans of one operation, each starting where the previous ended, on one time
+axis. Evidence, not mechanism: **static, no motion**. The span the idea is about gets
+the accent; every value label must be stated by the post. Spans scale linearly with
+their values; the name sits left of the row, the value at the span's end.
+
+```html
+<svg viewBox="0 0 960 300" role="img" aria-label="The server phase dominates the 200 ms request">
+  <line x1="120" y1="260" x2="880" y2="260" stroke="var(--line)" stroke-width="1.5"/>
+  <text x="880" y="288" text-anchor="end" font-size="14" fill="var(--muted)">time →</text>
+  <g class="pop" style="--i:0">
+    <rect x="120" y="48" width="46" height="32" rx="6" fill="var(--muted)"/>
+    <text x="112" y="64" text-anchor="end" dominant-baseline="middle" font-size="14" fill="var(--muted)">DNS</text>
+    <text x="174" y="64" dominant-baseline="middle" font-size="14" fill="var(--muted)">12 ms</text>
+  </g>
+  <g class="pop" style="--i:1">
+    <rect x="166" y="96" width="144" height="32" rx="6" fill="var(--muted)"/>
+    <text x="112" y="112" text-anchor="end" dominant-baseline="middle" font-size="14" fill="var(--muted)">TLS</text>
+    <text x="318" y="112" dominant-baseline="middle" font-size="14" fill="var(--muted)">38 ms</text>
+  </g>
+  <g class="pop" style="--i:2">
+    <rect x="310" y="144" width="361" height="32" rx="6" fill="var(--accent)"/>
+    <text x="112" y="160" text-anchor="end" dominant-baseline="middle" font-size="14" fill="var(--muted)">server</text>
+    <text x="679" y="160" dominant-baseline="middle" font-size="14" fill="var(--accent)">95 ms</text>
+  </g>
+  <g class="pop" style="--i:3">
+    <rect x="671" y="192" width="209" height="32" rx="6" fill="var(--muted)"/>
+    <text x="112" y="208" text-anchor="end" dominant-baseline="middle" font-size="14" fill="var(--muted)">transfer</text>
+    <text x="872" y="208" text-anchor="end" dominant-baseline="middle" font-size="14" fill="var(--bg)">55 ms</text>
+  </g>
+  <line x1="880" y1="40" x2="880" y2="260" stroke="var(--line)" stroke-width="1.5" stroke-dasharray="4 4"/>
+  <text x="872" y="32" text-anchor="end" font-size="14" fill="var(--muted)">200 ms total</text>
+</svg>
+```
+
+### 3f. Histogram with percentile markers (the shape of a distribution)
+
+The shape — the cluster and the tail — is the idea. Bars in `--muted`; the percentile
+the idea is about gets an accent dashed marker. **Static.** Bar heights sketch the
+distribution; only the marker labels carry values, and only values the post states.
+
+```html
+<svg viewBox="0 0 960 320" role="img" aria-label="Most requests finish near 2 ms but the p99 tail reaches 40 ms">
+  <line x1="80" y1="260" x2="880" y2="260" stroke="var(--line)" stroke-width="1.5"/>
+  <text x="880" y="288" text-anchor="end" font-size="14" fill="var(--muted)">latency →</text>
+  <rect class="grow" style="--i:0"  x="88"  y="200" width="40" height="60"  rx="4" fill="var(--muted)"/>
+  <rect class="grow" style="--i:1"  x="136" y="120" width="40" height="140" rx="4" fill="var(--muted)"/>
+  <rect class="grow" style="--i:2"  x="184" y="60"  width="40" height="200" rx="4" fill="var(--muted)"/>
+  <rect class="grow" style="--i:3"  x="232" y="40"  width="40" height="220" rx="4" fill="var(--muted)"/>
+  <rect class="grow" style="--i:4"  x="280" y="70"  width="40" height="190" rx="4" fill="var(--muted)"/>
+  <rect class="grow" style="--i:5"  x="328" y="110" width="40" height="150" rx="4" fill="var(--muted)"/>
+  <rect class="grow" style="--i:6"  x="376" y="150" width="40" height="110" rx="4" fill="var(--muted)"/>
+  <rect class="grow" style="--i:7"  x="424" y="180" width="40" height="80"  rx="4" fill="var(--muted)"/>
+  <rect class="grow" style="--i:8"  x="472" y="205" width="40" height="55"  rx="4" fill="var(--muted)"/>
+  <rect class="grow" style="--i:9"  x="520" y="222" width="40" height="38"  rx="4" fill="var(--muted)"/>
+  <rect class="grow" style="--i:10" x="568" y="234" width="40" height="26"  rx="4" fill="var(--muted)"/>
+  <rect class="grow" style="--i:11" x="616" y="242" width="40" height="18"  rx="4" fill="var(--muted)"/>
+  <rect class="grow" style="--i:12" x="664" y="248" width="40" height="12"  rx="4" fill="var(--muted)"/>
+  <rect class="grow" style="--i:13" x="712" y="252" width="40" height="8"   rx="4" fill="var(--muted)"/>
+  <rect class="grow" style="--i:14" x="760" y="254" width="40" height="6"   rx="4" fill="var(--muted)"/>
+  <rect class="grow" style="--i:15" x="808" y="256" width="40" height="4"   rx="4" fill="var(--muted)"/>
+  <line x1="252" y1="24" x2="252" y2="260" stroke="var(--muted)" stroke-width="1.5" stroke-dasharray="4 4"/>
+  <text x="260" y="32" font-size="14" fill="var(--muted)">p50 2 ms</text>
+  <line x1="828" y1="24" x2="828" y2="260" stroke="var(--accent)" stroke-width="1.5" stroke-dasharray="4 4"/>
+  <text x="820" y="32" text-anchor="end" font-size="14" fill="var(--accent)">p99 40 ms</text>
+</svg>
+```
+
+### 3g. Magnitude ladder (values spanning orders of magnitude)
+
+Horizontal bars with length proportional to **log10** of the value — linear bars go
+blank across orders of magnitude. This is the only non-linear template; it must keep
+the "log scale" annotation. The row the idea is about gets the accent. **Static.**
+Bar length: `60 + log10(value in the smallest unit) * 86`.
+
+```html
+<svg viewBox="0 0 960 280" role="img" aria-label="A disk seek costs ten million times an L1 hit">
+  <g class="pop" style="--i:0">
+    <rect class="grow-x" style="--i:0" x="200" y="40" width="60" height="32" rx="6" fill="var(--muted)"/>
+    <text x="192" y="56" text-anchor="end" dominant-baseline="middle" font-size="14" fill="var(--muted)">L1 hit</text>
+    <text x="268" y="56" dominant-baseline="middle" font-size="14" fill="var(--muted)">1 ns</text>
+  </g>
+  <g class="pop" style="--i:1">
+    <rect class="grow-x" style="--i:1" x="200" y="96" width="232" height="32" rx="6" fill="var(--muted)"/>
+    <text x="192" y="112" text-anchor="end" dominant-baseline="middle" font-size="14" fill="var(--muted)">RAM read</text>
+    <text x="440" y="112" dominant-baseline="middle" font-size="14" fill="var(--muted)">100 ns</text>
+  </g>
+  <g class="pop" style="--i:2">
+    <rect class="grow-x" style="--i:2" x="200" y="152" width="490" height="32" rx="6" fill="var(--muted)"/>
+    <text x="192" y="168" text-anchor="end" dominant-baseline="middle" font-size="14" fill="var(--muted)">SSD read</text>
+    <text x="698" y="168" dominant-baseline="middle" font-size="14" fill="var(--muted)">100 µs</text>
+  </g>
+  <g class="pop" style="--i:3">
+    <rect class="grow-x" style="--i:3" x="200" y="208" width="662" height="32" rx="6" fill="var(--accent)"/>
+    <text x="192" y="224" text-anchor="end" dominant-baseline="middle" font-size="14" fill="var(--muted)">disk seek</text>
+    <text x="870" y="224" dominant-baseline="middle" font-size="14" fill="var(--accent)">10 ms</text>
+  </g>
+  <text x="880" y="264" text-anchor="end" font-size="14" fill="var(--muted)">log scale →</text>
+</svg>
+```
+
+### 3h. Multi-curve comparison (two or three growth shapes against each other)
+
+Same axes as §3d. The curve the idea is about is accent solid; the others are
+`--muted`, the third dashed. Endpoint labels name the curves. **Static — no packet.**
+
+```html
+<svg viewBox="0 0 640 320" role="img" aria-label="Scan cost grows with n while the index stays near-flat">
+  <line x1="72" y1="272" x2="600" y2="272" stroke="var(--line)" stroke-width="1.5"/>
+  <line x1="72" y1="32" x2="72" y2="272" stroke="var(--line)" stroke-width="1.5"/>
+  <text x="600" y="296" text-anchor="end" font-size="14" fill="var(--muted)">n →</text>
+  <text x="60" y="40" text-anchor="end" font-size="14" fill="var(--muted)">cost</text>
+  <path class="draw" style="--i:0" d="M96 256 L 560 56" stroke="var(--muted)" stroke-width="2" fill="none"/>
+  <text x="548" y="44" text-anchor="end" font-size="14" fill="var(--muted)">scan O(n)</text>
+  <path class="draw" style="--i:1" d="M96 264 C 240 216, 400 208, 560 204" stroke="var(--accent)" stroke-width="2" fill="none"/>
+  <text x="548" y="192" text-anchor="end" font-size="14" fill="var(--accent)">index O(log n)</text>
+</svg>
+```
+
+### 3i. Annotated time series (a metric over time, with events)
+
+One accent curve, dashed vertical markers at the events the post names, a dot where
+the marker meets the curve. **Static.** Label only events and values the post states;
+a long event label goes in the figcaption.
+
+```html
+<svg viewBox="0 0 960 320" role="img" aria-label="Throughput doubles after the deploy and holds through the cache flush">
+  <line x1="80" y1="260" x2="880" y2="260" stroke="var(--line)" stroke-width="1.5"/>
+  <text x="880" y="288" text-anchor="end" font-size="14" fill="var(--muted)">time →</text>
+  <path class="draw" style="--i:0" d="M96 200 C 200 196, 300 192, 380 188 C 420 120, 480 96, 600 92 C 700 90, 800 94, 864 92" stroke="var(--accent)" stroke-width="2" fill="none"/>
+  <line x1="380" y1="48" x2="380" y2="260" stroke="var(--muted)" stroke-width="1.5" stroke-dasharray="4 4"/>
+  <circle cx="380" cy="188" r="5" fill="var(--accent)"/>
+  <text x="388" y="56" font-size="14" fill="var(--muted)">deploy</text>
+  <line x1="640" y1="48" x2="640" y2="260" stroke="var(--muted)" stroke-width="1.5" stroke-dasharray="4 4"/>
+  <circle cx="640" cy="91" r="5" fill="var(--accent)"/>
+  <text x="648" y="56" font-size="14" fill="var(--muted)">cache flush</text>
+</svg>
+```
+
 ## 4. Tree / hash / linked structure
 
 ```html
@@ -484,6 +624,43 @@ Use for Virtual Machines, Docker containers, Kubernetes pods, sandbox isolation,
 </svg>
 ```
 
+### 4d. Schema / record relations (tables with fields)
+
+Titled boxes with field rows, an accent arrow from the referencing field to the key it
+points at. The linking field gets an accent-soft highlight. Arrow label at most 8
+characters (`FK`); the full relation goes in the figcaption. Max 3 boxes; a wider
+schema is about a sub-relation.
+
+```html
+<svg viewBox="0 0 640 280" role="img" aria-label="Orders reference users through user_id">
+  <defs>
+    <marker id="arr-a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M0 0L10 5L0 10z" fill="var(--accent)"/>
+    </marker>
+  </defs>
+  <g class="pop" style="--i:0" transform="translate(48 56)">
+    <rect width="192" height="152" rx="10" fill="var(--surface)" stroke="var(--line)" stroke-width="1.5"/>
+    <line x1="0" y1="40" x2="192" y2="40" stroke="var(--line)" stroke-width="1.5"/>
+    <text x="96" y="20" text-anchor="middle" dominant-baseline="middle" font-size="16" font-weight="600">users</text>
+    <rect x="8" y="52" width="176" height="26" rx="4" fill="var(--accent-soft)"/>
+    <text x="20" y="65" dominant-baseline="middle" font-size="14">id</text>
+    <text x="20" y="97" dominant-baseline="middle" font-size="14" fill="var(--muted)">email</text>
+    <text x="20" y="127" dominant-baseline="middle" font-size="14" fill="var(--muted)">created_at</text>
+  </g>
+  <g class="pop" style="--i:1" transform="translate(400 56)">
+    <rect width="192" height="152" rx="10" fill="var(--surface)" stroke="var(--line)" stroke-width="1.5"/>
+    <line x1="0" y1="40" x2="192" y2="40" stroke="var(--line)" stroke-width="1.5"/>
+    <text x="96" y="20" text-anchor="middle" dominant-baseline="middle" font-size="16" font-weight="600">orders</text>
+    <text x="20" y="65" dominant-baseline="middle" font-size="14" fill="var(--muted)">id</text>
+    <rect x="8" y="84" width="176" height="26" rx="4" fill="var(--accent-soft)"/>
+    <text x="20" y="97" dominant-baseline="middle" font-size="14">user_id</text>
+    <text x="20" y="127" dominant-baseline="middle" font-size="14" fill="var(--muted)">amount</text>
+  </g>
+  <path class="draw" style="--i:2" d="M408 153 H320 V121 H244" stroke="var(--accent)" stroke-width="1.5" fill="none" marker-end="url(#arr-a)"/>
+  <text x="322" y="107" text-anchor="middle" font-size="14" fill="var(--muted)">FK</text>
+</svg>
+```
+
 ## 5. Options compared (Matrix)
 
 ```html
@@ -503,6 +680,20 @@ Use for Virtual Machines, Docker containers, Kubernetes pods, sandbox isolation,
 <div class="cells row">
   <div class="cell">crc</div><div class="cell">tstamp</div><div class="cell">ksz</div><div class="cell on">vsz</div>
   <div class="cell var">key</div><div class="cell var">value</div>
+</div>
+```
+
+### 6b. Heatmap cells (intensity across a grid)
+
+Load skew, hot shards, cache hit patterns. Three intensity steps of the one accent hue
+(`heat-1` faint → `heat-3` hot); a cold cell stays plain. **Static** — the skew is
+evidence, not a mechanism. Fix the column count to the grid the post describes; label
+cells only if the post names them.
+
+```html
+<div class="cells" style="grid-template-columns: repeat(8, minmax(2.75rem, 1fr));">
+  <div class="cell heat-1">s0</div><div class="cell">s1</div><div class="cell heat-2">s2</div><div class="cell heat-3">s3</div>
+  <div class="cell heat-3">s4</div><div class="cell heat-1">s5</div><div class="cell">s6</div><div class="cell heat-1">s7</div>
 </div>
 ```
 

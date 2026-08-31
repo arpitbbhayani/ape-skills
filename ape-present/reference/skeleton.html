@@ -1,17 +1,25 @@
 <!doctype html>
+<!-- Theme: no data-theme attribute = follow the OS. A named theme from SKILL.md
+     ("nord", "gruvbox", ...) is applied as <html lang="en" data-theme="nord">. -->
 <html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>{{TITLE}}</title>
-<!-- Fonts: the one permitted external stylesheet. Fallbacks in base.css keep the page readable offline. -->
+<!-- Fonts: the one permitted external stylesheet. Fallbacks in base.css keep the page
+     readable offline. IBM Plex Mono is the body; Space Grotesk is the display font for
+     the default themes -- when a named theme is chosen, swap it for that theme's display
+     font (table in SKILL.md). -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,500;0,600;1,400&family=Playfair+Display:ital,wght@0,700;1,400&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,500;0,600;1,400&family=Space+Grotesk:wght@500;600;700&display=swap">
 <style>
-/* 1. Paste reference/base.css here verbatim.                                    */
-/* 2. If a different accent suits the topic, change ONLY the two --accent lines. */
-/* 3. Add document-specific rules below this comment; never restyle base.        */
+/* 1. Inject reference/base.css verbatim over the marker below (mechanically -- see
+      SKILL.md Step 5; never retype it).                                          */
+/* 2. If a different accent suits the topic, change ONLY the two --accent lines
+      (midnight + daylight blocks); --accent-soft/--accent-line/--glow follow it. */
+/* 3. Add document-specific rules below the marker; never restyle base.          */
+{{BASE_CSS}}
 </style>
 </head>
 <body>
@@ -30,7 +38,7 @@
 
 <section id="context">
   <h2>{{CONTEXT HEADING as a sentence, e.g. "Riak needed a store that never seeks on write"}}</h2>
-  <p class="dropcap">{{1-3 short paragraphs: what the reader must already hold to follow the body. Use <span class="inspect-node" data-target="fig-node-1">terms</span> to link prose to diagrams.}}</p>
+  <p class="dropcap">{{1-3 short paragraphs: what the reader must already hold to follow the body. Use <span class="inspect-node" tabindex="0" data-target="fig-node-1">terms</span> to link prose to diagrams.}}</p>
 </section>
 
 <section id="body">
@@ -39,7 +47,7 @@
        when there are more than 8 ideas (see SKILL.md Step 1). Each idea: heading as a
        sentence, 1-3 short paragraphs, one figure with a caption, optional aside. Pattern: -->
   <h2 data-n="01">{{IDEA AS A READ-ALOUD SENTENCE}}</h2>
-  <p>{{The mechanism in prose: what happens, in what order, and why it works. 40-120 words. Use <span class="inspect-node" data-target="box-wal">WAL</span> to highlight diagram parts.}}</p>
+  <p>{{The mechanism in prose: what happens, in what order, and why it works. Use <span class="inspect-node" tabindex="0" data-target="box-wal">WAL</span> to highlight diagram parts (always with tabindex="0" so keyboards reach it).}}</p>
   <figure class="wide">
     {{VISUAL — one SVG from svg-templates.md, with motion from §10 if it is a mechanism}}
     <figcaption><strong>{{Figure label, 3-6 words.}}</strong> {{One sentence naming what the picture shows the reader that the prose cannot.}}</figcaption>
@@ -103,6 +111,36 @@
     <figcaption><strong>{{Label.}}</strong> {{What the highlighted line does.}}</figcaption>
   </figure>
 
+  <!-- Diff: the exact change the post made. Type the +/- prefixes yourself; .add/.del
+       per line; same span grammar as code; <= 20 lines total. -->
+  <h2 data-example>{{SENTENCE}}</h2>
+  <p data-example>{{PROSE}}</p>
+  <figure data-example>
+<pre class="diff"><code>  <span class="k">def</span> <span class="n">append</span>(entry):
+<span class="del">-     memtable.put(entry)</span>
+<span class="add">+     log.write(entry); log.fsync()</span>
+<span class="add">+     memtable.put(entry)</span></code></pre>
+    <figcaption><strong>{{Label.}}</strong> {{What the change accomplishes.}}</figcaption>
+  </figure>
+
+  <!-- Terminal session: .prompt on command lines, .out on output. Transcribe exactly
+       what the post shows -- output numbers are claims and must appear in the source. -->
+  <h2 data-example>{{SENTENCE}}</h2>
+  <p data-example>{{PROSE}}</p>
+  <figure data-example>
+<pre class="term"><code><span class="prompt">$</span> wrk -t4 -c64 http://localhost:8080/get
+<span class="out">Requests/sec:  41200.55</span></code></pre>
+    <figcaption><strong>{{Label.}}</strong> {{What the run demonstrates.}}</figcaption>
+  </figure>
+
+  <!-- Deep-dive: optional depth a skimmer can skip. Attaches under an idea, after its
+       figure. Never a caveat, never load-bearing: the body must read complete with
+       every deep-dive closed. At most two per document. -->
+  <details class="deep-dive" data-example>
+    <summary>{{3-7 word invitation, e.g. "How the crc check actually works"}}</summary>
+    <p>{{2-6 sentences of optional depth. Same fidelity rules as prose.}}</p>
+  </details>
+
   <!-- Formula. Include ONLY if the document has at least one .formula: the MathJax
        tags at the bottom too. -->
   <h2 data-example>{{SENTENCE}}</h2>
@@ -114,6 +152,32 @@
     <div class="formula-legend"><span><code>N</code> documents in corpus</span><span><code>df(t)</code> documents containing <code>t</code></span></div>
     <figcaption><strong>{{Label.}}</strong> {{What the formula says in words.}}</figcaption>
   </figure>
+
+  <!-- Stepper: a multi-phase mechanism the reader clicks through. The figure's SVG
+       carries id + data-step="1..N" on the groups each phase is about; the stepper's
+       data-svg points at that id and each .step-pane narrates one phase. Panes hold
+       the same prose fidelity rules as paragraphs. -->
+  <h2 data-example>{{SENTENCE}}</h2>
+  <p data-example>{{PROSE}}</p>
+  <figure class="wide" data-example>
+    <svg id="fig-merge" viewBox="0 0 960 240" role="img" aria-label="{{THE IDEA}}">
+      {{DIAGRAM from svg-templates.md with data-step="1", data-step="2", ... on the groups}}
+    </svg>
+    <figcaption><strong>{{Label.}}</strong> {{One sentence.}}</figcaption>
+  </figure>
+  <div class="stepper" data-svg="fig-merge" data-example>
+    <div class="stepper-header">
+      <span class="stepper-title">{{Walkthrough title}}</span>
+      <div class="stepper-nav">
+        <button class="step-btn step-prev" type="button">&#8592;</button>
+        <span class="step-count">1 / 3</span>
+        <button class="step-btn step-next" type="button">&#8594;</button>
+      </div>
+    </div>
+    <div class="step-pane">{{Phase 1, 1-2 sentences.}}</div>
+    <div class="step-pane">{{Phase 2, 1-2 sentences.}}</div>
+    <div class="step-pane">{{Phase 3, 1-2 sentences.}}</div>
+  </div>
 
   <!-- Options compared (Matrix) -->
   <h2 data-example>{{SENTENCE}}</h2>
@@ -161,7 +225,9 @@
 <script async src="https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-svg.js"></script>
 
 <script>
-/* Paste reference/runtime.js here verbatim. Do not add other scripts. */
+/* Inject reference/runtime.js verbatim over the marker (mechanically -- see SKILL.md
+   Step 5; never retype it). Do not add other scripts. */
+{{RUNTIME_JS}}
 </script>
 </body>
 </html>

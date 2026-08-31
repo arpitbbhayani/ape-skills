@@ -1,7 +1,7 @@
 # Worked example: the spine for `bitcask.md`
 
 Source: `bitcask.md`, 1,376 words, 2 figures ("Datafiles", "KeyDir"), no tables, no maths.
-Ten ideas, so grouped into four parts (`h2` parts, `h3` ideas). Budget: 850-1,600 words.
+Ten ideas, so grouped into four parts (`h2` parts, `h3` ideas). Budget: 1,200-2,900 words.
 
 Claim (dek): *Append every write, keep every key in memory, and any value is one disk seek away.*
 

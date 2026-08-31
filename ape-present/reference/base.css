@@ -36,9 +36,9 @@
   --accent:           #cba6f7;
   --accent-2:         #89b4fa;
   --accent-3:         #89dceb;
-  --accent-soft:      rgba(203, 166, 247, 0.1);
-  --accent-line:      rgba(203, 166, 247, 0.42);
-  --glow:             rgba(203, 166, 247, 0.34);
+  --accent-soft:      color-mix(in srgb, var(--accent) 10%, transparent);
+  --accent-line:      color-mix(in srgb, var(--accent) 42%, transparent);
+  --glow:             color-mix(in srgb, var(--accent) 34%, transparent);
   --gradient:         linear-gradient(115deg, #cba6f7, #89b4fa 58%, #89dceb);
   --accent-fade:      linear-gradient(90deg, #cba6f7, rgba(203, 166, 247, 0.45) 62%, transparent);
   --surface-soft:     rgba(49, 50, 68, 0.34);
@@ -109,9 +109,9 @@
   --accent:           #2ac3de;
   --accent-2:         #bb9af7;
   --accent-3:         #73daca;
-  --accent-soft:      rgba(42, 195, 222, 0.1);
-  --accent-line:      rgba(42, 195, 222, 0.42);
-  --glow:             rgba(42, 195, 222, 0.34);
+  --accent-soft:      color-mix(in srgb, var(--accent) 10%, transparent);
+  --accent-line:      color-mix(in srgb, var(--accent) 42%, transparent);
+  --glow:             color-mix(in srgb, var(--accent) 34%, transparent);
   --gradient:         linear-gradient(115deg, #2ac3de, #bb9af7 58%, #73daca);
   --accent-fade:      linear-gradient(90deg, #2ac3de, rgba(42, 195, 222, 0.45) 62%, transparent);
   --surface-soft:     rgba(41, 46, 66, 0.34);
@@ -181,9 +181,9 @@
   --accent:           #88c0d0;
   --accent-2:         #81a1c1;
   --accent-3:         #8fbcbb;
-  --accent-soft:      rgba(136, 192, 208, 0.1);
-  --accent-line:      rgba(136, 192, 208, 0.42);
-  --glow:             rgba(136, 192, 208, 0.34);
+  --accent-soft:      color-mix(in srgb, var(--accent) 10%, transparent);
+  --accent-line:      color-mix(in srgb, var(--accent) 42%, transparent);
+  --glow:             color-mix(in srgb, var(--accent) 34%, transparent);
   --gradient:         linear-gradient(115deg, #88c0d0, #81a1c1 58%, #8fbcbb);
   --accent-fade:      linear-gradient(90deg, #88c0d0, rgba(136, 192, 208, 0.45) 62%, transparent);
   --surface-soft:     rgba(59, 66, 82, 0.34);
@@ -253,9 +253,9 @@
   --accent:           #bd93f9;
   --accent-2:         #ff79c6;
   --accent-3:         #8be9fd;
-  --accent-soft:      rgba(189, 147, 249, 0.1);
-  --accent-line:      rgba(189, 147, 249, 0.42);
-  --glow:             rgba(189, 147, 249, 0.34);
+  --accent-soft:      color-mix(in srgb, var(--accent) 10%, transparent);
+  --accent-line:      color-mix(in srgb, var(--accent) 42%, transparent);
+  --glow:             color-mix(in srgb, var(--accent) 34%, transparent);
   --gradient:         linear-gradient(115deg, #bd93f9, #ff79c6 58%, #8be9fd);
   --accent-fade:      linear-gradient(90deg, #bd93f9, rgba(189, 147, 249, 0.45) 62%, transparent);
   --surface-soft:     rgba(52, 55, 70, 0.34);
@@ -325,9 +325,9 @@
   --accent:           #fabd2f;
   --accent-2:         #fe8019;
   --accent-3:         #b8bb26;
-  --accent-soft:      rgba(250, 189, 47, 0.1);
-  --accent-line:      rgba(250, 189, 47, 0.42);
-  --glow:             rgba(250, 189, 47, 0.34);
+  --accent-soft:      color-mix(in srgb, var(--accent) 10%, transparent);
+  --accent-line:      color-mix(in srgb, var(--accent) 42%, transparent);
+  --glow:             color-mix(in srgb, var(--accent) 34%, transparent);
   --gradient:         linear-gradient(115deg, #fabd2f, #fe8019 58%, #b8bb26);
   --accent-fade:      linear-gradient(90deg, #fabd2f, rgba(250, 189, 47, 0.45) 62%, transparent);
   --surface-soft:     rgba(50, 48, 47, 0.34);
@@ -398,9 +398,9 @@
   --accent:           #c4a7e7;
   --accent-2:         #9ccfd8;
   --accent-3:         #f6c177;
-  --accent-soft:      rgba(196, 167, 231, 0.1);
-  --accent-line:      rgba(196, 167, 231, 0.42);
-  --glow:             rgba(196, 167, 231, 0.34);
+  --accent-soft:      color-mix(in srgb, var(--accent) 10%, transparent);
+  --accent-line:      color-mix(in srgb, var(--accent) 42%, transparent);
+  --glow:             color-mix(in srgb, var(--accent) 34%, transparent);
   --gradient:         linear-gradient(115deg, #c4a7e7, #9ccfd8 58%, #f6c177);
   --accent-fade:      linear-gradient(90deg, #c4a7e7, rgba(196, 167, 231, 0.45) 62%, transparent);
   --surface-soft:     rgba(38, 35, 58, 0.34);
@@ -470,9 +470,9 @@
   --accent:           #a7c080;
   --accent-2:         #6fb5ac;
   --accent-3:         #dbbc7f;
-  --accent-soft:      rgba(167, 192, 128, 0.1);
-  --accent-line:      rgba(167, 192, 128, 0.42);
-  --glow:             rgba(167, 192, 128, 0.34);
+  --accent-soft:      color-mix(in srgb, var(--accent) 10%, transparent);
+  --accent-line:      color-mix(in srgb, var(--accent) 42%, transparent);
+  --glow:             color-mix(in srgb, var(--accent) 34%, transparent);
   --gradient:         linear-gradient(115deg, #a7c080, #6fb5ac 58%, #dbbc7f);
   --accent-fade:      linear-gradient(90deg, #a7c080, rgba(167, 192, 128, 0.45) 62%, transparent);
   --surface-soft:     rgba(61, 72, 77, 0.34);
@@ -542,9 +542,9 @@
   --accent:           #22d3ee;
   --accent-2:         #ff5cc8;
   --accent-3:         #38e8ff;
-  --accent-soft:      rgba(34, 211, 238, 0.1);
-  --accent-line:      rgba(34, 211, 238, 0.42);
-  --glow:             rgba(34, 211, 238, 0.34);
+  --accent-soft:      color-mix(in srgb, var(--accent) 10%, transparent);
+  --accent-line:      color-mix(in srgb, var(--accent) 42%, transparent);
+  --glow:             color-mix(in srgb, var(--accent) 34%, transparent);
   --gradient:         linear-gradient(115deg, #22d3ee, #ff5cc8 58%, #38e8ff);
   --accent-fade:      linear-gradient(90deg, #22d3ee, rgba(34, 211, 238, 0.45) 62%, transparent);
   --surface-soft:     rgba(22, 22, 42, 0.34);
@@ -616,9 +616,9 @@
   --accent:           #8839ef;
   --accent-2:         #1e66f5;
   --accent-3:         #179299;
-  --accent-soft:      rgba(136, 57, 239, 0.09);
-  --accent-line:      rgba(136, 57, 239, 0.34);
-  --glow:             rgba(136, 57, 239, 0.22);
+  --accent-soft:      color-mix(in srgb, var(--accent) 9%, transparent);
+  --accent-line:      color-mix(in srgb, var(--accent) 34%, transparent);
+  --glow:             color-mix(in srgb, var(--accent) 22%, transparent);
   --gradient:         linear-gradient(115deg, #8839ef, #1e66f5 58%, #179299);
   --accent-fade:      linear-gradient(90deg, #8839ef, rgba(136, 57, 239, 0.45) 62%, transparent);
   --surface-soft:     rgba(204, 208, 218, 0.42);
@@ -688,9 +688,9 @@
   --accent:           #2f7d94;
   --accent-2:         #4a7ba7;
   --accent-3:         #3b8b8a;
-  --accent-soft:      rgba(47, 125, 148, 0.09);
-  --accent-line:      rgba(47, 125, 148, 0.34);
-  --glow:             rgba(47, 125, 148, 0.22);
+  --accent-soft:      color-mix(in srgb, var(--accent) 9%, transparent);
+  --accent-line:      color-mix(in srgb, var(--accent) 34%, transparent);
+  --glow:             color-mix(in srgb, var(--accent) 22%, transparent);
   --gradient:         linear-gradient(115deg, #2f7d94, #4a7ba7 58%, #3b8b8a);
   --accent-fade:      linear-gradient(90deg, #2f7d94, rgba(47, 125, 148, 0.45) 62%, transparent);
   --surface-soft:     rgba(219, 225, 234, 0.42);
@@ -760,9 +760,9 @@
   --accent:           #268bd2;
   --accent-2:         #6c71c4;
   --accent-3:         #21958c;
-  --accent-soft:      rgba(38, 139, 210, 0.09);
-  --accent-line:      rgba(38, 139, 210, 0.34);
-  --glow:             rgba(38, 139, 210, 0.22);
+  --accent-soft:      color-mix(in srgb, var(--accent) 9%, transparent);
+  --accent-line:      color-mix(in srgb, var(--accent) 34%, transparent);
+  --glow:             color-mix(in srgb, var(--accent) 22%, transparent);
   --gradient:         linear-gradient(115deg, #268bd2, #6c71c4 58%, #21958c);
   --accent-fade:      linear-gradient(90deg, #268bd2, rgba(38, 139, 210, 0.45) 62%, transparent);
   --surface-soft:     rgba(227, 221, 200, 0.42);
@@ -832,9 +832,9 @@
   --accent:           #a81f2c;
   --accent-2:         #1f7f96;
   --accent-3:         #9a6c12;
-  --accent-soft:      rgba(168, 31, 44, 0.09);
-  --accent-line:      rgba(168, 31, 44, 0.34);
-  --glow:             rgba(168, 31, 44, 0.22);
+  --accent-soft:      color-mix(in srgb, var(--accent) 9%, transparent);
+  --accent-line:      color-mix(in srgb, var(--accent) 34%, transparent);
+  --glow:             color-mix(in srgb, var(--accent) 22%, transparent);
   --gradient:         linear-gradient(115deg, #a81f2c, #1f7f96 58%, #9a6c12);
   --accent-fade:      linear-gradient(90deg, #a81f2c, rgba(168, 31, 44, 0.45) 62%, transparent);
   --surface-soft:     rgba(228, 220, 204, 0.42);
@@ -905,9 +905,9 @@
   --accent:           #b4637a;
   --accent-2:         #907aa9;
   --accent-3:         #56949f;
-  --accent-soft:      rgba(180, 99, 122, 0.09);
-  --accent-line:      rgba(180, 99, 122, 0.34);
-  --glow:             rgba(180, 99, 122, 0.22);
+  --accent-soft:      color-mix(in srgb, var(--accent) 9%, transparent);
+  --accent-line:      color-mix(in srgb, var(--accent) 34%, transparent);
+  --glow:             color-mix(in srgb, var(--accent) 22%, transparent);
   --gradient:         linear-gradient(115deg, #b4637a, #907aa9 58%, #56949f);
   --accent-fade:      linear-gradient(90deg, #b4637a, rgba(180, 99, 122, 0.45) 62%, transparent);
   --surface-soft:     rgba(236, 224, 216, 0.42);
@@ -977,9 +977,9 @@
   --accent:           #e01b24;
   --accent-2:         #0a0a0a;
   --accent-3:         #5a5a5a;
-  --accent-soft:      rgba(224, 27, 36, 0.09);
-  --accent-line:      rgba(224, 27, 36, 0.34);
-  --glow:             rgba(224, 27, 36, 0.22);
+  --accent-soft:      color-mix(in srgb, var(--accent) 9%, transparent);
+  --accent-line:      color-mix(in srgb, var(--accent) 34%, transparent);
+  --glow:             color-mix(in srgb, var(--accent) 22%, transparent);
   --gradient:         linear-gradient(115deg, #e01b24, #0a0a0a 58%, #5a5a5a);
   --accent-fade:      linear-gradient(90deg, #e01b24, rgba(224, 27, 36, 0.45) 62%, transparent);
   --surface-soft:     rgba(220, 220, 220, 0.42);
@@ -1049,9 +1049,9 @@
   --accent:           #cba6f7;
   --accent-2:         #89b4fa;
   --accent-3:         #89dceb;
-  --accent-soft:      rgba(203, 166, 247, 0.1);
-  --accent-line:      rgba(203, 166, 247, 0.42);
-  --glow:             rgba(203, 166, 247, 0.34);
+  --accent-soft:      color-mix(in srgb, var(--accent) 10%, transparent);
+  --accent-line:      color-mix(in srgb, var(--accent) 42%, transparent);
+  --glow:             color-mix(in srgb, var(--accent) 34%, transparent);
   --gradient:         linear-gradient(115deg, #cba6f7, #89b4fa 58%, #89dceb);
   --accent-fade:      linear-gradient(90deg, #cba6f7, rgba(203, 166, 247, 0.45) 62%, transparent);
   --surface-soft:     rgba(49, 50, 68, 0.34);
@@ -1223,6 +1223,8 @@ figure.wide.in, .wide.in, .breakout.in, .full-bleed.in { transform: translateX(-
 .in .pop { opacity: 1; }
 .grow { transform: scaleY(0); transform-origin: bottom; transition: transform 700ms var(--ease); transition-delay: calc(var(--i, 0) * 100ms + 200ms); transform-box: fill-box; }
 .in .grow { transform: none; }
+.grow-x { transform: scaleX(0); transform-origin: left; transition: transform 700ms var(--ease); transition-delay: calc(var(--i, 0) * 100ms + 200ms); transform-box: fill-box; }
+.in .grow-x { transform: none; }
 
 /* ---- Live motion (loops only while the figure is on screen: .live) ------------- */
 .packet { fill: var(--accent); }
@@ -1331,6 +1333,28 @@ pre {
 pre .k { color: var(--code-k); } pre .s { color: var(--code-s); } pre .c { color: var(--code-c); } pre .n { color: var(--code-n); }
 pre .hl { display: inline-block; width: 100%; background: var(--accent-soft); box-shadow: -1.25rem 0 0 var(--accent-soft), 1.25rem 0 0 var(--accent-soft); }
 
+/* Diff: the exact code change. The author types the +/- prefixes; CSS only tints. */
+pre.diff .add { display: inline-block; width: 100%; background: color-mix(in srgb, var(--ok) 13%, transparent); box-shadow: -1.25rem 0 0 color-mix(in srgb, var(--ok) 13%, transparent), 1.25rem 0 0 color-mix(in srgb, var(--ok) 13%, transparent); }
+pre.diff .del { display: inline-block; width: 100%; background: color-mix(in srgb, var(--err) 11%, transparent); box-shadow: -1.25rem 0 0 color-mix(in srgb, var(--err) 11%, transparent), 1.25rem 0 0 color-mix(in srgb, var(--err) 11%, transparent); opacity: 0.85; }
+
+/* Terminal session: a command and what it printed. */
+pre.term { background: var(--crust); }
+pre.term .prompt { color: var(--accent); font-weight: 600; user-select: none; }
+pre.term .out { color: var(--muted); }
+
+/* Deep-dive: optional depth a skimmer can skip. Nothing load-bearing goes inside. */
+details.deep-dive { margin: 1.25rem 0; border: 1px solid var(--line); border-left: 3px solid var(--accent); border-radius: 8px; background: var(--surface-soft); }
+details.deep-dive > summary { cursor: pointer; padding: 0.7rem 1rem; font-family: var(--mono); font-size: 0.85rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); }
+details.deep-dive > summary:hover { color: var(--text); }
+details.deep-dive[open] > summary { border-bottom: 1px solid var(--line); color: var(--text); }
+details.deep-dive > :not(summary) { margin-left: 1rem; margin-right: 1rem; }
+details.deep-dive > :last-child { margin-bottom: 0.9rem; }
+
+/* Heatmap intensity: three steps of the one accent hue. */
+.cell.heat-1 { background: color-mix(in srgb, var(--accent) 12%, transparent); border-color: var(--accent-line); color: var(--text); }
+.cell.heat-2 { background: color-mix(in srgb, var(--accent) 32%, transparent); border-color: var(--accent); color: var(--text); }
+.cell.heat-3 { background: color-mix(in srgb, var(--accent) 60%, transparent); border-color: var(--accent); color: var(--text); }
+
 figure:has(> .matrix), .matrix-wrap { overflow-x: auto; }
 .matrix { border-collapse: collapse; width: 100%; font-size: 0.98rem; overflow-wrap: normal; }
 .matrix th, .matrix td { padding: 0.7rem 0.9rem; text-align: left; border-bottom: 1px solid var(--line); vertical-align: top; white-space: nowrap; }
@@ -1367,7 +1391,10 @@ mjx-container > svg { display: inline-block; max-width: 100%; height: auto; }   
   .chrome, .doc-header > * { animation: none; }
   figure, .stats, .summary, .pop { opacity: 1 !important; transform: none !important; }
   .draw { stroke-dashoffset: 0 !important; }
-  .grow { transform: none !important; }
+  .grow, .grow-x { transform: none !important; }
+  details.deep-dive { border-left-color: var(--line); }
+  details.deep-dive > summary::after { content: " (collapsed)"; }
+  details.deep-dive[open] > summary::after { content: ""; }
   .doc { padding: 0; max-width: 100%; }
   figure.wide, .wide, .breakout, .full-bleed { width: 100%; margin-left: 0; transform: none !important; }
 }
@@ -1375,7 +1402,7 @@ mjx-container > svg { display: inline-block; max-width: 100%; height: auto; }   
 /* ---- Reduced motion: everything visible, nothing moves --------------------------- */
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation: none !important; transition: none !important; }
-  figure, .stats, .summary, .pop, .grow, .callout, .race-bars, .quadrant, .stepper { opacity: 1 !important; transform: none !important; }
+  figure, .stats, .summary, .pop, .grow, .grow-x, .callout, .race-bars, .quadrant, .stepper { opacity: 1 !important; transform: none !important; }
   .chrome, .doc-header > * { animation: none; opacity: 1; }
   figure.wide, .wide, .breakout, .full-bleed { transform: translateX(-50%) !important; }
   .draw { stroke-dashoffset: 0 !important; }
