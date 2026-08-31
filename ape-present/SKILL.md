@@ -121,7 +121,7 @@ Every figure comes from one of these, or from a custom visual when the idea call
 | A number that matters | Stat row with count-up | `skeleton.html` stats example |
 | Sequence of steps, algorithm phases | `.steps` list (numbered) | `base.css .steps` |
 | Principles, rules, requirements, "the N things" (not sequential) | `.rules` list (dashed) | `base.css .rules` |
-| Two things contrasted (before/after, old/new, profile A/profile B) | Side-by-side `.panels` | `base.css .panels` |
+| Two or three things contrasted, multi-card sets | Side-by-side `.panels` (or `.panels.three`, `.wide` / breakout permitted) | `base.css .panels` |
 | The key insight, the surprising claim, in the post's own words | `.quote` | `skeleton.html` quote example |
 | A section's core takeaway that is not a quotation | `.callout.insight` with `.hl-pill` terms | `skeleton.html` callout example |
 | Multi-phase mechanism the reader steps through (3-6 phases on one diagram) | `.stepper` panes + `data-step` highlights on the figure's SVG | `skeleton.html` stepper example |
@@ -138,7 +138,7 @@ Rules:
 - **Deep-dives** (`<details class="deep-dive">`): optional depth a skimmer can skip, attached under an idea after its figure. Never a caveat, never load-bearing -- the body must read complete with every deep-dive closed. At most two per document.
 - One figure per idea. An idea that needs two figures is two ideas.
 - Every SVG and table sits in a `<figure>` with a `<figcaption>`; 960-wide diagrams get `class="wide"`.
-- Stats: one row per idea, at most three numbers in it, and only for figures the post actually states. A metric without a value ("cycle time", "weeks to days") is not a stat -- it goes in prose or a `.rules` list.
+- Stats & multi-card layouts: one row per idea, at most three numbers in it, and only for figures the post actually states. A metric without a value ("cycle time", "weeks to days") is not a stat -- it goes in prose or a `.rules` list. Three-card layouts (three stats, three panels via `.panels.three`) are permitted and encouraged to break out beyond the prose container (`.wide` / `.breakout`) up to `--wide` so the cards have room to breathe rather than squeezing tightly inside `--measure`.
 - The catalogue is the default, not a cage. Reach for a custom visual -- not necessarily an SVG diagram in the §1-§9 grammar -- when an idea's shape does not fit any row, or when a different visual form would make the concept click faster than forcing it into an existing template. See "Going off-catalogue" below for what a custom visual must still honour.
 - A `.stepper` is user-driven interaction, not animation: use it when one diagram carries 3-6 phases the reader should walk at their own pace, with `data-step="1..N"` on the SVG groups each phase is about. Each pane is prose and obeys the fidelity rules. At most one stepper per document; a mechanism with 2 phases is `.panels`, with continuous motion it is §10.
 - **Two external resources are permitted, no others.** The Google Fonts link from `skeleton.html` (IBM Plex Mono for text; Space Grotesk for title and headings on the default themes -- a named theme swaps in its own display font per the table above; system fallbacks make the page readable offline), and MathJax -- only when the document has at least one `.formula`, with the exact pinned tags from `skeleton.html`. Every `.formula` carries a plain-text fallback in `data-plain`.
@@ -184,7 +184,7 @@ These are the patterns that make generated pages look generated, or turn a docum
 - Full-viewport sections, a hero, a scroll hint, a progress bar, keyboard "slide" navigation. It is a document.
 - Centred body text. Prose is left-aligned; only figcaptions and formulas centre.
 - Gradients of any kind. Glassmorphism, blur, noise textures, drop shadows, glow. Emoji. Icon sets. (The graph-paper ground in `base.css` is the only texture; it is not optional and not adjustable.)
-- Cards for everything. `.panel` is for a two-way contrast; `.stat` for numbers the post states. Paragraphs are paragraphs.
+- Cards for everything. `.panel` is for contrast / multi-card sets; `.stat` for numbers the post states. Paragraphs are paragraphs.
 - More than one accent colour. `--err` and `--ok` are the only other hues.
 - Any hex colour outside the `:root` blocks.
 - Your own theme toggle UI. Theme follows the OS, or the `t` key -- no button.

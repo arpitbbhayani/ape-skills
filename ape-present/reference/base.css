@@ -1127,13 +1127,13 @@ figure.wide, .wide, .breakout {
   width: min(var(--wide), 100vw - 2.5rem);
   max-width: none;
   margin-left: 50%;
-  transform: translateX(-50%);
+  transform: translate(-50%, 12px);
 }
 .full-bleed {
   width: min(var(--max-width), 100vw - 2.5rem);
   max-width: none;
   margin-left: 50%;
-  transform: translateX(-50%);
+  transform: translate(-50%, 12px);
 }
 
 /* Layout mode: data-layout="left" on <html> shifts the whole document off a left
@@ -1149,12 +1149,12 @@ figure.wide, .wide, .breakout {
 :root[data-layout="left"] .breakout {
   width: min(var(--wide), 100vw - var(--doc-left-margin) - 2rem);
   margin-left: 0;
-  transform: none;
+  transform: translateY(12px);
 }
 :root[data-layout="left"] .full-bleed {
   width: min(var(--max-width), 100vw - var(--doc-left-margin) - 2rem);
   margin-left: 0;
-  transform: none;
+  transform: translateY(12px);
 }
 :root[data-layout="left"] figure.wide.in,
 :root[data-layout="left"] .wide.in,
@@ -1239,7 +1239,7 @@ figcaption { color: var(--muted); font-size: 0.95rem; line-height: 1.5; margin-t
 figcaption strong { color: var(--text); font-weight: 600; }
 
 /* ---- Reveal (gentle; figures only) --------------------------------------------- */
-figure, .stats, .summary, .callout, .race-bars, .quadrant, .stepper { opacity: 0; transform: translateY(12px); transition: opacity 500ms var(--ease), transform 500ms var(--ease); }
+figure, .stats, .summary, .callout, .race-bars, .quadrant, .stepper, .panels { opacity: 0; transform: translateY(12px); transition: opacity 500ms var(--ease), transform 500ms var(--ease); }
 .in { opacity: 1 !important; transform: translateY(0) !important; }
 figure.wide.in, .wide.in, .breakout.in, .full-bleed.in { transform: translateX(-50%) !important; }
 /* Arrows draw themselves once the figure is in. */
@@ -1319,6 +1319,7 @@ figure.wide.in, .wide.in, .breakout.in, .full-bleed.in { transform: translateX(-
 .quote em { color: var(--accent); font-style: normal; }
 
 .panels { display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; }
+.panels.three { grid-template-columns: repeat(3, 1fr); }
 .panel { text-align: left; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 1.1rem 1.25rem; box-shadow: var(--shadow-md); }
 .panel h4 { margin: 0 0 0.6rem; font-size: 0.8rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); font-weight: 600; }
 .panel.after { border-color: var(--accent); }
@@ -1407,7 +1408,7 @@ mjx-container > svg { display: inline-block; max-width: 100%; height: auto; }   
 
 /* ---- Responsive -------------------------------------------------------------------- */
 @media (max-width: 48rem) {
-  .panels { grid-template-columns: 1fr; }
+  .panels, .panels.three { grid-template-columns: 1fr; }
   figure.wide, .wide, .breakout, .full-bleed { width: 100%; margin-left: 0; transform: none; }
   figure.wide.in, .wide.in, .breakout.in, .full-bleed.in { transform: none !important; }
   :root[data-layout="left"] .doc { margin-left: 0; }

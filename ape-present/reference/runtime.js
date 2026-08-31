@@ -83,7 +83,7 @@
   };
 
   // --- Reveal once ----------------------------------------------------------
-  const targets = [...document.querySelectorAll('figure, .stats, .summary, .callout, .race-bars, .quadrant')];
+  const targets = [...document.querySelectorAll('figure, .stats, .summary, .callout, .race-bars, .quadrant, .stepper, .panels')];
   const io = new IntersectionObserver((entries) => {
     for (const e of entries) {
       if (!e.isIntersecting) continue;
