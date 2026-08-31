@@ -1274,9 +1274,11 @@ figure.wide.in, .wide.in, .breakout.in, .full-bleed.in { transform: translateX(-
 
 /* ---- Components ------------------------------------------------------------------ */
 .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(11rem, 1fr)); gap: 1.5rem; margin: 2rem 0; }
-.stat { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 1.25rem 1.25rem 1rem; box-shadow: var(--shadow-md); }
+figure .stats { margin: 0 0 1.5rem 0; }
+figure.wide .stats, .stats.wide { grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr)); }
+.stat { display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 1.5rem 1.25rem; box-shadow: var(--shadow-md); }
 .stat .num { font-family: var(--serif); font-size: clamp(2.5rem, 4.5vw, 3.75rem); line-height: 1; color: var(--accent); font-weight: 700; letter-spacing: -0.02em; }
-.stat .unit { color: var(--muted); font-size: 0.95rem; margin-top: 0.5rem; }
+.stat .unit { color: var(--muted); font-size: 0.95rem; margin-top: 0.5rem; text-align: center; }
 
 /* Meters / Progress Gauges */
 .meter { display: grid; gap: 0.4rem; margin: 1.2rem 0; }
@@ -1408,7 +1410,7 @@ mjx-container > svg { display: inline-block; max-width: 100%; height: auto; }   
 
 /* ---- Responsive -------------------------------------------------------------------- */
 @media (max-width: 48rem) {
-  .panels, .panels.three { grid-template-columns: 1fr; }
+  .panels, .panels.three, .stats, figure.wide .stats, .stats.wide { grid-template-columns: 1fr; }
   figure.wide, .wide, .breakout, .full-bleed { width: 100%; margin-left: 0; transform: none; }
   figure.wide.in, .wide.in, .breakout.in, .full-bleed.in { transform: none !important; }
   :root[data-layout="left"] .doc { margin-left: 0; }
