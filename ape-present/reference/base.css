@@ -5,7 +5,9 @@
    The document is a long-form reading page, not a deck: one prose column,
    real headings, figures inline. Theme follows the OS or present-md; `t` flips it.
    Width has a comfortable measure constraint (--measure) with visual elements
-   allowed to break out beyond it (--wide, --max-width). */
+   allowed to break out beyond it (--wide, --max-width). Layout is centered by
+   default; data-layout="left" on <html> switches the whole document to a
+   left-margin layout so breakouts extend rightward instead of symmetrically. */
 
 /* ---- Theme: midnight (dark) -------------------------------- */
 :root[data-theme="midnight"],
@@ -1134,6 +1136,31 @@ figure.wide, .wide, .breakout {
   transform: translateX(-50%);
 }
 
+/* Layout mode: data-layout="left" on <html> shifts the whole document off a left
+   margin instead of true center, freeing the right side for breakouts throughout
+   the doc. Default (no attribute) keeps the centered column above. Figures then
+   anchor to that same left edge and grow rightward instead of centering on the
+   viewport. Collapses back to the default full-width column below the mobile
+   breakpoint (see Responsive). */
+:root[data-layout="left"] { --doc-left-margin: clamp(2rem, 8vw, 6rem); }
+:root[data-layout="left"] .doc { margin: 0 0 0 var(--doc-left-margin); }
+:root[data-layout="left"] figure.wide,
+:root[data-layout="left"] .wide,
+:root[data-layout="left"] .breakout {
+  width: min(var(--wide), 100vw - var(--doc-left-margin) - 2rem);
+  margin-left: 0;
+  transform: none;
+}
+:root[data-layout="left"] .full-bleed {
+  width: min(var(--max-width), 100vw - var(--doc-left-margin) - 2rem);
+  margin-left: 0;
+  transform: none;
+}
+:root[data-layout="left"] figure.wide.in,
+:root[data-layout="left"] .wide.in,
+:root[data-layout="left"] .breakout.in,
+:root[data-layout="left"] .full-bleed.in { transform: none !important; }
+
 /* Chrome bar: running head above the title. Mono, uppercase, hairline. */
 .chrome { display: flex; justify-content: space-between; gap: 1rem; font-family: var(--mono); font-size: 0.72rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); padding-bottom: 0.6rem; border-bottom: 1.5px solid var(--text); margin-bottom: 2.5rem; }
 .chrome b { color: var(--text); font-weight: 500; }
@@ -1383,6 +1410,7 @@ mjx-container > svg { display: inline-block; max-width: 100%; height: auto; }   
   .panels { grid-template-columns: 1fr; }
   figure.wide, .wide, .breakout, .full-bleed { width: 100%; margin-left: 0; transform: none; }
   figure.wide.in, .wide.in, .breakout.in, .full-bleed.in { transform: none !important; }
+  :root[data-layout="left"] .doc { margin-left: 0; }
 }
 
 /* ---- Print ------------------------------------------------------------------------- */
@@ -1395,7 +1423,7 @@ mjx-container > svg { display: inline-block; max-width: 100%; height: auto; }   
   details.deep-dive { border-left-color: var(--line); }
   details.deep-dive > summary::after { content: " (collapsed)"; }
   details.deep-dive[open] > summary::after { content: ""; }
-  .doc { padding: 0; max-width: 100%; }
+  .doc { padding: 0; max-width: 100%; margin: 0; }
   figure.wide, .wide, .breakout, .full-bleed { width: 100%; margin-left: 0; transform: none !important; }
 }
 
@@ -1404,7 +1432,14 @@ mjx-container > svg { display: inline-block; max-width: 100%; height: auto; }   
   *, *::before, *::after { animation: none !important; transition: none !important; }
   figure, .stats, .summary, .pop, .grow, .grow-x, .callout, .race-bars, .quadrant, .stepper { opacity: 1 !important; transform: none !important; }
   .chrome, .doc-header > * { animation: none; opacity: 1; }
-  figure.wide, .wide, .breakout, .full-bleed { transform: translateX(-50%) !important; }
+  :root:not([data-layout="left"]) figure.wide,
+  :root:not([data-layout="left"]) .wide,
+  :root:not([data-layout="left"]) .breakout,
+  :root:not([data-layout="left"]) .full-bleed { transform: translateX(-50%) !important; }
+  :root[data-layout="left"] figure.wide,
+  :root[data-layout="left"] .wide,
+  :root[data-layout="left"] .breakout,
+  :root[data-layout="left"] .full-bleed { transform: none !important; }
   .draw { stroke-dashoffset: 0 !important; }
   html { scroll-behavior: auto; }
 }

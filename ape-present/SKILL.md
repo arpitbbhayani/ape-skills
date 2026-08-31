@@ -13,7 +13,7 @@ It is not the blog either. The post explained; this document shows and teaches. 
 
 ## The one rule that makes it look good
 
-**Do not design. Assemble.** The `reference/` directory next to this file holds a finished design system: `base.css`, `runtime.js`, `skeleton.html`, `svg-templates.md`, and a `verify.sh` that checks the result. The document is built by pasting those verbatim and filling the slots. Every visual is a template from `svg-templates.md` with the labels changed. A document that follows the templates exactly looks deliberate; a document that "improves" on them looks like every other AI-generated page. The design decisions have already been made -- the only creative work left is picking the right visual for each idea and writing the sentences around it.
+**Assemble the system; design only when the concept earns it.** The `reference/` directory next to this file holds a finished design system: `base.css`, `runtime.js`, `skeleton.html`, `svg-templates.md`, and a `verify.sh` that checks the result. The document is built by pasting those verbatim and filling the slots, and most visuals are a template from `svg-templates.md` with the labels changed -- that stays the fast, safe default and should be your first move for every idea. But the catalogue is not a ceiling: when an idea's shape does not fit any row, or a different visual form would carry the concept more clearly than forcing it into an existing template, invent one. A custom visual is judged the same way a templated one is -- only the tokens `base.css` defines (never a new hex, never a gradient/blur/shadow/texture it doesn't already have), a `<figure>` with a `<figcaption>`, the mechanism-moves/evidence-stays-still rule, and every ban in Step 4 -- so it still reads as part of the same system rather than a different page bolted on. See "Going off-catalogue" in Step 2. What's gone is the requirement to force every idea into an existing box-and-arrow arrangement when a better shape exists.
 
 Read `skeleton.html`, `svg-templates.md`, at least one post in `reference/examples/` so you know what a source looks like, and `examples/bitcask.spine.md` -- a real spine for one of them, with the wrong spines it avoids -- before starting. Do not skip this because the task looks simple. Do **not** read `base.css` or `runtime.js` in full: they are injected mechanically in Step 5, never retyped, and everything you need from them (the component classes, the theme tokens) is documented in this file, the catalogue, and the skeleton's examples.
 
@@ -31,6 +31,7 @@ Optional modifiers the user may add anywhere in the request:
 - **Audience**: "for execs", "for new grads", "for the platform team". Changes how much is assumed and which numbers lead. Default: senior engineers who have not read the post.
 - **Length**: "short" (the claim, the surprising idea, the main mechanism, the biggest number; 4-6 ideas) or "full" (every idea in the post). Default: full.
 - **Theme**: "midnight", "tokyo", "nord", "dracula", "gruvbox", "rosepine", "forest", "neon", "daylight", "arctic", "solarized", "paper", "rosequartz", "swiss" (matching `present-md`), or an accent hue ("amber", "teal", "violet"). Default: no theme -- the page follows the OS (daylight on light, midnight on dark). See "Applying a theme or accent" below.
+- **Layout**: "keep it left-aligned", "shift the body left", "give the right side more room for diagrams". Default: centered column, breakouts symmetric. See "Applying a layout mode" below.
 - **Output path**: "write it to ~/docs/wal.html". Default: `<slug-of-title>.html` next to the source file; in the current directory for URL or pasted input.
 
 ### Applying a theme or accent
@@ -59,13 +60,17 @@ An **accent hue** changes only the two `--accent` lines in the pasted `base.css`
 | red | `#f38ba8` | `#d20f39` |
 | rose | `#f5c2e7` | `#ea76cb` |
 
+### Applying a layout mode
+
+By default the document sits in a single centered column (`.doc`), and wide figures (`.wide`/`.breakout`/`.full-bleed`) break out symmetrically around that same center point. Request a **left layout** to switch to an asymmetric mode instead: the whole document hangs off a left margin, and every breakout figure extends rightward from that same margin rather than centering on the viewport -- useful when the concept needs a run of wide diagrams, tables, or code and the document should keep the right side free for them throughout. Apply it as `data-layout="left"` on `html`, alongside any `data-theme`: `<html lang="en" data-theme="nord" data-layout="left">`. Omit the attribute for the default centered behaviour. This is a document-wide switch, not a per-figure choice, and it collapses back to the default full-width single column below the mobile breakpoint like everything else.
+
 ## Step 1: Find the Spine
 
 Read the whole post once before writing anything. Extract, in this order:
 
 1. **The one-line claim.** What the author would say with ten seconds. This is the dek under the title.
 2. **The ideas, in order.** Each idea is one thing the reader must understand to believe the claim. A typical post has 5-12. Each becomes one `h2` in the body. The test for an idea: *it is something a reader could be wrong about.* "The write path" is a topic; "every write is appended, never seeks, and the index lives in memory" is an idea. One idea per paragraph, per heading, or per section of the blog are all wrong spines -- ideas cut across the post's structure.
-3. **For each idea, its visual form**, chosen from the catalogue in Step 2. If no picture carries it, the idea is a number (stat row), a sentence (quote), or context (prose only, no figure) -- or not an idea, and it is cut.
+3. **For each idea, its visual form**, chosen from the catalogue in Step 2 or designed custom when the catalogue underserves the idea (see "Going off-catalogue" in Step 2). If no picture carries it, the idea is a number (stat row), a sentence (quote), or context (prose only, no figure) -- or not an idea, and it is cut.
 4. **The numbers.** Every figure in the post that matters. These are the only things allowed in large type.
 5. **The surprising claim.** The thing a knowledgeable reader would not have guessed. It gets its own `h2` and the quote treatment.
 6. **The code or pseudocode, if any.**
@@ -82,7 +87,7 @@ Write the spine as a plain list (`NN. idea as sentence -> visual form`) and prin
 
 ## Step 2: Visual Catalogue
 
-Every figure comes from one of these. The template reference is where to copy from.
+Every figure comes from one of these, or from a custom visual when the idea calls for it (see "Going off-catalogue" below). The template reference is where to copy from.
 
 | Idea shape | Visual | Template |
 |---|---|---|
@@ -134,9 +139,17 @@ Rules:
 - One figure per idea. An idea that needs two figures is two ideas.
 - Every SVG and table sits in a `<figure>` with a `<figcaption>`; 960-wide diagrams get `class="wide"`.
 - Stats: one row per idea, at most three numbers in it, and only for figures the post actually states. A metric without a value ("cycle time", "weeks to days") is not a stat -- it goes in prose or a `.rules` list.
-- If an idea genuinely fits no row, draw a custom SVG **that obeys the grammar in `svg-templates.md`** (8px grid, box sizes, stroke widths, colours, max 7 boxes). Custom means new arrangement, not new style.
+- The catalogue is the default, not a cage. Reach for a custom visual -- not necessarily an SVG diagram in the §1-§9 grammar -- when an idea's shape does not fit any row, or when a different visual form would make the concept click faster than forcing it into an existing template. See "Going off-catalogue" below for what a custom visual must still honour.
 - A `.stepper` is user-driven interaction, not animation: use it when one diagram carries 3-6 phases the reader should walk at their own pace, with `data-step="1..N"` on the SVG groups each phase is about. Each pane is prose and obeys the fidelity rules. At most one stepper per document; a mechanism with 2 phases is `.panels`, with continuous motion it is §10.
 - **Two external resources are permitted, no others.** The Google Fonts link from `skeleton.html` (IBM Plex Mono for text; Space Grotesk for title and headings on the default themes -- a named theme swaps in its own display font per the table above; system fallbacks make the page readable offline), and MathJax -- only when the document has at least one `.formula`, with the exact pinned tags from `skeleton.html`. Every `.formula` carries a plain-text fallback in `data-plain`.
+
+### Going off-catalogue
+
+The catalogue exists so most documents never need this section. Reach for it when an idea's shape genuinely does not map to any row, or when you can see a visual that would carry the idea more clearly than the nearest template forced into service.
+
+A custom visual is free in **form** -- it does not have to be a box-and-arrow SVG on the 8px grid, and it does not have to reuse an existing §-numbered layout. It is not free in **material**: it must still be built only from the tokens `base.css` defines (no hex outside `:root`, no gradient/blur/shadow/texture beyond what the system already has), sit inside a `<figure>` with a `<figcaption>` like every other visual, follow the mechanism-moves/evidence-stays-still rule above, and obey every ban in Step 4. Judge it the way a templated figure is judged in the fidelity pass (Step 6): every element on it must correspond to something the post actually says.
+
+Reach for a custom visual deliberately, not by default -- if a catalogue entry already fits, use it. A document that invents a new visual form for every idea stops reading as one coherent system and starts reading as a collection of one-offs.
 
 ## Step 3: Document Structure
 
@@ -189,7 +202,7 @@ Assembly:
 
 1. Start from `skeleton.html` and write the *content* file: header, summary, context, one heading block per spine item, caveats, sources -- with the `{{BASE_CSS}}` and `{{RUNTIME_JS}}` markers left in place. Delete every block marked `data-example` (`verify.sh` fails if one survives). The source link comes from the post's frontmatter or the user; a local file with no URL is credited as `adapted from <code>filename.md</code>` -- never guess a URL.
 2. Fill each figure from its template. Change labels, counts, positions, highlighted elements only. Add motion to every mechanism diagram.
-3. If a named theme was requested, set `data-theme` on `<html>` and swap the display font in the fonts link; if an accent was requested, plan the two `--accent` hexes from the table above. Remove the MathJax tags if there is no `.formula`.
+3. If a named theme was requested, set `data-theme` on `<html>` and swap the display font in the fonts link; if an accent was requested, plan the two `--accent` hexes from the table above. If a left layout was requested, set `data-layout="left"` on `<html>` too. Remove the MathJax tags if there is no `.formula`.
 4. Inject the design system with one command (run from the document's directory, `REF` = the skill's `reference/` dir), applying the accent afterwards only via the two `--accent` lines:
 
    ```bash
@@ -234,7 +247,7 @@ Do not pad the document with fluff, but do add bridging explanations and explana
 
 Every item is checked by the commands above or by opening the file; none is ticked from memory.
 
-- [ ] One figure per idea, from a template, obeying the grammar; every figure captioned.
+- [ ] One figure per idea, from a template or a deliberate custom visual (see "Going off-catalogue"), built only from system tokens; every figure captioned.
 - [ ] Every mechanism diagram has at least one motion primitive; none has more than three.
 - [ ] Every evidence figure (waterfall, histogram, ladder, curves, series, heatmap, schema, diff, terminal) is static, and every value or event label on it is stated by the post.
 - [ ] Deep-dives: at most two, nothing load-bearing inside, body reads complete with all of them closed.
@@ -263,8 +276,9 @@ Then, in order:
 4. A closing block, formatted through [[ape-style-markdown]]:
    - Output path.
    - Whether MathJax is included (fonts and MathJax load from the network; offline the page falls back to system fonts and plain-text formulas), and any formula transcribed from prose rather than read from an image.
+   - Layout mode, if not the default centered column.
    - Source words, document words, and the budget range for the idea count.
-   - Idea list with the figure used for each.
+   - Idea list with the figure used for each, marking any custom, off-catalogue visual.
    - Anything deliberately dropped from the post and why, one line each.
    - Fidelity: claims checked, drifted fixed, unsupported removed, passes taken.
    - Which `verify.sh` checks were skipped (pasted input has no source to measure against).
