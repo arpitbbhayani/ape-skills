@@ -42,7 +42,9 @@ Read the whole post once before writing anything. Extract, in this order:
 3. **For each idea, its visual form**, chosen from the catalogue in Step 2. If no picture carries it, the idea is a number (stat row), a sentence (quote), or context (prose only, no figure) -- or not an idea, and it is cut.
 4. **The numbers.** Every figure in the post that matters. These are the only things allowed in large type.
 5. **The surprising claim.** The thing a knowledgeable reader would not have guessed. It gets its own `h2` and the quote treatment.
-6. **The code, if any.** Keep at most the one snippet that shows the mechanism, trimmed to the lines that matter with `...` for the rest. Never more than 20 lines.
+6. **The code or pseudocode, if any.**
+   - *Retain critical code*: When the blog contains code snippets that are essential to understanding the mechanism, retain them so the reader can follow along. Trim to the essential lines that matter with `...` for the rest, highlighting the key lines with `.hl`. Never more than 20 lines.
+   - *Summarize complex code as pseudocode*: When the actual code is too complex, verbose, or bogged down in implementation details, simplify and express it as clear, readable pseudocode following [[ape-write-pseudocode]] (`def` signature, docstring input/output, and Pythonic `object.verb()` calls capturing intent over implementation).
 7. **The post's own figures.** For each image, chart, or diagram in the source: if it carries an idea, it is redrawn from a template (never embedded, never linked, never base64); if it is decorative, it is dropped. Note the decision per figure. To read an image: `curl -sL <url> -o <scratchpad>/figN.png`, then open it with the `Read` tool and transcribe what it shows (a formula to LaTeX, a plot to its shape and labelled points, a table to rows). If the download fails, work from the surrounding prose and say so in the closing block.
 8. **Tables and maths.** A table in the source becomes the matrix figure with the relevant row highlighted. Inline maths stays as Unicode (`O(log n)`, `λ = 0.7`). A formula that *is* the idea of a section becomes a `.formula` figure typeset with MathJax. Formulas the source shows as images are transcribed to LaTeX from the image; if the image cannot be read, the formula is written from the surrounding prose and flagged in the closing block.
 9. **The caveats.** Every "only when", "except if", "we have not tested" in the post. Each attaches to its idea as an aside, and all of them are collected again in the `risks-or-caveats` section.
@@ -83,12 +85,13 @@ Every figure comes from one of these. The template reference is where to copy fr
 | Principles, rules, requirements, "the N things" (not sequential) | `.rules` list (dashed) | `base.css .rules` |
 | Two things contrasted (before/after, old/new, profile A/profile B) | Side-by-side `.panels` | `base.css .panels` |
 | The key insight, the surprising claim | `.quote` | `skeleton.html` quote example |
-| Mechanism in code | `pre` with hand-wrapped spans, 1-3 `.hl` lines | `skeleton.html` code example |
+| Mechanism in code / Pseudocode | `pre` with hand-wrapped spans, 1-3 `.hl` lines | `skeleton.html` code example |
 | A formula that is the point | `.formula` figure, MathJax, key term in accent | `skeleton.html` formula example |
 
 Rules:
 
-- **Every mechanism diagram moves.** Pipeline, sequence, flowchart, state machine, tree lookup, cell grid: add at least one motion primitive from `svg-templates.md` §10 (a packet along the accent arrow at minimum). Motion shows where the data goes; it runs only while the figure is on screen and never under reduced-motion. Static figures -- stats, quotes, bar charts, matrices, timelines, code -- stay still.
+- **Every mechanism diagram moves.** Pipeline, sequence, flowchart, state machine, tree lookup, cell grid: add at least one motion primitive from `svg-templates.md` §10 (a packet along the accent arrow at minimum). Motion shows where the data goes; it runs only while the figure is on screen and never under reduced-motion. Static figures -- stats, quotes, bar charts, matrices, timelines, code / pseudocode -- stay still.
+- **Code and Pseudocode**: Retain critical code snippets from the blog that are essential for following the mechanism. When actual source code is overly verbose, complex, or full of boilerplate, summarize it into clean, high-level pseudocode following [[ape-write-pseudocode]] (`def`, input/output docstrings, Pythonic `object.verb()` calls). Use `<pre><code>` with hand-wrapped spans (`span.k` for keywords, `span.s` for strings, `span.c` for comments, `span.n` for names/numbers) and 1-3 `.hl` lines marking the key operation.
 - One figure per idea. An idea that needs two figures is two ideas.
 - Every SVG and table sits in a `<figure>` with a `<figcaption>`; 960-wide diagrams get `class="wide"`.
 - Stats: one row per idea, at most three numbers in it, and only for figures the post actually states. A metric without a value ("cycle time", "weeks to days") is not a stat -- it goes in prose or a `.rules` list.
@@ -115,7 +118,7 @@ Per-idea rules:
 
 - **Heading** (`h2`, or `h3` under parts): carries `data-n="NN"` (two digits, numbered across the whole body) so the folio prints in the margin; the idea as a full sentence. "Every write goes to the log first", not "Write path". Stable across versions -- reviewers anchor comments to headings.
 - **Prose**: Write empathetic, well-explained paragraphs with a natural flow. What happens, in what order, why it works. Add extra details or bridging explanations if they help the reader understand the core idea. Real sentences with the numbers in them. This is a document; it must read well without anyone talking over it and never leave the reader struggling to connect the dots.
-- **Figure**: from Step 2. The figcaption opens with a bold 3-6 word label, then one sentence saying what the picture shows that the prose cannot. A `.formula` figure also carries a `.formula-legend` naming each symbol in one phrase (`N documents in corpus`), and its `\class{term}{…}` marks the one term the idea is about.
+- **Figure**: from Step 2. The figcaption opens with a bold 3-6 word label, then one sentence saying what the picture shows that the prose cannot. A `.formula` figure also carries a `.formula-legend` naming each symbol in one phrase (`N documents in corpus`), and its `\class{term}{…}` marks the one term the idea is about. A code or pseudocode figure wraps in `<pre><code>` with hand-wrapped spans and an explanatory figcaption highlighting what the critical lines accomplish.
 - **Aside**: only if the post had a caveat for this idea. Never drop a caveat to make a section cleaner. `.aside.err` for a failure condition.
 - **Stagger**: `style="--i:n"` on each `.pop`/`.draw` inside an SVG, in reading order. Nothing else needs `--i`.
 
@@ -188,6 +191,7 @@ Every item is checked by the commands above or by opening the file; none is tick
 - [ ] Every caveat survives as an aside on its idea and in risks-or-caveats.
 - [ ] Fidelity pass completed to ensure accuracy without sacrificing necessary bridging explanations; every number in prose appears in the source (`verify.sh`).
 - [ ] Word count measured, but sufficient detail was included to ensure comprehensive understanding.
+- [ ] Essential code retained (trimmed to <= 20 lines) or simplified into clean pseudocode via [[ape-write-pseudocode]]; syntax styled with hand-wrapped spans (`.k`, `.s`, `.c`, `.n`) and 1-3 `.hl` lines.
 - [ ] All five sections present; exactly one `h1`; at least one source entry.
 - [ ] Zero hex outside `:root`, zero network references beyond the fonts link and MathJax (only with a `.formula`), zero `<img>`, zero emoji, zero `{{` -- by command.
 - [ ] `base.css` and `runtime.js` pasted unmodified except `--accent`.
