@@ -16,11 +16,11 @@ text() { perl -0pe 's/<style>.*?<\/style>//s; s/<script.*?<\/script>//sg; s/<[^>
 # word budget and for picking which heading level the sentence check applies to.
 ideas=$(perl -0ne 'my ($b)=/(id="body".*?<\/section>)/s; $b//=""; my $h3=()=$b=~/<h3/g; my $h2=()=$b=~/<h2/g; print $h3>0?$h3:$h2' "$OUT")
 
-# --- word budget (SKILL.md Step 3: 100-250 words per idea plus 200-400) ------------
+# --- word budget (SKILL.md Step 3: 80-180 words per idea plus 150-300) ------------
 if [ -n "$SRC" ] && [ -f "$SRC" ]; then
   s=$(wc -w < "$SRC" | tr -d ' '); d=$(text | wc -w | tr -d ' ')
   r=$(perl -e "printf '%.2f', $d/$s")
-  lo=$((ideas*100+200)); hi=$((ideas*250+400))
+  lo=$((ideas*80+150)); hi=$((ideas*180+300))
   if [ "$d" -ge "$lo" ]; then pass "words $d for $ideas ideas (baseline $lo-$hi, source $s, ratio $r)"; else info "words $d for $ideas ideas (baseline $lo-$hi, source $s, ratio $r)"; fi
 else info "no source given; word ratio skipped"; fi
 
@@ -66,7 +66,7 @@ n=$(grep -c '{{' "$OUT"); [ "$n" -eq 0 ] && pass "no {{ anywhere (markers inject
 n=$(grep -c 'data-example' "$OUT"); [ "$n" -eq 0 ] && pass "no skeleton examples left" || failm "$n data-example blocks left from the skeleton"
 
 # --- structure --------------------------------------------------------------------
-for s in summary context body caveats sources; do
+for s in summary context body sources; do
   grep -q "<section id=\"$s\"" "$OUT" && pass "section $s" || failm "missing section $s"
 done
 n=$(grep -c '<h1' "$OUT"); [ "$n" -eq 1 ] && pass "one h1" || failm "$n h1"
