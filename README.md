@@ -44,6 +44,8 @@ You can also tag a skill explicitly with `/skill`, e.g. `/ape-cut-fluff`.
 | [ape-quiz-me](./ape-quiz-me)               | Quizzes you on content you claim to have read -- Socratic, hints that narrow but never reveal, ending with an understood-vs-recited verdict. |
 | [ape-cli-terminal-experience](./ape-cli-terminal-experience) | Designs a CLI's terminal experience the Claude Code way -- palette, glyphs, spinners, prompts, listings, and full-screen TUI views. |
 | [ape-present](./ape-present)               | Converts a blog post into a single self-contained, readable HTML document -- animated diagrams, large numbers, typeset formulas, just enough text to carry the idea. Requires the `reference/` directory alongside `SKILL.md`. |
+| [ape-teach](./ape-teach)                   | Teaches any concept or doc step-by-step with mental models, cross-domain analogies with breaking points, check questions, and depth-on-demand loops until mastery. |
+
 
 ## License
 
