@@ -1,294 +1,185 @@
 ---
 name: ape-present
-description: Converts a blog post into a single self-contained HTML document -- a readable long-form document with animated diagrams and minimal text, written to teach concepts intuitively from first principles. Trigger on "ape present", "make this presentable", or "turn this post into a doc I can walk people through".
+description: Converts a blog post into a single self-contained HTML document -- a visual-heavy, readable walkthrough with custom animated diagrams, short and crisp bullet points, and a natural explanation flow from first principles. Trigger on "ape present", "make this presentable", or "turn this post into a doc I can walk people through".
 ---
 
 # Present Skill
 
-Takes a blog post and produces one HTML file that reads like a masterfully taught internal document: a title, a summary, real headings and short paragraphs, and a figure for every idea -- diagrams that move to show the mechanism, numbers set large, a formula typeset where the formula is the point. The author opens it and walks people through it, or shares the link and people read it alone. Both must work.
+Takes a blog post and produces one self-contained HTML file designed for intuitive learning: a clean header, short crisp bullet points, and visual-first explanations. Diagrams take center stage, featuring custom animations that visually demonstrate the underlying mechanics, followed by numbers set large and wire layouts or pseudocode where relevant.
 
-It is a document, not a deck. No full-screen sections, no hero, no scroll-snapping, no progress bar, no slide feel. The first screen is the title and the summary, and the page scrolls like any other. Single file, real selectable text, comfortable line length with defined width limits (`--measure` for prose column, with visual elements permitted to break out to `--wide` or `--max-width`), full theme support matching `present-md`, and a fixed section skeleton -- summary, context, body, sources -- so every document has the same shape.
+It is a document, not a deck. No full-screen hero sections, no scroll-snapping, and no slide feel. Single file, comfortable reading width (`--measure`), full theme support, and a fixed section skeleton -- summary, context, body, sources -- so every document has a coherent shape.
 
-It is not the blog either. The post merely recorded or explained; this document **teaches**. Write it as an expert engineer explaining the concept to a sharp peer: start from first principles, build direct intuition for why the problem is hard and why this solution exists, and make the narrative flow naturally from cause to effect. Text is **minimal and ruthlessly optimized for understanding**: each idea gets exactly enough prose to illuminate the mental model and make the concept click -- the figure, code, or format diagram carries the mechanism, while the prose anchors the intuition.
+It is not the blog either. The post merely recorded or explained; this document **teaches**. Write it as an expert engineer explaining the concept to a sharp peer:
+- **Visuals carry the heavy lifting**: Every idea is anchored by a diagram, custom animation, code snippet, or layout.
+- **Short, crisp bullet points**: No verbose paragraphs or walls of text. Use punchy, high-signal bullets that explain the invariant, the causal steps, and the trade-off.
+- **Custom animations**: You are free and encouraged to design custom SVG/CSS animations tailored directly to what the concept needs to make the mechanism click.
+- **Natural, causal flow**: Ideas progress logically, where each section resolves a constraint or trade-off raised by the previous one.
 
-Audience: practicing engineers, not students. Ground explanations in first principles and physical or systems realities (e.g. disk seeks vs sequential I/O, cache line invalidation, network roundtrips). Favor concrete mechanics over abstract description -- pseudocode for algorithms, the on-disk or wire format for stored/transmitted structures, real code where the post has it. A mechanism explained only in prose gets translated into pseudocode or a format figure, not more prose.
+Audience: practicing engineers. Ground explanations in first principles and systems realities (disk seeks, memory hierarchies, network hops).
 
-## The one rule that makes it look good
+## Design System & Custom Animations
 
-**Assemble the system; design only when the concept earns it.** The `reference/` directory next to this file holds a finished design system: `base.css`, `runtime.js`, `skeleton.html`, `svg-templates.md`, and a `verify.sh` that checks the result. The document is built by pasting those verbatim and filling the slots, and most visuals are a template from `svg-templates.md` with the labels changed -- that stays the fast, safe default and should be your first move for every idea. But the catalogue is not a ceiling: when an idea's shape does not fit any row, or a different visual form would carry the concept more clearly than forcing it into an existing template, invent one. A custom visual is judged the same way a templated one is -- only the tokens `base.css` defines (never a new hex, never a gradient/blur/shadow/texture it doesn't already have), a `<figure>` with a `<figcaption>`, the mechanism-moves/evidence-stays-still rule, and every ban in Step 4 -- so it still reads as part of the same system rather than a different page bolted on. See "Going off-catalogue" in Step 2. What's gone is the requirement to force every idea into an existing box-and-arrow arrangement when a better shape exists.
+The `reference/` directory next to this file holds the design system: `base.css`, `runtime.js`, `skeleton.html`, `svg-templates.md`, and `verify.sh`.
 
-Read `skeleton.html`, `svg-templates.md`, at least one post in `reference/examples/` so you know what a source looks like, and `examples/bitcask.spine.md` -- a real spine for one of them, with the wrong spines it avoids -- before starting. Do not skip this because the task looks simple. Do **not** read `base.css` or `runtime.js` in full: they are injected mechanically in Step 5, never retyped, and everything you need from them (the component classes, the theme tokens) is documented in this file, the catalogue, and the skeleton's examples.
+- **Visual-first presentation**: Every idea gets at least one visual figure. Multiple visuals per idea (e.g. animated flow + pseudocode, diagram + trade-off matrix) are welcomed whenever helpful.
+- **Custom animated diagrams encouraged**: While `svg-templates.md` provides a fast catalogue of standard shapes, do not feel constrained by it. When a concept calls for a specialized layout, data movement, or custom state cycle, **design a custom animated SVG**.
+- **Cohesive tokens**: Build custom visuals using only the CSS variables defined in `base.css` (`var(--surface)`, `var(--line)`, `var(--accent)`, `var(--accent-soft)`, `var(--muted)`, `var(--err)`, `var(--ok)`). Never invent arbitrary hex colors outside `:root`.
+- **Motion with purpose**: Motion exists to make mechanisms intuitive. Animate data packets moving along paths (`animateMotion`), pulsing nodes (`class="pulse"`), flowing channels (`class="stream-channel"`), or cycling active states (`data-cycle`). Keep motion purposeful and loops reasonable (1.5s - 3s). Static evidence charts (bars, tables, quotes) stay still.
 
 ## Input Handling
 
-The user may provide input in any of these forms. Identify which it is before doing anything else.
+The user may provide input in any of these forms:
 
 1. **File path on disk**: a path ending in `.md`, `.txt`, `.html`, or similar. Read the file directly.
-2. **A URL**: a string starting with `http://` or `https://`. Use `WebFetch` to download the content, then strip navigation, sidebars, footers, and comments before working on the body. If the URL points to a PDF, download it with `curl` and extract the text -- prefer `pdftotext` if available; otherwise read the PDF with the `Read` tool.
-3. **Pasted content**: raw text in the message. Work on it in-memory.
-4. **Ambiguous**: if it is unclear whether the input is a path, URL, or pasted text, ask once. Do not guess.
+2. **A URL**: fetch using web tools, then strip navigation and sidebars before working on the body.
+3. **Pasted content**: raw text in the message.
+4. **Ambiguous**: if unclear, ask once. Do not guess.
 
-Optional modifiers the user may add anywhere in the request:
+Optional modifiers:
+- **Audience**: e.g., "for execs", "for new grads". Default: software engineers with 5-8 years of experience.
+- **Length**: "short" (4-6 key ideas) or "full" (all core ideas). Default: full.
+- **Theme**: "midnight", "tokyo", "nord", "dracula", "gruvbox", "rosepine", "forest", "neon", "daylight", "arctic", "solarized", "paper", "rosequartz", "swiss" (applied via `<html lang="en" data-theme="theme">`). Default: OS-following.
+- **Layout**: `data-layout="left"` for left-aligned body with rightward breakouts. Default: centered.
 
-- **Audience**: "for execs", "for new grads", "for the platform team". Changes how much is assumed and which numbers lead. Default: software engineers with 5-8 years of experience -- practical and implementation-minded; they want the pseudocode, the wire format, and the code, not just the concept.
-- **Length**: "short" (the claim, the surprising idea, the main mechanism, the biggest number; 4-6 ideas) or "full" (every idea in the post). Default: full.
-- **Theme**: "midnight", "tokyo", "nord", "dracula", "gruvbox", "rosepine", "forest", "neon", "daylight", "arctic", "solarized", "paper", "rosequartz", "swiss" (matching `present-md`), or an accent hue ("amber", "teal", "violet"). Default: no theme -- the page follows the OS (daylight on light, midnight on dark). See "Applying a theme or accent" below.
-- **Layout**: "keep it left-aligned", "shift the body left", "give the right side more room for diagrams". Default: centered column, breakouts symmetric. See "Applying a layout mode" below.
-- **Output path**: "write it to ~/docs/wal.html". Default: `<slug-of-title>.html` next to the source file; in the current directory for URL or pasted input.
+## Step 1: Find the Spine & Natural Flow
 
-### Applying a theme or accent
+Read the source material once. Extract:
 
-A **named theme** is applied as `data-theme` on the html element: `<html lang="en" data-theme="nord">`. Omit the attribute for the default OS-following behaviour. Each named theme brings its own display font, which must replace Space Grotesk in the fonts `<link>` (IBM Plex Mono stays):
+1. **The one-line claim**: The central thesis in one punchy sentence (the dek).
+2. **The ideas in natural explanatory flow**: 4 to 10 progressive milestones. Each milestone represents one logical step in understanding:
+   - What fundamental constraint makes this hard?
+   - The central intuition / naive attempt breakdown.
+   - The core mechanism (how the gears turn).
+   - How edge cases, concurrency, or scale are solved.
+   - The primary trade-off or production reality.
+   *Every idea heading is a clear, read-aloud sentence capturing the insight.*
+3. **The visual & animation concept for each idea**: A template from `svg-templates.md` or a custom animated design that illuminates the specific mechanics.
+4. **Key numbers & invariants**: Exact stats, orders of magnitude, and core formulas.
+5. **Concrete code / layout**: Trimmed code (<= 20 lines) or clean pseudocode; record/wire format diagrams.
 
-| Theme | Display font | Theme | Display font |
-|---|---|---|---|
-| midnight, daylight, neon | Space Grotesk (default link) | forest, solarized | Outfit |
-| tokyo | Sora | rosepine, paper | Fraunces |
-| nord, arctic | Manrope | rosequartz | Playfair Display |
-| dracula | Syne | swiss | Archivo |
-| gruvbox | Bricolage Grotesque | | |
+Print the spine: `NN. <idea as sentence> -> <visual / custom animation description>`.
 
-An **accent hue** changes only the two `--accent` lines in the pasted `base.css` -- the one in the midnight block and the one in the daylight block (`--accent-soft`, `--accent-line`, and `--glow` derive from it automatically). Use these pairs; do not invent hexes:
+## Step 2: Document Structure & Writing Style
 
-| Accent | midnight (dark) | daylight (light) |
-|---|---|---|
-| violet (default) | `#cba6f7` | `#8839ef` |
-| blue | `#89b4fa` | `#1e66f5` |
-| sky | `#89dceb` | `#04a5e5` |
-| teal | `#94e2d5` | `#179299` |
-| green | `#a6e3a1` | `#40a02b` |
-| amber | `#f9e2af` | `#df8e1d` |
-| orange | `#fab387` | `#fe640b` |
-| red | `#f38ba8` | `#d20f39` |
-| rose | `#f5c2e7` | `#ea76cb` |
+Follow `skeleton.html`:
 
-### Applying a layout mode
-
-By default the document sits in a single centered column (`.doc`), and wide figures (`.wide`/`.breakout`/`.full-bleed`) break out symmetrically around that same center point. Request a **left layout** to switch to an asymmetric mode instead: the whole document hangs off a left margin, and every breakout figure extends rightward from that same margin rather than centering on the viewport -- useful when the concept needs a run of wide diagrams, tables, or code and the document should keep the right side free for them throughout. Apply it as `data-layout="left"` on `html`, alongside any `data-theme`: `<html lang="en" data-theme="nord" data-layout="left">`. Omit the attribute for the default centered behaviour. This is a document-wide switch, not a per-figure choice, and it collapses back to the default full-width single column below the mobile breakpoint like everything else.
-
-## Step 1: Find the Spine
- 
-Read the whole post once before writing anything. Extract, in this order:
-
-1. **The one-line claim.** What the author would say with ten seconds. This is the dek under the title.
-2. **The ideas, in order of natural pedagogical flow.** Each idea is one step in understanding: start from the foundational constraint or first principle ("why is this difficult?"), move through the core intuition and mechanism, then into optimizations, trade-offs, and limits. A typical post has 5-12 ideas. Each becomes one `h2` in the body. The test for an idea: *it is something a reader could be wrong about or fail to intuit.* "The write path" is a topic; "every write is appended, never seeks, and the index lives in memory" is an idea. One idea per paragraph, per heading, or per section of the blog are all wrong spines -- ideas cut across the post's structure and connect in a causal chain where each unlocks the next.
-3. **For each idea, its visual form**, chosen from the catalogue in Step 2 or designed custom when the catalogue underserves the idea (see "Going off-catalogue" in Step 2). If no picture carries it, the idea is a number (stat row), a sentence (quote), or context (prose only, no figure) -- or not an idea, and it is cut.
-4. **The numbers.** Every figure in the post that matters. These are the only things allowed in large type.
-5. **The surprising claim.** The thing a knowledgeable reader would not have guessed. It gets its own `h2` and the quote treatment.
-6. **The code, pseudocode, and storage/wire format for every mechanism.** Retain code the post shows (trim to essentials, `...` for the rest, `.hl` on key lines, max 20 lines) or simplify it to pseudocode via [[ape-write-pseudocode]]. When the post describes an algorithm only in prose, write pseudocode for it anyway -- this is the default, not a fallback; every step must map to something the post says, but the form is code, not paragraphs. Same for a record layout, disk format, header, or wire format described in prose only: draw it as the wire-format figure ("Record, header, or wire-format layout" in Step 2) even without a source image.
-7. **The post's own figures.** For each image, chart, or diagram in the source: if it carries an idea, it is redrawn from a template (never embedded, never linked, never base64); if it is decorative, it is dropped. Note the decision per figure. To read an image: `curl -sL <url> -o <scratchpad>/figN.png`, then open it with the `Read` tool and transcribe what it shows (a formula to LaTeX, a plot to its shape and labelled points, a table to rows). If the download fails, work from the surrounding prose and say so in the closing block.
-8. **Tables and maths.** A table in the source becomes the matrix figure with the relevant row highlighted. Inline maths stays as Unicode (`O(log n)`, `λ = 0.7`). A formula that *is* the idea of a section becomes a `.formula` figure typeset with MathJax. Formulas the source shows as images are transcribed to LaTeX from the image; if the image cannot be read, the formula is written from the surrounding prose and flagged in the closing block.
-9. **The caveats.** Every "only when", "except if", "we have not tested" in the post. Each attaches to its idea as an aside.
-10. **The sources.** The post itself, plus anything the post cites that the document mentions.
-
-Write the spine as a plain list (`NN. idea as sentence -> visual form`) and print it. **If the source is over 2,500 words or the spine has more than 10 ideas, stop here and wait for the user to confirm or trim.** Otherwise the spine is informational and the build proceeds immediately.
-
-**Heading levels.** Up to 8 ideas: each idea is an `h2`. More than 8: group them into 2-4 parts; each part is a short `h2` (`Structure`, `Operations` -- the one place a topic heading is allowed) and each idea beneath it is an `h3`. Whatever the level, *idea* headings are sentences; the sentence rule in the checklist applies to idea headings only.
-
-## Step 2: Visual Catalogue
-
-Every figure comes from one of these, or from a custom visual when the idea calls for it (see "Going off-catalogue" below). The template reference is where to copy from.
-
-| Idea shape | Visual | Template |
-|---|---|---|
-| System, pipeline, request flow | Boxes and arrows, left to right, packets moving along it | `svg-templates.md` §1 + §10 |
-| Data flow across complex components (stream processing, multi-stage routing) | Data Flow Graph, multiple components with fanning packets | §1c + §10 |
-| Pub/Sub Broadcast, central message bus, hub-and-spoke | Central broker radiating out to multiple subscribers | §1d + §10 |
-| Request/response, handshake, consensus round, race condition | Sequence diagram, time downward, packets per message | §2 + §10 (race: crossing `--err` arrows) |
-| Parallel execution, blocking vs async, concurrency | Gantt / Swimlane diagram over time | §2b |
-| Comparison of 2-6 magnitudes, before/after numbers | Race bars (horizontal meters filling to their targets) | §3a + `skeleton.html` race-bars example |
-| Comparison of more than 6 magnitudes | SVG bar chart, labels on bars, no legend | §3 |
-| Comparison of two conflicting axes (e.g. Write vs Read) | 2x2 Trade-off Matrix / Quadrants | §3b |
-| Architecture Stack/Layer Breakdown (system overview, multi-tier comp) | Stack diagram of logical layers / modules | §3c + §10 |
-| One quantity against another, a function's shape, a plot in the post | Function curve, one accent path, labelled endpoints | §3d |
-| Sequential cost of one operation, "where the time goes" | Latency waterfall (static) | §3e |
-| A distribution and its tail, percentiles (p50/p99) | Histogram with percentile markers (static) | §3f |
-| Values spanning orders of magnitude ("ns to ms") | Magnitude ladder, log scale (static) | §3g |
-| Two or three growth shapes compared (O(n) vs O(log n)) | Multi-curve comparison (static) | §3h |
-| A metric over time with events marked ("then we deployed") | Annotated time series (static) | §3i |
-| Tree, hash, linked, graph structure | Node-and-edge diagram | §4 |
-| Circular distribution, consistent hashing, peer-to-peer rings | Ring Topology / Distributed Ring | §4b + §10 |
-| Nested environments, Virtual Machines, Containers, sandboxes | Nested Boundaries / Containment Structure | §4c |
-| Records/tables and the fields linking them (schema) | Titled boxes with field rows, FK arrow | §4d |
-| Decision, branching logic, "if X then Y" | Flowchart with diamonds, packet on the taken branch | §7 + §10 |
-| Lifecycle, modes, status transitions | State machine, states cycling | §8 + §10 |
-| History, phases, "first we…, then we…" | Timeline | §9 |
-| Several options, one chosen | Matrix table with `.chosen` row (`figure.wide` above 3 columns) | §5 |
-| Memory, bytes, slots, array, hash buckets | Cell grid with `.on` / `.bad` cells, probe sequence cycling | §6 + §10 |
-| Record, header, or wire-format layout | `.cells.row` with named fields | §6 |
-| Load skew, hot spots, hit patterns across a grid | Heatmap cells, 3 accent intensity steps (static) | §6b |
-| One source feeding two targets (or two into one) | Branching pipeline | §1b + §10 |
-| A number that matters | Stat row with count-up | `skeleton.html` stats example |
-| Sequence of steps, algorithm phases | `.steps` list (numbered) | `base.css .steps` |
-| Principles, rules, requirements, "the N things" (not sequential) | `.rules` list (dashed) | `base.css .rules` |
-| Two or three things contrasted, multi-card sets | Side-by-side `.panels` (or `.panels.three`, `.wide` / breakout permitted) | `base.css .panels` |
-| The key insight, the surprising claim, in the post's own words | `.quote` | `skeleton.html` quote example |
-| A section's core takeaway that is not a quotation | `.callout.insight` with `.hl-pill` terms | `skeleton.html` callout example |
-| Multi-phase mechanism the reader steps through (3-6 phases on one diagram) | `.stepper` panes + `data-step` highlights on the figure's SVG | `skeleton.html` stepper example |
-| Mechanism in code / Pseudocode | `pre` with hand-wrapped spans, 1-3 `.hl` lines | `skeleton.html` code example |
-| The exact code change the post made (before/after lines) | `pre.diff` with `.add`/`.del` lines | `skeleton.html` diff example |
-| A shell session the post shows (command and output) | `pre.term` with `.prompt`/`.out` | `skeleton.html` terminal example |
-| Optional depth a skimmer can skip | `<details class="deep-dive">` after the idea's figure | `skeleton.html` deep-dive example |
-| A formula that is the point | `.formula` figure, MathJax, key term in accent | `skeleton.html` formula example |
-
-- **Visual-first presentation, minimal text**: Visuals carry the explanation; text is minimal and exists to anchor intuition. A section is **encouraged to have multiple visual elements** when doing so clarifies the concept -- for example: a moving mechanism SVG paired with a wire-format layout, an algorithm diagram alongside a highlighted pseudocode block, or a pipeline diagram followed by a stat row or trade-off matrix. Every visual element earns its place by answering a specific question visually.
-- **Every mechanism diagram moves; every evidence figure stays still.** A mechanism shows where data goes -- pipeline, sequence, flowchart, state machine, tree lookup, cell grid: add at least one motion primitive from `svg-templates.md` §10 (a packet along the accent arrow at minimum), running only while the figure is on screen and never under reduced-motion. An evidence figure proves a claim -- stats, quotes, bar and race charts, waterfall, histogram, magnitude ladder, curves, time series, heatmap, matrices, timelines, schema, code / diff / terminal: no motion beyond the reveal, and every value or event label on it must be stated by the post. The magnitude ladder is the one non-linear scale permitted and keeps its "log scale" annotation.
-- **Code and Pseudocode**: `<pre><code>` with hand-wrapped spans (`span.k`/`.s`/`.c`/`.n`) and 1-3 `.hl` lines on the key operation (see Step 1 item 6 for when to write pseudocode from scratch). When the post's point *is* a change, show it as `pre.diff` -- the post's own before/after lines, `+`/`-` prefixes, `.add`/`.del` per line, same 20-line cap. A shell session is `pre.term` with `.prompt`/`.out`, transcribed exactly -- output numbers are claims.
-- **Deep-dives** (`<details class="deep-dive">`): optional depth a skimmer can skip, attached under an idea after its figure. Never a caveat, never load-bearing -- the body must read complete with every deep-dive closed. At most two per document.
-- **Multiple visuals per section are welcomed**: While each idea must have at least one figure, feel free to use multiple visual elements (diagram + pseudocode, diagram + stat row, format layout + sequence) whenever the concept benefits from showing multiple perspectives.
-- Every SVG and table sits in a `<figure>` with a `<figcaption>`; 960-wide diagrams get `class="wide"`.
-- Stats & multi-card layouts: at most three numbers per stat row, and only for figures the post actually states. A metric without a value ("cycle time", "weeks to days") is not a stat -- it goes in prose or a `.rules` list. Three-card layouts (three stats, three panels via `.panels.three`) are permitted and encouraged to break out beyond the prose container (`.wide` / `.breakout`) up to `--wide` so the cards have room to breathe rather than squeezing tightly inside `--measure`.
-- The catalogue is the default, not a cage. Reach for a custom visual -- not necessarily an SVG diagram in the §1-§9 grammar -- when an idea's shape does not fit any row, or when a different visual form would make the concept click faster than forcing it into an existing template. See "Going off-catalogue" below for what a custom visual must still honour.
-- A `.stepper` is user-driven interaction, not animation: use it when one diagram carries 3-6 phases the reader should walk at their own pace, with `data-step="1..N"` on the SVG groups each phase is about. Each pane is prose and obeys the fidelity rules. At most one stepper per document; a mechanism with 2 phases is `.panels`, with continuous motion it is §10.
-- **Two external resources are permitted, no others.** The Google Fonts link from `skeleton.html` (IBM Plex Mono for text; Space Grotesk for title and headings on the default themes -- a named theme swaps in its own display font per the table above; system fallbacks make the page readable offline), and MathJax -- only when the document has at least one `.formula`, with the exact pinned tags from `skeleton.html`. Every `.formula` carries a plain-text fallback in `data-plain`.
-
-### Going off-catalogue
-
-The catalogue exists so most documents never need this section. Reach for it when an idea's shape genuinely does not map to any row, or when you can see a visual that would carry the idea more clearly than the nearest template forced into service.
-
-A custom visual is free in **form** -- it does not have to be a box-and-arrow SVG on the 8px grid, and it does not have to reuse an existing §-numbered layout. It is not free in **material**: it must still be built only from the tokens `base.css` defines (no hex outside `:root`, no gradient/blur/shadow/texture beyond what the system already has), sit inside a `<figure>` with a `<figcaption>` like every other visual, follow the mechanism-moves/evidence-stays-still rule above, and obey every ban in Step 4. Judge it the way a templated figure is judged in the fidelity pass (Step 6): every element on it must correspond to something the post actually says.
-
-Reach for a custom visual deliberately, not by default -- if a catalogue entry already fits, use it. A document that invents a new visual form for every idea stops reading as one coherent system and starts reading as a collection of one-offs.
-
-## Step 3: Document Structure
- 
-Follow `skeleton.html` exactly. Direct start (no chrome bars, eyebrows, or author clutter at the top):
-
-```
+```html
 <article class="doc">
-  <header class="doc-header">        h1 · dek (the one-line claim) -- clean, immediate start
-  <section id="summary">            .summary: 3-5 sentences (the claim, strongest evidence, biggest caveat)
-  <section id="context">            h2 + 1-3 short paragraphs, the first with class="dropcap": the first-principles grounding and problem intuition
-  <section id="body">               one heading per idea with data-n="NN" (margin folio): intuition & prose · figure + figcaption · optional aside; ends with <p class="end-mark">■</p>
-  <section id="sources">            h2 + <li cite="…"> one per source
+  <header class="doc-header">
+    <h1>{{TITLE}}</h1>
+    <p class="dek">{{ONE-LINE CLAIM}}</p>
+  </header>
+
+  <section id="summary">
+    <div class="summary">
+      <p>{{TL;DR: 3 to 4 crisp sentences stating the core claim, the strongest number/evidence, and the main boundary condition.}}</p>
+    </div>
+  </section>
+
+  <section id="context">
+    <h2>{{CONTEXT HEADING as a sentence}}</h2>
+    <div class="context-body">
+      <!-- 2-4 crisp bullets grounding the problem in first principles -->
+      <ul class="rules">
+        <li><strong>The Fundamental Invariant</strong>: ...</li>
+        <li><strong>Why Naive Approaches Fail</strong>: ...</li>
+      </ul>
+    </div>
+  </section>
+
+  <section id="body">
+    <!-- One section per idea, numbered data-n="01", data-n="02", etc. -->
+    <h2 data-n="01">{{IDEA AS A READ-ALOUD SENTENCE}}</h2>
+    
+    <!-- Short, crisp bullet points explaining the concept -->
+    <ul class="rules">
+      <li><strong>Core Intuition</strong>: [The immediate mental model or physics constraint]</li>
+      <li><strong>Mechanism</strong>: [Causal step-by-step: what happens, in what order]</li>
+      <li><strong>Trade-off / Invariant</strong>: [What is gained vs. what is sacrificed]</li>
+    </ul>
+
+    <!-- Visual: Animated SVG (custom or template), Code, Layout, or Matrix -->
+    <figure class="wide">
+      {{ANIMATED SVG OR VISUAL}}
+      <figcaption><strong>{{Label, 3-6 words.}}</strong> {{One sentence explaining what the visual demonstrates.}}</figcaption>
+    </figure>
+
+    <!-- Optional: Second visual element if helpful (pseudocode, stat row, trade-off matrix, wire format) -->
+    <!-- Optional: Caveat aside if the source had one -->
+    <div class="aside"><p>{{The caveat or boundary condition}}</p></div>
+  </section>
+
+  <section id="sources">
+    <h2>Sources & References</h2>
+    <ul>
+      <li cite="...">...</li>
+    </ul>
+  </section>
 </article>
-<script> MathJax tags (only with a .formula), then runtime.js verbatim
 ```
 
-Teaching and Prose Rules:
+### Writing Rules: Short, Crisp, Intuitive
 
-- **Teach, don't just record**: Frame each idea as a step in an intuitive explanation. Explain *why* a design choice was necessary from first principles (the fundamental physics or invariant: e.g. random I/O is slow, clocks drift, memory is finite) before explaining *what* was built.
-- **Minimal, high-signal text**: Text must be concise, crisp, and optimized for instant understanding. No fluff, no throat-clearing, no filler transitions. Say things simply and directly. Let the moving diagram or code carry the mechanical heavy lifting, while the prose anchors the mental model and intuition.
-- **Natural flow**: Structure sections so each idea flows naturally into the next. Each idea answers an intuition gap, resolves a trade-off raised by the previous section, or scales the mechanism to the next level.
-- **Heading** (`h2`, or `h3` under parts): carries `data-n="NN"` (two digits, numbered across the whole body) so the folio prints in the margin; the idea as a full sentence. "Every write goes to the log first", not "Write path". Stable across versions -- reviewers anchor comments to headings.
-- **Prose**: 1-3 short, punchy paragraphs per idea. Lead with the core intuition or underlying invariant, describe what happens and in what order, and ground it with the post's exact numbers. Never restate in words what the picture already clearly demonstrates -- point at the diagram or code, highlight key operations with `<span class="inspect-node" tabindex="0" data-target="...">`, and move forward. Optional depth only specialists need belongs in a `<details class="deep-dive">`, not in the main narrative.
-- **Figure**: from Step 2. The figcaption opens with a bold 3-6 word label, then one sentence explaining the core takeaway the picture reveals that prose cannot easily convey. A `.formula` figure also carries a `.formula-legend` naming each symbol in one phrase (`N documents in corpus`), and its `\class{term}{…}` marks the one term the idea is about. A code or pseudocode figure wraps in `<pre><code>` with hand-wrapped spans and an explanatory figcaption highlighting what the critical lines accomplish.
-- **Aside**: only if the post had a caveat for this idea. Never drop a caveat to make a section cleaner. `.aside.err` for a failure condition.
-- **Stagger**: `style="--i:n"` on each `.pop`/`.draw` inside an SVG, in reading order. Nothing else needs `--i`.
+- **No walls of prose**: Never write dense multi-paragraph text. Explain ideas through tight, bulleted points (`.rules` or `.steps`).
+- **Focus heavily on explanation**: Frame every concept from first principles. What invariant makes this hard? What naive assumption broke? How does this design restore the guarantee?
+- **Natural progression**: Section N+1 should naturally answer the challenge or trade-off left open by Section N.
+- **Cross-link text to visuals**: Use `<span class="inspect-node" tabindex="0" data-target="node-id">` to connect bullet points directly to highlighted diagram elements.
+- **Truthful to the source**: Use the post's exact numbers, benchmarks, and claims. Never fabricate facts or benchmarks.
 
-Word budget: the whole document (summary to sources, captions and diagram labels included) is **80-180 words per idea plus 150-300** for summary, context, and sources. Staying inside this budget forces minimalism and cuts redundant text. Exceed it only when a sentence is genuinely load-bearing for conceptual understanding.
+## Step 3: Crafting Visuals & Custom Animations
 
-## Step 4: What Not To Do
+- **Use the templates or invent custom designs**: Standard templates in `reference/svg-templates.md` work well for basic pipelines, tables, and trees. When the idea has a distinct spatial or mechanical dynamic, **write a custom animated SVG**.
+- **Animation primitives**:
+  - `animateMotion`: Move packets, offsets, or requests along SVG paths (`<mpath href="#path-id"/>`).
+  - `class="pulse"` or `class="pulse-glow"`: Highlight active buffers, locks, or workers.
+  - `data-cycle="ms"`: Step sequentially through state machines, ring tokens, or phased protocols.
+  - `class="flowing"`: Show continuous streams or data pipes.
+- **Keep diagrams clean and legible**:
+  - 8px grid alignment, `viewBox="0 0 960 H"` (or `640` for narrow).
+  - Clear typography: labels inside elements at font-size 16-18, annotations at 14.
+  - Accessible: every `<svg>` must have `role="img"` and a descriptive `aria-label`.
+  - Captioned: every visual sits in a `<figure>` with a `<figcaption>`.
 
-These are the patterns that make generated pages look generated, or turn a document into a deck. Each is a build failure.
+## Step 4: Assemble and Verify
 
-- Full-viewport sections, a hero, a scroll hint, a progress bar, keyboard "slide" navigation. It is a document.
-- Centred body text. Prose is left-aligned; only figcaptions and formulas centre.
-- Gradients of any kind. Glassmorphism, blur, noise textures, drop shadows, glow. Emoji. Icon sets. (The graph-paper ground in `base.css` is the only texture; it is not optional and not adjustable.)
-- Cards for everything. `.panel` is for contrast / multi-card sets; `.stat` for numbers the post states. Paragraphs are paragraphs.
-- More than one accent colour. `--err` and `--ok` are the only other hues.
-- Any hex colour outside the `:root` blocks.
-- Your own theme toggle UI. Theme follows the OS, or the `t` key -- no button.
-- Hover-only content, tilt, parallax, particles, typewriter, scramble or glitch text. (`.inspect-node` cross-highlighting is a permitted enhancement, not content: the prose reads fully without it, and every inspect-node carries `tabindex="0"` so keyboard and touch reach it.) The header stagger on load, figure reveals, diagram motion from §10, and `.stepper` pane switches are the only animation permitted; at most three moving things per diagram, no loop faster than 1.5 s.
-- Changing anything in `base.css` other than the two `--accent` lines. Adding or swapping fonts. Loading anything from a URL except the fonts link and the MathJax tags.
-- Inventing a number, a claim, an example, or a caveat that is not in the post.
-- Headings that are topics ("Architecture", "Results", "Conclusion").
-- `TODO`, `TBD`, `[insert …]`, lorem ipsum, or any unfilled `{{slot}}`.
-
-## Step 5: Build and Verify
-
-Write the content once, inject the design system mechanically, then verify with real commands. Do not paste HTML into the conversation, and **never retype `base.css` or `runtime.js` through the Write tool** -- they are injected from disk, which is both cheaper and the only way the verbatim check can pass.
-
-Assembly:
-
-1. Start from `skeleton.html` and write the *content* file: header, summary, context, one heading block per spine item, sources -- with the `{{BASE_CSS}}` and `{{RUNTIME_JS}}` markers left in place. Delete every block marked `data-example` (`verify.sh` fails if one survives). The source link comes from the post's frontmatter or the user; a local file with no URL is credited as `adapted from <code>filename.md</code>` -- never guess a URL.
-2. Fill each figure from its template. Change labels, counts, positions, highlighted elements only. Add motion to every mechanism diagram.
-3. If a named theme was requested, set `data-theme` on `<html>` and swap the display font in the fonts link; if an accent was requested, plan the two `--accent` hexes from the table above. If a left layout was requested, set `data-layout="left"` on `<html>` too. Remove the MathJax tags if there is no `.formula`.
-4. Inject the design system with one command (run from the document's directory, `REF` = the skill's `reference/` dir), applying the accent afterwards only via the two `--accent` lines:
-
+1. **Write content file**: Start with `skeleton.html`, write headers, bullets, and figures. Leave `{{BASE_CSS}}` and `{{RUNTIME_JS}}` in place. Remove skeleton `data-example` blocks.
+2. **Inject CSS & JS mechanically**:
    ```bash
    python3 - <<'EOF'
    from pathlib import Path
-   ref = Path("REF"); doc = Path("out.html")
+   ref = Path("REF") # path to reference/
+   doc = Path("out.html")
    html = doc.read_text()
    html = html.replace("{{BASE_CSS}}", (ref/"base.css").read_text())
    html = html.replace("{{RUNTIME_JS}}", (ref/"runtime.js").read_text())
    doc.write_text(html)
    EOF
    ```
-
-5. Grep for double curly brackets and expect zero hits.
-
-Verification -- run the verifier and fix until every line is PASS:
-
-```bash
-bash <skill-dir>/reference/verify.sh out.html source.md
-```
-
-It checks, portably on macOS and Linux: the word budget from the heading count (though you may exceed it for clarity); leftover `data-example` blocks; hex colours outside `:root`; external resources beyond the fonts link and pinned MathJax; MathJax present exactly when a `.formula` exists, each with a `data-plain` fallback; `<img>`/`<iframe>`; emoji; unfilled `{{slots}}` (including un-injected `{{BASE_CSS}}`/`{{RUNTIME_JS}}` markers), `TODO`, `TBD`, placeholders; the four sections (`summary`, `context`, `body`, `sources`), one `h1`, at least one source entry; every `<figure>` captioned; every `<svg>` with `role="img"` and `aria-label`; the count of motion primitives (must be at least the number of mechanism diagrams -- check this by eye); box labels too long for their boxes; `h2`s that look like topics; every number in prose and every stat `data-to` value present in the source; and that `base.css` (accent aside) and `runtime.js` are embedded verbatim. Skip `source.md` for pasted input and state that the word budget and number checks were not run. There is no rendering step: the templates are the tested layout, so a document that passes `verify.sh` and the fidelity pass is done.
-
-## Step 6: Fidelity Pass
-
-The document says only what the post says. After the build verifies clean, check that -- and iterate until it holds.
-
-1. Extract every claim from the document: each sentence of the summary, context, prose and asides; each figcaption; each stat, matrix cell, formula, and diagram label. Number them.
-2. For each claim, find the sentence(s) in the source that support it. Quote the source span. Three outcomes:
-   - **Supported**: the source states it, in the same direction and with the same qualifier. Keep.
-   - **Drifted**: the source states something near it but the document sharpened, generalised, dropped a condition, or changed a number. Rewrite the claim to match the source exactly, then re-check.
-   - **Unsupported**: nothing in the source says it -- an added example, an inferred mechanism, a "typically", a figure the post never gave. Delete it, or replace it with what the post actually says.
-3. Diagrams are claims too: every box, arrow and label must correspond to something the post names; an arrow the post does not describe is an invention. Fix the SVG, not the caption.
-4. Re-run `verify.sh` after edits (word budget and structure can shift), then repeat from step 1 on the changed claims. Stop when a full pass produces zero drifted or unsupported claims. Two passes is normal; more than three means the spine was wrong -- rebuild the affected idea from the source rather than patching sentences.
-5. Record the result for the closing block: claims checked, drifted fixed, unsupported removed, and the pass count.
-
-`verify.sh` backstops this mechanically: every number in the document's prose and stats must appear in the source text. It cannot check words -- that is what this pass is for.
-
-Fidelity means nothing false, not everything true. Do not pad with fluff; add a bridging sentence only where its absence would leave the reader stuck.
+3. **Verify with script**:
+   ```bash
+   bash <skill-dir>/reference/verify.sh out.html source.md
+   ```
+   Fix any structural issues (missing sections, unclosed tags, leftover `{{` markers, or ungrounded numbers).
+4. **Factual review**: Confirm that all numbers, algorithmic steps, and trade-offs faithfully reflect the source material without hallucinations.
 
 ## Checklist
 
-Every item is checked by the commands above or by opening the file; none is ticked from memory.
-
-- [ ] Visual-first presentation: at least one figure per idea (multiple visuals per section welcomed where helpful, e.g. diagram + pseudocode or diagram + stat/matrix), from a template or a deliberate custom visual (see "Going off-catalogue"), built only from system tokens; every figure captioned.
-- [ ] Every mechanism diagram has at least one motion primitive; none has more than three.
-- [ ] Every evidence figure (waterfall, histogram, ladder, curves, series, heatmap, schema, diff, terminal) is static, and every value or event label on it is stated by the post.
-- [ ] Deep-dives: at most two, nothing load-bearing inside, body reads complete with all of them closed.
-- [ ] Every idea heading is a sentence a reader could be wrong about (part headings, when used, are exempt).
-- [ ] Prose teaches from first principles and intuition: the underlying constraint/invariant is made obvious before mechanics are introduced.
-- [ ] Text is minimal and ruthlessly optimized for understanding: zero fluff, no redundant restatements of diagram visuals, clear causal chain.
-- [ ] Natural flow: ideas progress logically where each section builds upon or resolves the previous one.
-- [ ] Every number that matters is present, exact, in prose and as a stat or on a chart.
-- [ ] Every caveat survives as an aside on its idea.
-- [ ] Fidelity pass completed; every number in prose appears in the source (`verify.sh`).
-- [ ] Word count inside budget, or exceeded only where load-bearing.
-- [ ] Essential code retained (trimmed to <= 20 lines) or simplified into clean pseudocode via [[ape-write-pseudocode]]; syntax styled with hand-wrapped spans (`.k`, `.s`, `.c`, `.n`) and 1-3 `.hl` lines.
-- [ ] Every algorithm/procedure idea has a pseudocode figure via [[ape-write-pseudocode]], even when the source showed no code.
-- [ ] Every record layout, disk write path, or wire/storage format the post describes has a wire-format figure, even when only prose in the source.
-- [ ] All four sections present; exactly one `h1`; at least one source entry.
-- [ ] Zero hex outside `:root`, zero network references beyond the fonts link and MathJax (only with a `.formula`), zero `<img>`, zero emoji, zero `{{` -- by command.
-- [ ] `base.css` and `runtime.js` injected mechanically over the skeleton markers, unmodified except the two `--accent` lines (`verify.sh` fails otherwise).
-- [ ] Every `.inspect-node` carries `tabindex="0"`; a `.stepper`, if used, points its `data-svg` at a real SVG id with matching `data-step` groups.
-- [ ] Nothing from Step 4 present.
+- [ ] Visual-heavy presentation: at least one visual figure per idea; custom animated designs used where helpful to show mechanism.
+- [ ] Short, crisp bullets instead of dense prose paragraphs.
+- [ ] Natural explanatory flow: ideas progress logically from problem to mechanism to edge cases and trade-offs.
+- [ ] Visuals built cleanly using design system CSS variables (`--surface`, `--line`, `--accent`, etc.).
+- [ ] Mechanism diagrams move purposefully; static evidence figures remain still.
+- [ ] Every figure has a `<figcaption>` with a bold label and clear takeaway.
+- [ ] Four required sections present (`summary`, `context`, `body`, `sources`), exactly one `h1`.
+- [ ] Design system (`base.css` and `runtime.js`) injected cleanly with zero leftover `{{` markers.
+- [ ] Numbers, benchmarks, and claims grounded in the source material.
 
 ## Output Structure
 
-Before anything else, print a one-line flavour string on what the skill is doing. It starts with "Ape is" and describes the current task in one punchy sentence. Examples: "Ape is turning this post into a doc you can walk people through.", "Ape is drawing the pictures the words were hiding.", "Ape is making the mechanism move."
-
-Then, in order:
-
-1. `Source: <path or URL>` (skip for pasted content).
-2. The spine: `NN. <idea as sentence> -> <visual form>`, plus one line per source figure saying redrawn or dropped. Pause here only under the long-source rule in Step 1.
-3. Build and verify (Step 5), then the fidelity pass (Step 6).
-4. A closing block, formatted through [[ape-style-markdown]]:
-   - Output path.
-   - Whether MathJax is included (fonts and MathJax load from the network; offline the page falls back to system fonts and plain-text formulas), and any formula transcribed from prose rather than read from an image.
-   - Layout mode, if not the default centered column.
-   - Source words, document words, and the budget range for the idea count.
-   - Idea list with the figure used for each, marking any custom, off-catalogue visual.
-   - Anything deliberately dropped from the post and why, one line each.
-   - Fidelity: claims checked, drifted fixed, unsupported removed, passes taken.
-   - Which `verify.sh` checks were skipped (pasted input has no source to measure against).
-   - How to use it: open in a browser (or present via `present-md`); theme follows the OS or `present-md` theme, `t` flips it.
-
-## Iteration
-
-The user will ask for changes after seeing it: "idea 4 needs a diagram not a quote", "the state machine should cycle", "cut ideas 7 and 8", "teal". Apply targeted edits to the file on disk, keep everything else byte-identical, keep headings stable unless asked (reviewers anchor to them), and re-run the checks the change could affect. Print only what changed.
+1. Print one punchy flavour line starting with "Ape is": e.g., "Ape is turning this post into a visual-heavy walkthrough with custom animations."
+2. Print the spine showing the natural flow of ideas and their visual/animated forms.
+3. Build the self-contained HTML file and run verification.
+4. Print a concise summary with:
+   - Output file path
+   - Key ideas and the animated/visual forms used
+   - Confirmation of factual alignment and verification status
