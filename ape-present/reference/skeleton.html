@@ -41,21 +41,24 @@
 
 <section id="context">
   <h2>{{CONTEXT HEADING as a sentence, e.g. "Riak needed a store that never seeks on write"}}</h2>
-  <p class="dropcap">{{1-3 short paragraphs: what the reader must already hold to follow the body. Use <span class="inspect-node" tabindex="0" data-target="fig-node-1">terms</span> to link prose to diagrams.}}</p>
+  <p class="dropcap">{{1-3 short paragraphs: the first-principles grounding and problem intuition. What invariant or physical reality makes this hard? What must the reader hold before seeing the solution? Use <span class="inspect-node" tabindex="0" data-target="fig-node-1">terms</span> to link prose to diagrams.}}</p>
 </section>
 
 <section id="body">
 
   <!-- ONE HEADING PER IDEA: h2 when the body is flat; h3 under short h2 part headings
-       when there are more than 8 ideas (see SKILL.md Step 1). Each idea: heading as a
-       sentence, 1-3 short paragraphs, one figure with a caption, optional aside. Pattern: -->
+       when there are more than 8 ideas (see SKILL.md Step 1).
+       Each idea: heading as a sentence, minimal prose teaching the concept, one or more visual figures with captions, optional aside.
+       Write to teach: establish intuition first, keep text minimal and high-signal, let moving figures and diagrams carry the mechanics, and let each section flow naturally into the next.
+       Multiple visuals per section are welcomed (e.g. diagram + wire layout, flow + pseudocode, pipeline + stat row). Pattern: -->
   <h2 data-n="01">{{IDEA AS A READ-ALOUD SENTENCE}}</h2>
-  <p>{{The mechanism in prose: what happens, in what order, and why it works. Use <span class="inspect-node" tabindex="0" data-target="box-wal">WAL</span> to highlight diagram parts (always with tabindex="0" so keyboards reach it).}}</p>
+  <p>{{The intuition and mechanism in minimal prose: why it must work this way from first principles, what happens, in what order, and why it works. Use <span class="inspect-node" tabindex="0" data-target="box-wal">WAL</span> to highlight diagram parts (always with tabindex="0" so keyboards reach it).}}</p>
   <figure class="wide">
-    {{VISUAL — one SVG from svg-templates.md, with motion from §10 if it is a mechanism}}
+    {{VISUAL 1 — one SVG from svg-templates.md, with motion from §10 if it is a mechanism}}
     <figcaption><strong>{{Figure label, 3-6 words.}}</strong> {{One sentence naming what the picture shows the reader that the prose cannot.}}</figcaption>
   </figure>
-  <p>{{Optional: the consequence or the trade-off, 1-2 sentences.}}</p>
+  <!-- Optional: Second visual element if helpful (pseudocode, stat row, trade-off matrix, wire format) -->
+  <p>{{Optional: the consequence, trade-off, or natural bridge to the next constraint, 1-2 sentences.}}</p>
   <div class="aside"><p>{{ONLY IF THE POST HAD IT: the caveat, the "only when", the "except if".}}</p></div>
 
   <!-- EXAMPLES BELOW: every block carrying data-example is deleted before the file is written.

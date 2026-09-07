@@ -1,17 +1,17 @@
 ---
 name: ape-present
-description: Converts a blog post into a single self-contained HTML document -- a readable long-form document with animated diagrams and just enough text to carry the idea. Trigger on "ape present", "make this presentable", or "turn this post into a doc I can walk people through".
+description: Converts a blog post into a single self-contained HTML document -- a readable long-form document with animated diagrams and minimal text, written to teach concepts intuitively from first principles. Trigger on "ape present", "make this presentable", or "turn this post into a doc I can walk people through".
 ---
 
 # Present Skill
 
-Takes a blog post and produces one HTML file that reads like a well-made internal document: a title, a summary, real headings and short paragraphs, and a figure for every idea -- diagrams that move to show the mechanism, numbers set large, a formula typeset where the formula is the point. The author opens it and walks people through it, or shares the link and people read it alone. Both must work.
+Takes a blog post and produces one HTML file that reads like a masterfully taught internal document: a title, a summary, real headings and short paragraphs, and a figure for every idea -- diagrams that move to show the mechanism, numbers set large, a formula typeset where the formula is the point. The author opens it and walks people through it, or shares the link and people read it alone. Both must work.
 
 It is a document, not a deck. No full-screen sections, no hero, no scroll-snapping, no progress bar, no slide feel. The first screen is the title and the summary, and the page scrolls like any other. Single file, real selectable text, comfortable line length with defined width limits (`--measure` for prose column, with visual elements permitted to break out to `--wide` or `--max-width`), full theme support matching `present-md`, and a fixed section skeleton -- summary, context, body, sources -- so every document has the same shape.
 
-It is not the blog either. The post explained; this document shows and teaches. Each idea gets exactly enough prose to be understood, and no more -- the figure, code, or format diagram carries the weight, not the paragraph around it.
+It is not the blog either. The post merely recorded or explained; this document **teaches**. Write it as an expert engineer explaining the concept to a sharp peer: start from first principles, build direct intuition for why the problem is hard and why this solution exists, and make the narrative flow naturally from cause to effect. Text is **minimal and ruthlessly optimized for understanding**: each idea gets exactly enough prose to illuminate the mental model and make the concept click -- the figure, code, or format diagram carries the mechanism, while the prose anchors the intuition.
 
-Audience: practicing engineers, not students. Favor concrete mechanics over abstract description -- pseudocode for algorithms, the on-disk or wire format for stored/transmitted structures, real code where the post has it. A mechanism explained only in prose gets translated into pseudocode or a format figure, not more prose.
+Audience: practicing engineers, not students. Ground explanations in first principles and physical or systems realities (e.g. disk seeks vs sequential I/O, cache line invalidation, network roundtrips). Favor concrete mechanics over abstract description -- pseudocode for algorithms, the on-disk or wire format for stored/transmitted structures, real code where the post has it. A mechanism explained only in prose gets translated into pseudocode or a format figure, not more prose.
 
 ## The one rule that makes it look good
 
@@ -67,11 +67,11 @@ An **accent hue** changes only the two `--accent` lines in the pasted `base.css`
 By default the document sits in a single centered column (`.doc`), and wide figures (`.wide`/`.breakout`/`.full-bleed`) break out symmetrically around that same center point. Request a **left layout** to switch to an asymmetric mode instead: the whole document hangs off a left margin, and every breakout figure extends rightward from that same margin rather than centering on the viewport -- useful when the concept needs a run of wide diagrams, tables, or code and the document should keep the right side free for them throughout. Apply it as `data-layout="left"` on `html`, alongside any `data-theme`: `<html lang="en" data-theme="nord" data-layout="left">`. Omit the attribute for the default centered behaviour. This is a document-wide switch, not a per-figure choice, and it collapses back to the default full-width single column below the mobile breakpoint like everything else.
 
 ## Step 1: Find the Spine
-
+ 
 Read the whole post once before writing anything. Extract, in this order:
 
 1. **The one-line claim.** What the author would say with ten seconds. This is the dek under the title.
-2. **The ideas, in order.** Each idea is one thing the reader must understand to believe the claim. A typical post has 5-12. Each becomes one `h2` in the body. The test for an idea: *it is something a reader could be wrong about.* "The write path" is a topic; "every write is appended, never seeks, and the index lives in memory" is an idea. One idea per paragraph, per heading, or per section of the blog are all wrong spines -- ideas cut across the post's structure.
+2. **The ideas, in order of natural pedagogical flow.** Each idea is one step in understanding: start from the foundational constraint or first principle ("why is this difficult?"), move through the core intuition and mechanism, then into optimizations, trade-offs, and limits. A typical post has 5-12 ideas. Each becomes one `h2` in the body. The test for an idea: *it is something a reader could be wrong about or fail to intuit.* "The write path" is a topic; "every write is appended, never seeks, and the index lives in memory" is an idea. One idea per paragraph, per heading, or per section of the blog are all wrong spines -- ideas cut across the post's structure and connect in a causal chain where each unlocks the next.
 3. **For each idea, its visual form**, chosen from the catalogue in Step 2 or designed custom when the catalogue underserves the idea (see "Going off-catalogue" in Step 2). If no picture carries it, the idea is a number (stat row), a sentence (quote), or context (prose only, no figure) -- or not an idea, and it is cut.
 4. **The numbers.** Every figure in the post that matters. These are the only things allowed in large type.
 5. **The surprising claim.** The thing a knowledgeable reader would not have guessed. It gets its own `h2` and the quote treatment.
@@ -131,14 +131,13 @@ Every figure comes from one of these, or from a custom visual when the idea call
 | Optional depth a skimmer can skip | `<details class="deep-dive">` after the idea's figure | `skeleton.html` deep-dive example |
 | A formula that is the point | `.formula` figure, MathJax, key term in accent | `skeleton.html` formula example |
 
-Rules:
-
+- **Visual-first presentation, minimal text**: Visuals carry the explanation; text is minimal and exists to anchor intuition. A section is **encouraged to have multiple visual elements** when doing so clarifies the concept -- for example: a moving mechanism SVG paired with a wire-format layout, an algorithm diagram alongside a highlighted pseudocode block, or a pipeline diagram followed by a stat row or trade-off matrix. Every visual element earns its place by answering a specific question visually.
 - **Every mechanism diagram moves; every evidence figure stays still.** A mechanism shows where data goes -- pipeline, sequence, flowchart, state machine, tree lookup, cell grid: add at least one motion primitive from `svg-templates.md` §10 (a packet along the accent arrow at minimum), running only while the figure is on screen and never under reduced-motion. An evidence figure proves a claim -- stats, quotes, bar and race charts, waterfall, histogram, magnitude ladder, curves, time series, heatmap, matrices, timelines, schema, code / diff / terminal: no motion beyond the reveal, and every value or event label on it must be stated by the post. The magnitude ladder is the one non-linear scale permitted and keeps its "log scale" annotation.
 - **Code and Pseudocode**: `<pre><code>` with hand-wrapped spans (`span.k`/`.s`/`.c`/`.n`) and 1-3 `.hl` lines on the key operation (see Step 1 item 6 for when to write pseudocode from scratch). When the post's point *is* a change, show it as `pre.diff` -- the post's own before/after lines, `+`/`-` prefixes, `.add`/`.del` per line, same 20-line cap. A shell session is `pre.term` with `.prompt`/`.out`, transcribed exactly -- output numbers are claims.
 - **Deep-dives** (`<details class="deep-dive">`): optional depth a skimmer can skip, attached under an idea after its figure. Never a caveat, never load-bearing -- the body must read complete with every deep-dive closed. At most two per document.
-- One figure per idea. An idea that needs two figures is two ideas.
+- **Multiple visuals per section are welcomed**: While each idea must have at least one figure, feel free to use multiple visual elements (diagram + pseudocode, diagram + stat row, format layout + sequence) whenever the concept benefits from showing multiple perspectives.
 - Every SVG and table sits in a `<figure>` with a `<figcaption>`; 960-wide diagrams get `class="wide"`.
-- Stats & multi-card layouts: one row per idea, at most three numbers in it, and only for figures the post actually states. A metric without a value ("cycle time", "weeks to days") is not a stat -- it goes in prose or a `.rules` list. Three-card layouts (three stats, three panels via `.panels.three`) are permitted and encouraged to break out beyond the prose container (`.wide` / `.breakout`) up to `--wide` so the cards have room to breathe rather than squeezing tightly inside `--measure`.
+- Stats & multi-card layouts: at most three numbers per stat row, and only for figures the post actually states. A metric without a value ("cycle time", "weeks to days") is not a stat -- it goes in prose or a `.rules` list. Three-card layouts (three stats, three panels via `.panels.three`) are permitted and encouraged to break out beyond the prose container (`.wide` / `.breakout`) up to `--wide` so the cards have room to breathe rather than squeezing tightly inside `--measure`.
 - The catalogue is the default, not a cage. Reach for a custom visual -- not necessarily an SVG diagram in the §1-§9 grammar -- when an idea's shape does not fit any row, or when a different visual form would make the concept click faster than forcing it into an existing template. See "Going off-catalogue" below for what a custom visual must still honour.
 - A `.stepper` is user-driven interaction, not animation: use it when one diagram carries 3-6 phases the reader should walk at their own pace, with `data-step="1..N"` on the SVG groups each phase is about. Each pane is prose and obeys the fidelity rules. At most one stepper per document; a mechanism with 2 phases is `.panels`, with continuous motion it is §10.
 - **Two external resources are permitted, no others.** The Google Fonts link from `skeleton.html` (IBM Plex Mono for text; Space Grotesk for title and headings on the default themes -- a named theme swaps in its own display font per the table above; system fallbacks make the page readable offline), and MathJax -- only when the document has at least one `.formula`, with the exact pinned tags from `skeleton.html`. Every `.formula` carries a plain-text fallback in `data-plain`.
@@ -152,29 +151,32 @@ A custom visual is free in **form** -- it does not have to be a box-and-arrow SV
 Reach for a custom visual deliberately, not by default -- if a catalogue entry already fits, use it. A document that invents a new visual form for every idea stops reading as one coherent system and starts reading as a collection of one-offs.
 
 ## Step 3: Document Structure
-
+ 
 Follow `skeleton.html` exactly. Direct start (no chrome bars, eyebrows, or author clutter at the top):
 
 ```
 <article class="doc">
   <header class="doc-header">        h1 · dek (the one-line claim) -- clean, immediate start
-  <section id="summary">            .summary: 3-5 sentences
-  <section id="context">            h2 + 1-3 short paragraphs, the first with class="dropcap", optional .inspect-node links
-  <section id="body">               one heading per idea with data-n="NN" (margin folio): prose · figure + figcaption · optional aside; ends with <p class="end-mark">■</p>
+  <section id="summary">            .summary: 3-5 sentences (the claim, strongest evidence, biggest caveat)
+  <section id="context">            h2 + 1-3 short paragraphs, the first with class="dropcap": the first-principles grounding and problem intuition
+  <section id="body">               one heading per idea with data-n="NN" (margin folio): intuition & prose · figure + figcaption · optional aside; ends with <p class="end-mark">■</p>
   <section id="sources">            h2 + <li cite="…"> one per source
 </article>
 <script> MathJax tags (only with a .formula), then runtime.js verbatim
 ```
 
-Per-idea rules:
+Teaching and Prose Rules:
 
+- **Teach, don't just record**: Frame each idea as a step in an intuitive explanation. Explain *why* a design choice was necessary from first principles (the fundamental physics or invariant: e.g. random I/O is slow, clocks drift, memory is finite) before explaining *what* was built.
+- **Minimal, high-signal text**: Text must be concise, crisp, and optimized for instant understanding. No fluff, no throat-clearing, no filler transitions. Say things simply and directly. Let the moving diagram or code carry the mechanical heavy lifting, while the prose anchors the mental model and intuition.
+- **Natural flow**: Structure sections so each idea flows naturally into the next. Each idea answers an intuition gap, resolves a trade-off raised by the previous section, or scales the mechanism to the next level.
 - **Heading** (`h2`, or `h3` under parts): carries `data-n="NN"` (two digits, numbered across the whole body) so the folio prints in the margin; the idea as a full sentence. "Every write goes to the log first", not "Write path". Stable across versions -- reviewers anchor comments to headings.
-- **Prose**: What happens, in what order, why it works, with the numbers in it -- as few sentences as that takes. When the figure carries the idea, the prose gets shorter still: never restate in words what the picture already shows, point at it and move on. Depth only some readers want goes in a deep-dive, not the paragraph.
-- **Figure**: from Step 2. The figcaption opens with a bold 3-6 word label, then one sentence saying what the picture shows that the prose cannot. A `.formula` figure also carries a `.formula-legend` naming each symbol in one phrase (`N documents in corpus`), and its `\class{term}{…}` marks the one term the idea is about. A code or pseudocode figure wraps in `<pre><code>` with hand-wrapped spans and an explanatory figcaption highlighting what the critical lines accomplish.
+- **Prose**: 1-3 short, punchy paragraphs per idea. Lead with the core intuition or underlying invariant, describe what happens and in what order, and ground it with the post's exact numbers. Never restate in words what the picture already clearly demonstrates -- point at the diagram or code, highlight key operations with `<span class="inspect-node" tabindex="0" data-target="...">`, and move forward. Optional depth only specialists need belongs in a `<details class="deep-dive">`, not in the main narrative.
+- **Figure**: from Step 2. The figcaption opens with a bold 3-6 word label, then one sentence explaining the core takeaway the picture reveals that prose cannot easily convey. A `.formula` figure also carries a `.formula-legend` naming each symbol in one phrase (`N documents in corpus`), and its `\class{term}{…}` marks the one term the idea is about. A code or pseudocode figure wraps in `<pre><code>` with hand-wrapped spans and an explanatory figcaption highlighting what the critical lines accomplish.
 - **Aside**: only if the post had a caveat for this idea. Never drop a caveat to make a section cleaner. `.aside.err` for a failure condition.
 - **Stagger**: `style="--i:n"` on each `.pop`/`.draw` inside an SVG, in reading order. Nothing else needs `--i`.
 
-Word budget: the whole document (summary to sources, captions and diagram labels included) is **80-180 words per idea plus 150-300** for summary, context, and sources. Stay inside it by default; exceed it only when a sentence is load-bearing for understanding, not to be thorough for its own sake.
+Word budget: the whole document (summary to sources, captions and diagram labels included) is **80-180 words per idea plus 150-300** for summary, context, and sources. Staying inside this budget forces minimalism and cuts redundant text. Exceed it only when a sentence is genuinely load-bearing for conceptual understanding.
 
 ## Step 4: What Not To Do
 
@@ -246,12 +248,14 @@ Fidelity means nothing false, not everything true. Do not pad with fluff; add a 
 
 Every item is checked by the commands above or by opening the file; none is ticked from memory.
 
-- [ ] One figure per idea, from a template or a deliberate custom visual (see "Going off-catalogue"), built only from system tokens; every figure captioned.
+- [ ] Visual-first presentation: at least one figure per idea (multiple visuals per section welcomed where helpful, e.g. diagram + pseudocode or diagram + stat/matrix), from a template or a deliberate custom visual (see "Going off-catalogue"), built only from system tokens; every figure captioned.
 - [ ] Every mechanism diagram has at least one motion primitive; none has more than three.
 - [ ] Every evidence figure (waterfall, histogram, ladder, curves, series, heatmap, schema, diff, terminal) is static, and every value or event label on it is stated by the post.
 - [ ] Deep-dives: at most two, nothing load-bearing inside, body reads complete with all of them closed.
 - [ ] Every idea heading is a sentence a reader could be wrong about (part headings, when used, are exempt).
-- [ ] Prose per idea reads smoothly without a presenter, at the shortest length that stays clear.
+- [ ] Prose teaches from first principles and intuition: the underlying constraint/invariant is made obvious before mechanics are introduced.
+- [ ] Text is minimal and ruthlessly optimized for understanding: zero fluff, no redundant restatements of diagram visuals, clear causal chain.
+- [ ] Natural flow: ideas progress logically where each section builds upon or resolves the previous one.
 - [ ] Every number that matters is present, exact, in prose and as a stat or on a chart.
 - [ ] Every caveat survives as an aside on its idea.
 - [ ] Fidelity pass completed; every number in prose appears in the source (`verify.sh`).
