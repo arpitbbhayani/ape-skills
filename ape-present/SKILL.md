@@ -46,7 +46,7 @@ Optional modifiers:
 Read the source material once. Extract:
 
 1. **The one-line claim**: The central thesis in one punchy sentence (the dek).
-2. **The lead visual illustration concept**: A striking, super visual illustration that represents the talk's core domain, mental model, or architectural universe (an animated visual anchor, not a text summary box).
+2. **The lead visual illustration concept**: A simple, iconic visual motif representing the topic (e.g. an append stream entering an active block, a single heartbeat pulse, an index pointer). Keep it simple and focused — never try to map the entire blog post or full architecture into this one visual.
 3. **The ideas in natural explanatory flow**: 4 to 10 progressive milestones. Each milestone represents one logical step in understanding:
    - What fundamental constraint makes this hard?
    - The central intuition / naive attempt breakdown.
@@ -134,10 +134,11 @@ Follow `skeleton.html`:
 
 ## Step 3: Crafting Visuals & Custom Animations
 
-- **Crafting the Lead Visual Illustration**:
-  - The talk opens with an evocative visual anchor, never a text summary or TL;DR box.
-  - The illustration must be super visual: a custom animated SVG that graphically sets the stage and visually represents the talk (e.g. distributed nodes communicating across boundaries, storage engine journal and memory architecture, dataflow pipelines, or network packet journeys).
-  - It does not need to summarize the article textually; its purpose is to be an immediate, striking visual representation of the talk's universe and mental model.
+- **Crafting the Lead Visual Illustration (Simplicity First)**:
+  - The talk opens with a simple, iconic visual anchor, never a text summary or TL;DR box.
+  - **Do NOT map the whole blog post into one complex diagram**: Do not attempt to fit multiple systems, stages, or edge cases into this illustration. Body sections will explain mechanisms one step at a time.
+  - **Aim for simplicity & elegance**: 2 to 3 clean elements max. A focused visual motif that sets the mood/theme of the talk (e.g., an append stream entering an active block, a clean pulse between two nodes, or a pointer to an index cell).
+  - **Subtle, purposeful motion**: A single moving packet or gentle pulse. Keep it calm, clean, and fast to parse visually.
 - **Use the templates or invent custom designs**: Standard templates in `reference/svg-templates.md` work well for basic pipelines, tables, and trees. When the idea has a distinct spatial or mechanical dynamic, **write a custom animated SVG**.
 - **Animation primitives**:
   - `animateMotion`: Move packets, offsets, or requests along SVG paths (`<mpath href="#path-id"/>`).
@@ -175,7 +176,7 @@ Follow `skeleton.html`:
 ## Checklist
 
 - [ ] Visual-heavy presentation: at least one visual figure per idea; custom animated designs used where helpful to show mechanism.
-- [ ] Super-visual lead illustration under the header that represents the talk visually (no top text summary box).
+- [ ] Simple, iconic lead visual illustration under the header (not an overloaded architectural diagram summarizing the whole blog post).
 - [ ] Short, crisp bullets instead of dense prose paragraphs.
 - [ ] Natural explanatory flow: ideas progress logically from problem to mechanism to edge cases and trade-offs.
 - [ ] Visuals built cleanly using design system CSS variables (`--surface`, `--line`, `--accent`, etc.).

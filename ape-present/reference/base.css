@@ -1167,7 +1167,7 @@ figure.wide, .wide, .breakout {
 .tag { display: inline-block; border: 1px solid var(--accent); color: var(--accent); border-radius: 3px; padding: 0.15em 0.55em; font-family: var(--mono); font-size: 0.7rem; letter-spacing: 0.1em; text-transform: uppercase; vertical-align: middle; }
 
 /* Header: direct, clean first screen. Staggers in once on load. */
-.doc-header { margin-bottom: 0; padding-bottom: 0; border-bottom: none; }
+.doc-header { padding-bottom: 0.5rem; margin-bottom: 1.25rem; }
 @keyframes rise { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
 .chrome, .doc-header > * { animation: rise 700ms var(--ease) both; }
 .chrome { animation-delay: 0ms; }
@@ -1233,7 +1233,7 @@ svg.inspect-active [data-node] { opacity: 0.25; transition: opacity 250ms var(--
 svg.inspect-active .inspected, svg.inspect-active [data-node].inspected { opacity: 1 !important; filter: drop-shadow(0 0 8px var(--accent)); }
 
 /* Lead illustration (replaces text summary at the top of the talk) */
-#illustration { margin: 1.25rem 0 2rem; }
+#illustration { margin: 0 0 2rem; }
 #illustration figure, .lead-art { margin-top: 0; margin-bottom: 2rem; }
 .lead-art svg { border-radius: 8px; }
 

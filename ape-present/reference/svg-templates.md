@@ -51,78 +51,40 @@ Box + label group (repeat, translate to position):
 </g>
 ## 0. Lead Visual Illustration (The Talk Visual Anchor)
 
-Replaces the top text summary box. Instead of prose or bullet points, the document opens with an evocative, high-impact SVG illustration representing the talk's core domain or architectural universe.
+Replaces the top text summary box. Opens the document with a simple, iconic visual motif that evokes the talk's theme.
 
 **Rules for Lead Illustrations:**
-- **No text summary**: Do not pack sentences or bullet points into the illustration.
-- **Evocative & thematic**: Visually depict the problem space or core system (e.g. distributed nodes across a partitioned boundary, an append-only log with an active write head and indexing memory map, or an engine pipeline with live flowing telemetry).
-- **Rich, lively motion**: Use animated packets (`animateMotion`), pulsing stages (`class="pulse"`), and flowing gradients (`class="flowing"`) to give the talk an immediate dynamic presence.
-- **ViewBox**: Typically `viewBox="0 0 960 260"` to `viewBox="0 0 960 320"`.
+- **Keep it simple, never complex**: Do NOT try to compress the entire blog post or multi-stage system architecture into one visual. Leave detailed mechanisms for the body sections.
+- **Iconic visual motif**: 2 to 3 clean elements max that represent the central intuition (e.g., a write head appending to an active block, two nodes exchanging a heartbeat pulse, or an index pointer).
+- **Subtle, purposeful motion**: A single animated packet (`animateMotion`) or gentle pulse (`class="pulse"`).
+- **Clean proportions**: Height should be modest (typically `viewBox="0 0 960 160"` to `viewBox="0 0 960 180"`).
 
-Example conceptual lead illustration (Distributed System & Storage World):
+Example simple lead illustration (Sequential Append Motif):
 
 ```html
-<svg viewBox="0 0 960 260" role="img" aria-label="Conceptual system landscape: distributed writes streaming into immutable storage with real-time indexing">
+<svg viewBox="0 0 960 160" role="img" aria-label="Simple visual motif: sequential stream appending into active storage">
   <defs>
-    <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
-      <path d="M0 0L10 5L0 10z" fill="var(--muted)"/>
-    </marker>
-    <marker id="arr-a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+    <marker id="arr-lead" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
       <path d="M0 0L10 5L0 10z" fill="var(--accent)"/>
     </marker>
-    <linearGradient id="lead-stream" x1="0%" y1="0%" x2="100%" y2="0%">
-      <stop offset="0%" stop-color="var(--accent)" stop-opacity="0.1"/>
-      <stop offset="50%" stop-color="var(--accent)" stop-opacity="0.7"/>
-      <stop offset="100%" stop-color="var(--accent)" stop-opacity="0.1"/>
-    </linearGradient>
   </defs>
 
-  <!-- Background thematic grid / bounds -->
-  <rect x="40" y="24" width="880" height="212" rx="16" fill="var(--surface)" stroke="var(--line)" stroke-dasharray="4 4" stroke-width="1.5"/>
-
-  <!-- Left: Traffic & Ingestion Sphere -->
-  <g class="pop" style="--i:0" transform="translate(70 54)">
-    <rect width="180" height="152" rx="12" fill="var(--surface)" stroke="var(--line)" stroke-width="1.5"/>
-    <text x="90" y="32" text-anchor="middle" font-size="14" fill="var(--muted)" font-family="var(--mono)" letter-spacing="0.08em">CLIENT TRAFFIC</text>
-    <circle cx="90" cy="94" r="32" fill="var(--accent-soft)" stroke="var(--accent)" stroke-width="2" class="pulse"/>
-    <text x="90" y="99" text-anchor="middle" font-size="16" font-weight="600" fill="var(--accent)">Ingest</text>
+  <!-- Left: Source Inflow -->
+  <g class="pop" style="--i:0" transform="translate(180 48)">
+    <rect width="180" height="64" rx="10" fill="var(--surface)" stroke="var(--line)" stroke-width="1.5"/>
+    <text x="90" y="32" text-anchor="middle" dominant-baseline="middle" font-size="16" font-family="var(--mono)" fill="var(--muted)">Mutation Stream</text>
   </g>
 
-  <!-- Connecting Transit Path with Motion -->
-  <path id="transit-lane" d="M250 130 H400" stroke="url(#lead-stream)" stroke-width="4" fill="none"/>
-  <circle r="5" fill="var(--accent)">
-    <animateMotion dur="2.2s" repeatCount="indefinite" path="M250 130 H400"/>
-  </circle>
-  <circle r="5" fill="var(--accent)">
-    <animateMotion dur="2.2s" begin="1.1s" repeatCount="indefinite" path="M250 130 H400"/>
+  <!-- Connecting Stream Line with Animated Packet -->
+  <path id="lead-path" d="M360 80 H540" stroke="var(--accent-line)" stroke-width="2" fill="none" marker-end="url(#arr-lead)"/>
+  <circle r="4.5" fill="var(--accent)">
+    <animateMotion dur="1.8s" repeatCount="indefinite" path="M360 80 H530"/>
   </circle>
 
-  <!-- Center: The Core Engine / Processing Hub -->
-  <g class="pop" style="--i:1" transform="translate(400 44)">
-    <rect width="220" height="172" rx="12" fill="var(--surface)" stroke="var(--accent)" stroke-width="2"/>
-    <text x="110" y="32" text-anchor="middle" font-size="16" font-weight="600">Core Engine</text>
-    <rect x="24" y="52" width="172" height="42" rx="6" fill="var(--accent-soft)" stroke="var(--accent-line)" stroke-width="1"/>
-    <text x="110" y="78" text-anchor="middle" font-size="13" font-family="var(--mono)" fill="var(--text)">In-Memory State</text>
-    <rect x="24" y="106" width="172" height="42" rx="6" fill="var(--surface)" stroke="var(--line)" stroke-width="1"/>
-    <text x="110" y="132" text-anchor="middle" font-size="13" font-family="var(--mono)" fill="var(--muted)">Append Journal</text>
-  </g>
-
-  <!-- Connecting Stream Path to Persistence -->
-  <path id="persist-lane" d="M620 130 H750" stroke="url(#lead-stream)" stroke-width="4" fill="none"/>
-  <circle r="5" fill="var(--accent)">
-    <animateMotion dur="2.2s" repeatCount="indefinite" path="M620 130 H750"/>
-  </circle>
-
-  <!-- Right: Storage & Durability Boundary -->
-  <g class="pop" style="--i:2" transform="translate(750 54)">
-    <rect width="140" height="152" rx="12" fill="var(--surface)" stroke="var(--line)" stroke-width="1.5"/>
-    <text x="70" y="32" text-anchor="middle" font-size="14" fill="var(--muted)" font-family="var(--mono)" letter-spacing="0.08em">PERSISTENCE</text>
-    <rect x="20" y="58" width="100" height="24" rx="4" fill="var(--surface)" stroke="var(--line)" stroke-width="1.5"/>
-    <text x="70" y="74" text-anchor="middle" font-size="12" font-family="var(--mono)">Segment 01</text>
-    <rect x="20" y="90" width="100" height="24" rx="4" fill="var(--surface)" stroke="var(--line)" stroke-width="1.5"/>
-    <text x="70" y="106" text-anchor="middle" font-size="12" font-family="var(--mono)">Segment 02</text>
-    <rect x="20" y="122" width="100" height="24" rx="4" fill="var(--accent-soft)" stroke="var(--accent)" stroke-width="1.5"/>
-    <text x="70" y="138" text-anchor="middle" font-size="12" font-family="var(--mono)" fill="var(--accent)">Active Log</text>
+  <!-- Right: Active Target Structure -->
+  <g class="pop" style="--i:1" transform="translate(540 48)">
+    <rect width="240" height="64" rx="10" fill="var(--accent-soft)" stroke="var(--accent)" stroke-width="1.5"/>
+    <text x="120" y="32" text-anchor="middle" dominant-baseline="middle" font-size="16" font-weight="600" fill="var(--accent)">Append-Only Log</text>
   </g>
 </svg>
 ```
