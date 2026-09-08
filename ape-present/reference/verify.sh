@@ -66,9 +66,10 @@ n=$(grep -c '{{' "$OUT"); [ "$n" -eq 0 ] && pass "no {{ anywhere (markers inject
 n=$(grep -c 'data-example' "$OUT"); [ "$n" -eq 0 ] && pass "no skeleton examples left" || failm "$n data-example blocks left from the skeleton"
 
 # --- structure --------------------------------------------------------------------
-for s in summary context body sources; do
+for s in illustration context body sources; do
   grep -q "<section id=\"$s\"" "$OUT" && pass "section $s" || failm "missing section $s"
 done
+n=$(grep -cE '<div class="summary"' "$OUT"); [ "$n" -eq 0 ] && pass "no text summary box (lead illustration used)" || failm "$n text summary box found (replace with lead illustration)"
 n=$(grep -c '<h1' "$OUT"); [ "$n" -eq 1 ] && pass "one h1" || failm "$n h1"
 perl -0ne 'exit((/id="sources".*?<li /s)?0:1)' "$OUT" && pass "has a source entry" || failm "no source entry"
 f=$(grep -c '<figure' "$OUT"); c=$(grep -c '<figcaption' "$OUT")

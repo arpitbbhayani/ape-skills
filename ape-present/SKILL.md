@@ -7,7 +7,7 @@ description: Converts a blog post into a single self-contained HTML document -- 
 
 Takes a blog post and produces one self-contained HTML file designed for intuitive learning: a clean header, short crisp bullet points, and visual-first explanations. Diagrams take center stage, featuring custom animations that visually demonstrate the underlying mechanics, followed by numbers set large and wire layouts or pseudocode where relevant.
 
-It is a document, not a deck. No full-screen hero sections, no scroll-snapping, and no slide feel. Single file, comfortable reading width (`--measure`), full theme support, and a fixed section skeleton -- summary, context, body, sources -- so every document has a coherent shape.
+It is a document, not a deck. No full-screen hero sections, no scroll-snapping, and no slide feel. Single file, comfortable reading width (`--measure`), full theme support, and a fixed section skeleton -- illustration, context, body, sources -- so every document has a coherent shape.
 
 It is not the blog either. The post merely recorded or explained; this document **teaches**. Write it as an expert engineer explaining the concept to a sharp peer:
 - **Visuals carry the heavy lifting**: Every idea is anchored by a diagram, custom animation, code snippet, or layout.
@@ -46,18 +46,21 @@ Optional modifiers:
 Read the source material once. Extract:
 
 1. **The one-line claim**: The central thesis in one punchy sentence (the dek).
-2. **The ideas in natural explanatory flow**: 4 to 10 progressive milestones. Each milestone represents one logical step in understanding:
+2. **The lead visual illustration concept**: A striking, super visual illustration that represents the talk's core domain, mental model, or architectural universe (an animated visual anchor, not a text summary box).
+3. **The ideas in natural explanatory flow**: 4 to 10 progressive milestones. Each milestone represents one logical step in understanding:
    - What fundamental constraint makes this hard?
    - The central intuition / naive attempt breakdown.
    - The core mechanism (how the gears turn).
    - How edge cases, concurrency, or scale are solved.
    - The primary trade-off or production reality.
    *Every idea heading is a clear, read-aloud sentence capturing the insight.*
-3. **The visual & animation concept for each idea**: A template from `svg-templates.md` or a custom animated design that illuminates the specific mechanics.
-4. **Key numbers & invariants**: Exact stats, orders of magnitude, and core formulas.
-5. **Concrete code / layout**: Trimmed code (<= 20 lines) or clean pseudocode; record/wire format diagrams.
+4. **The visual & animation concept for each idea**: A template from `svg-templates.md` or a custom animated design that illuminates the specific mechanics.
+5. **Key numbers & invariants**: Exact stats, orders of magnitude, and core formulas.
+6. **Concrete code / layout**: Trimmed code (<= 20 lines) or clean pseudocode; record/wire format diagrams.
 
-Print the spine: `NN. <idea as sentence> -> <visual / custom animation description>`.
+Print the spine:
+- Lead Illustration: `<super-visual description capturing the talk>`
+- `NN. <idea as sentence> -> <visual / custom animation description>`.
 
 ## Step 2: Document Structure & Writing Style
 
@@ -70,10 +73,13 @@ Follow `skeleton.html`:
     <p class="dek">{{ONE-LINE CLAIM}}</p>
   </header>
 
-  <section id="summary">
-    <div class="summary">
-      <p>{{TL;DR: 3 to 4 crisp sentences stating the core claim, the strongest number/evidence, and the main boundary condition.}}</p>
-    </div>
+  <section id="illustration">
+    <figure class="wide lead-art">
+      <!-- High-impact visual illustration that conceptually represents the talk/article.
+           Not a text summary, but an evocative, animated visual scene capturing the topic. -->
+      {{LEAD SVG ILLUSTRATION}}
+      <figcaption><strong>{{Illustration Title, 3-6 words.}}</strong> {{One crisp sentence capturing what the visual represents about the talk.}}</figcaption>
+    </figure>
   </section>
 
   <section id="context">
@@ -128,6 +134,10 @@ Follow `skeleton.html`:
 
 ## Step 3: Crafting Visuals & Custom Animations
 
+- **Crafting the Lead Visual Illustration**:
+  - The talk opens with an evocative visual anchor, never a text summary or TL;DR box.
+  - The illustration must be super visual: a custom animated SVG that graphically sets the stage and visually represents the talk (e.g. distributed nodes communicating across boundaries, storage engine journal and memory architecture, dataflow pipelines, or network packet journeys).
+  - It does not need to summarize the article textually; its purpose is to be an immediate, striking visual representation of the talk's universe and mental model.
 - **Use the templates or invent custom designs**: Standard templates in `reference/svg-templates.md` work well for basic pipelines, tables, and trees. When the idea has a distinct spatial or mechanical dynamic, **write a custom animated SVG**.
 - **Animation primitives**:
   - `animateMotion`: Move packets, offsets, or requests along SVG paths (`<mpath href="#path-id"/>`).
@@ -165,12 +175,13 @@ Follow `skeleton.html`:
 ## Checklist
 
 - [ ] Visual-heavy presentation: at least one visual figure per idea; custom animated designs used where helpful to show mechanism.
+- [ ] Super-visual lead illustration under the header that represents the talk visually (no top text summary box).
 - [ ] Short, crisp bullets instead of dense prose paragraphs.
 - [ ] Natural explanatory flow: ideas progress logically from problem to mechanism to edge cases and trade-offs.
 - [ ] Visuals built cleanly using design system CSS variables (`--surface`, `--line`, `--accent`, etc.).
 - [ ] Mechanism diagrams move purposefully; static evidence figures remain still.
 - [ ] Every figure has a `<figcaption>` with a bold label and clear takeaway.
-- [ ] Four required sections present (`summary`, `context`, `body`, `sources`), exactly one `h1`.
+- [ ] Four required sections present (`illustration`, `context`, `body`, `sources`), exactly one `h1`.
 - [ ] Design system (`base.css` and `runtime.js`) injected cleanly with zero leftover `{{` markers.
 - [ ] Numbers, benchmarks, and claims grounded in the source material.
 
