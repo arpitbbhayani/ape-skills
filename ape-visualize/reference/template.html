@@ -1,0 +1,757 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{CONCEPT_TITLE}} - Interactive 3D Visualization</title>
+  <style>
+    :root {
+      --bg: #090a0f;
+      --card-bg: rgba(18, 22, 34, 0.75);
+      --card-border: rgba(255, 255, 255, 0.08);
+      --text: #e2e8f0;
+      --text-muted: #8492a6;
+      --accent: #00f0ff;
+      --accent-glow: rgba(0, 240, 255, 0.25);
+      --accent-green: #00ff9d;
+      --accent-amber: #ffb700;
+      --accent-rose: #ff3366;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body, html {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background-color: var(--bg);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      color: var(--text);
+      user-select: none;
+    }
+
+    #canvas-container {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      z-index: 1;
+    }
+
+    /* Floating UI Layer */
+    .ui-layer {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      pointer-events: none;
+      z-index: 10;
+      display: grid;
+      grid-template-columns: 340px 1fr 340px;
+      grid-template-rows: auto 1fr auto;
+      padding: 16px;
+      gap: 16px;
+    }
+
+    .ui-interactive {
+      pointer-events: auto;
+    }
+
+    .glass-card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border-radius: 12px;
+      padding: 16px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.45);
+    }
+
+    /* Header Bar */
+    .header-bar {
+      grid-column: 1 / -1;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 52px;
+      padding: 0 18px;
+    }
+
+    .title-group {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .concept-title {
+      font-size: 1.15rem;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+      color: #fff;
+    }
+
+    .domain-badge {
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      padding: 3px 8px;
+      border-radius: 6px;
+      background: rgba(0, 240, 255, 0.12);
+      color: var(--accent);
+      border: 1px solid rgba(0, 240, 255, 0.3);
+    }
+
+    /* Depth Selector Tabs */
+    .depth-selector {
+      display: flex;
+      background: rgba(0, 0, 0, 0.35);
+      border: 1px solid var(--card-border);
+      padding: 3px;
+      border-radius: 8px;
+      gap: 4px;
+    }
+
+    .depth-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      font-size: 0.8rem;
+      font-weight: 600;
+      padding: 5px 14px;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .depth-btn:hover {
+      color: #fff;
+    }
+
+    .depth-btn.active {
+      background: var(--accent);
+      color: #05070a;
+      box-shadow: 0 0 12px var(--accent-glow);
+    }
+
+    /* Left Control Panel */
+    .controls-panel {
+      grid-column: 1;
+      grid-row: 2;
+      align-self: start;
+      max-height: calc(100vh - 120px);
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .panel-section-title {
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+      font-weight: 700;
+    }
+
+    .control-row {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-bottom: 12px;
+    }
+
+    .control-label-group {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.82rem;
+    }
+
+    .param-value {
+      font-family: ui-monospace, "SF Mono", Monaco, "Cascadia Code", monospace;
+      color: var(--accent);
+      font-weight: 600;
+    }
+
+    input[type="range"] {
+      -webkit-appearance: none;
+      width: 100%;
+      height: 5px;
+      border-radius: 3px;
+      background: rgba(255, 255, 255, 0.12);
+      outline: none;
+    }
+
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 15px;
+      height: 15px;
+      border-radius: 50%;
+      background: var(--accent);
+      cursor: pointer;
+      box-shadow: 0 0 8px var(--accent);
+      transition: transform 0.15s;
+    }
+
+    input[type="range"]::-webkit-slider-thumb:hover {
+      transform: scale(1.2);
+    }
+
+    .btn-row {
+      display: flex;
+      gap: 8px;
+    }
+
+    .action-btn {
+      flex: 1;
+      background: rgba(255, 255, 255, 0.07);
+      border: 1px solid var(--card-border);
+      color: #fff;
+      padding: 8px 12px;
+      border-radius: 6px;
+      font-size: 0.82rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      transition: all 0.2s;
+    }
+
+    .action-btn:hover {
+      background: rgba(255, 255, 255, 0.14);
+      border-color: rgba(255, 255, 255, 0.2);
+    }
+
+    .action-btn.primary {
+      background: var(--accent);
+      color: #05070a;
+      border: none;
+    }
+
+    .toggle-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 0.82rem;
+      margin-bottom: 8px;
+      cursor: pointer;
+    }
+
+    /* Right Telemetry Panel */
+    .telemetry-panel {
+      grid-column: 3;
+      grid-row: 2;
+      align-self: start;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .telemetry-stat {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      padding: 6px 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      font-size: 0.82rem;
+    }
+
+    .stat-val {
+      font-family: ui-monospace, "SF Mono", Monaco, "Cascadia Code", monospace;
+      font-weight: 600;
+      color: var(--accent-green);
+    }
+
+    #sparkline-canvas {
+      width: 100%;
+      height: 80px;
+      background: rgba(0, 0, 0, 0.3);
+      border-radius: 6px;
+      border: 1px solid rgba(255, 255, 255, 0.06);
+    }
+
+    /* Bottom Explanation Card */
+    .explanation-card {
+      grid-column: 1 / -1;
+      grid-row: 3;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+      padding: 14px 20px;
+    }
+
+    .explanation-text {
+      flex: 1;
+      font-size: 0.88rem;
+      line-height: 1.45;
+      color: #cbd5e1;
+    }
+
+    .equation-box {
+      font-family: "Cambria Math", "Times New Roman", serif;
+      font-style: italic;
+      background: rgba(0, 0, 0, 0.4);
+      border: 1px solid rgba(0, 240, 255, 0.25);
+      padding: 8px 16px;
+      border-radius: 8px;
+      font-size: 1.05rem;
+      color: var(--accent);
+      white-space: nowrap;
+    }
+
+    /* Visibility by depth */
+    .depth-simple-only { display: none; }
+    .depth-intermediate-only { display: none; }
+    .depth-advanced-only { display: none; }
+
+    body[data-depth="simple"] .depth-simple-only { display: block; }
+    body[data-depth="intermediate"] .depth-intermediate-only { display: block; }
+    body[data-depth="advanced"] .depth-advanced-only { display: block; }
+
+    body[data-depth="intermediate"] .depth-simple-only,
+    body[data-depth="advanced"] .depth-simple-only { display: none; }
+
+    /* Scrollbar */
+    ::-webkit-scrollbar { width: 5px; }
+    ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 3px; }
+  </style>
+</head>
+<body data-depth="intermediate">
+
+  <div id="canvas-container"></div>
+
+  <div class="ui-layer">
+    <!-- Header -->
+    <header class="header-bar glass-card ui-interactive">
+      <div class="title-group">
+        <span class="concept-title">{{CONCEPT_TITLE}}</span>
+        <span class="domain-badge">{{DOMAIN_BADGE}}</span>
+      </div>
+      <div class="depth-selector">
+        <button class="depth-btn" data-depth="simple" onclick="setDepth('simple')">Simple</button>
+        <button class="depth-btn active" data-depth="intermediate" onclick="setDepth('intermediate')">Intermediate</button>
+        <button class="depth-btn" data-depth="advanced" onclick="setDepth('advanced')">Advanced</button>
+      </div>
+    </header>
+
+    <!-- Controls Panel -->
+    <aside class="controls-panel glass-card ui-interactive">
+      <div class="panel-section-title">Timeline</div>
+      <div class="btn-row">
+        <button id="play-pause-btn" class="action-btn primary" onclick="togglePlay()">Pause</button>
+        <button class="action-btn" onclick="resetSim()">Reset</button>
+      </div>
+
+      <div class="control-row" style="margin-top: 10px;">
+        <div class="control-label-group">
+          <span>Simulation Speed</span>
+          <span id="speed-val" class="param-value">1.0x</span>
+        </div>
+        <input type="range" id="speed-slider" min="0.1" max="3.0" step="0.1" value="1.0" oninput="updateSpeed(this.value)">
+      </div>
+
+      <div class="panel-section-title" style="margin-top: 8px;">Parameters</div>
+
+      <!-- Simple Controls -->
+      <div class="depth-simple-only">
+        <div class="control-row">
+          <div class="control-label-group">
+            <span>Intensity / Strength</span>
+            <span id="simple-param-val" class="param-value">Medium</span>
+          </div>
+          <input type="range" id="simple-slider" min="1" max="5" step="1" value="3" oninput="updateSimpleParam(this.value)">
+        </div>
+      </div>
+
+      <!-- Intermediate Controls -->
+      <div class="depth-intermediate-only">
+        <div class="control-row">
+          <div class="control-label-group">
+            <span>Field Strength (B)</span>
+            <span id="field-val" class="param-value">1.50 T</span>
+          </div>
+          <input type="range" id="field-slider" min="0.2" max="4.0" step="0.1" value="1.5" oninput="updateField(this.value)">
+        </div>
+        <div class="control-row">
+          <div class="control-label-group">
+            <span>Particle Velocity (v)</span>
+            <span id="vel-val" class="param-value">2.00 m/s</span>
+          </div>
+          <input type="range" id="vel-slider" min="0.5" max="5.0" step="0.1" value="2.0" oninput="updateVelocity(this.value)">
+        </div>
+      </div>
+
+      <!-- Advanced Controls -->
+      <div class="depth-advanced-only">
+        <div class="control-row">
+          <div class="control-label-group">
+            <span>Damping / Perturbation (γ)</span>
+            <span id="gamma-val" class="param-value">0.050</span>
+          </div>
+          <input type="range" id="gamma-slider" min="0.0" max="0.3" step="0.005" value="0.05" oninput="updateGamma(this.value)">
+        </div>
+        <div class="control-row">
+          <div class="control-label-group">
+            <span>Time-Step Precision (dt)</span>
+            <span id="dt-val" class="param-value">0.016 s</span>
+          </div>
+          <input type="range" id="dt-slider" min="0.005" max="0.032" step="0.001" value="0.016" oninput="updateDt(this.value)">
+        </div>
+      </div>
+
+      <div class="panel-section-title" style="margin-top: 8px;">Display</div>
+      <label class="toggle-row">
+        <span>Coordinate Grid</span>
+        <input type="checkbox" id="grid-toggle" checked onchange="toggleGrid(this.checked)">
+      </label>
+      <label class="toggle-row">
+        <span>Vectors / Indicators</span>
+        <input type="checkbox" id="vector-toggle" checked onchange="toggleVectors(this.checked)">
+      </label>
+      <label class="toggle-row">
+        <span>Motion Trail</span>
+        <input type="checkbox" id="trail-toggle" checked onchange="toggleTrails(this.checked)">
+      </label>
+    </aside>
+
+    <!-- Telemetry Panel -->
+    <aside class="telemetry-panel glass-card ui-interactive">
+      <div class="panel-section-title">Telemetry & Metrics</div>
+      <div class="telemetry-stat">
+        <span style="color: var(--text-muted);">State</span>
+        <span id="stat-state" class="stat-val">Active</span>
+      </div>
+      <div class="telemetry-stat">
+        <span style="color: var(--text-muted);">Primary Value</span>
+        <span id="stat-primary" class="stat-val">0.00</span>
+      </div>
+      <div class="telemetry-stat depth-intermediate-only depth-advanced-only">
+        <span style="color: var(--text-muted);">Total Energy / Invariant</span>
+        <span id="stat-energy" class="stat-val">E = 12.4 J</span>
+      </div>
+      <div class="telemetry-stat depth-advanced-only">
+        <span style="color: var(--text-muted);">Conservation Error (ΔE/E₀)</span>
+        <span id="stat-drift" class="stat-val">±0.002%</span>
+      </div>
+
+      <div class="panel-section-title" style="margin-top: 6px;">Live Real-Time Plot</div>
+      <canvas id="sparkline-canvas" width="300" height="80"></canvas>
+    </aside>
+
+    <!-- Bottom Explanation Card -->
+    <footer class="explanation-card glass-card ui-interactive">
+      <div class="explanation-text" id="explanation-body">
+        <strong>Core Insight:</strong> {{EXPLANATION_SUMMARY}}
+      </div>
+      <div class="equation-box depth-intermediate-only depth-advanced-only" id="equation-display">
+        {{EQUATION_FORMULATION}}
+      </div>
+    </footer>
+  </div>
+
+  <!-- Three.js + OrbitControls from standard CDN -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+
+  <script>
+    // --- Application State ---
+    const state = {
+      depth: 'intermediate',
+      running: true,
+      speed: 1.0,
+      fieldB: 1.5,
+      velocity: 2.0,
+      gamma: 0.05,
+      dt: 0.016,
+      showGrid: true,
+      showVectors: true,
+      showTrails: true,
+      history: []
+    };
+
+    // --- Three.js Setup ---
+    const container = document.getElementById('canvas-container');
+    const scene = new THREE.Scene();
+    scene.background = new THREE.Color(0x090a0f);
+
+    const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
+    camera.position.set(12, 10, 16);
+
+    const renderer = new THREE.WebGLRenderer({ antialias: true });
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    container.appendChild(renderer.domElement);
+
+    const controls = new THREE.OrbitControls(camera, renderer.domElement);
+    controls.enableDamping = true;
+    controls.dampingFactor = 0.05;
+
+    // --- Lighting ---
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.4);
+    scene.add(ambientLight);
+
+    const dirLight = new THREE.DirectionalLight(0xffffff, 0.8);
+    dirLight.position.set(15, 25, 10);
+    scene.add(dirLight);
+
+    const pointLight = new THREE.PointLight(0x00f0ff, 2.0, 50);
+    pointLight.position.set(0, 0, 0);
+    scene.add(pointLight);
+
+    // --- Grid Helper ---
+    const gridHelper = new THREE.GridHelper(24, 24, 0x00f0ff, 0x1f293d);
+    gridHelper.position.y = -4;
+    scene.add(gridHelper);
+
+    // --- Concept Objects ---
+    // Example: Core emitter / particle
+    const coreGeometry = new THREE.SphereGeometry(1.0, 32, 32);
+    const coreMaterial = new THREE.MeshStandardMaterial({
+      color: 0x00f0ff,
+      emissive: 0x004466,
+      roughness: 0.2,
+      metalness: 0.8
+    });
+    const coreObject = new THREE.Mesh(coreGeometry, coreMaterial);
+    scene.add(coreObject);
+
+    // Velocity Vector Arrow
+    const velArrow = new THREE.ArrowHelper(
+      new THREE.Vector3(1, 0, 0),
+      new THREE.Vector3(0, 0, 0),
+      3,
+      0x00ff9d,
+      0.6,
+      0.3
+    );
+    scene.add(velArrow);
+
+    // Force Vector Arrow
+    const forceArrow = new THREE.ArrowHelper(
+      new THREE.Vector3(0, 1, 0),
+      new THREE.Vector3(0, 0, 0),
+      2.5,
+      0xff3366,
+      0.6,
+      0.3
+    );
+    scene.add(forceArrow);
+
+    // Trajectory Trail Buffer
+    const MAX_POINTS = 300;
+    const trailPositions = new Float32Array(MAX_POINTS * 3);
+    const trailGeometry = new THREE.BufferGeometry();
+    trailGeometry.setAttribute('position', new THREE.BufferAttribute(trailPositions, 3));
+    const trailMaterial = new THREE.LineBasicMaterial({
+      color: 0x00f0ff,
+      transparent: true,
+      opacity: 0.6
+    });
+    const trailLine = new THREE.Line(trailGeometry, trailMaterial);
+    scene.add(trailLine);
+    let trailCount = 0;
+
+    // --- Simulation Physics Loop Variables ---
+    let simTime = 0;
+    const clock = new THREE.Clock();
+
+    // --- UI Controls Callback ---
+    function setDepth(depth) {
+      state.depth = depth;
+      document.body.setAttribute('data-depth', depth);
+      document.querySelectorAll('.depth-btn').forEach(b => {
+        b.classList.toggle('active', b.dataset.depth === depth);
+      });
+
+      // Adjust visuals based on depth
+      if (depth === 'simple') {
+        velArrow.visible = false;
+        forceArrow.visible = false;
+        document.getElementById('explanation-body').innerHTML =
+          '<strong>Intuition (Simple):</strong> The particle orbits smoothly, feeling an inward pull that bends its trajectory into a circle.';
+      } else if (depth === 'intermediate') {
+        velArrow.visible = state.showVectors;
+        forceArrow.visible = state.showVectors;
+        document.getElementById('explanation-body').innerHTML =
+          '<strong>Mechanics (Intermediate):</strong> The magnetic Lorentz force acts perpendicular to both velocity and magnetic field, doing no work.';
+      } else {
+        velArrow.visible = state.showVectors;
+        forceArrow.visible = state.showVectors;
+        document.getElementById('explanation-body').innerHTML =
+          '<strong>Rigorous (Advanced):</strong> Numerical integration solves d²r/dt² = (q/m)(v × B) - γv. Hamiltonian energy drift monitored below.';
+      }
+    }
+
+    function togglePlay() {
+      state.running = !state.running;
+      const btn = document.getElementById('play-pause-btn');
+      btn.innerText = state.running ? 'Pause' : 'Play';
+      btn.classList.toggle('primary', state.running);
+    }
+
+    function resetSim() {
+      simTime = 0;
+      trailCount = 0;
+      trailGeometry.setDrawRange(0, 0);
+      state.history = [];
+      coreObject.position.set(4, 0, 0);
+    }
+
+    function updateSpeed(v) {
+      state.speed = parseFloat(v);
+      document.getElementById('speed-val').innerText = `${state.speed.toFixed(1)}x`;
+    }
+
+    function updateField(v) {
+      state.fieldB = parseFloat(v);
+      document.getElementById('field-val').innerText = `${state.fieldB.toFixed(2)} T`;
+    }
+
+    function updateVelocity(v) {
+      state.velocity = parseFloat(v);
+      document.getElementById('vel-val').innerText = `${state.velocity.toFixed(2)} m/s`;
+    }
+
+    function updateGamma(v) {
+      state.gamma = parseFloat(v);
+      document.getElementById('gamma-val').innerText = state.gamma.toFixed(3);
+    }
+
+    function updateDt(v) {
+      state.dt = parseFloat(v);
+      document.getElementById('dt-val').innerText = `${state.dt.toFixed(3)} s`;
+    }
+
+    function updateSimpleParam(v) {
+      const labels = ['Very Weak', 'Weak', 'Medium', 'Strong', 'Intense'];
+      document.getElementById('simple-param-val').innerText = labels[parseInt(v) - 1];
+      state.fieldB = parseFloat(v) * 0.7;
+    }
+
+    function toggleGrid(show) {
+      state.showGrid = show;
+      gridHelper.visible = show;
+    }
+
+    function toggleVectors(show) {
+      state.showVectors = show;
+      if (state.depth !== 'simple') {
+        velArrow.visible = show;
+        forceArrow.visible = show;
+      }
+    }
+
+    function toggleTrails(show) {
+      state.showTrails = show;
+      trailLine.visible = show;
+    }
+
+    // --- Telemetry Sparkline Plot ---
+    const plotCanvas = document.getElementById('sparkline-canvas');
+    const plotCtx = plotCanvas.getContext('2d');
+
+    function drawPlot(val) {
+      state.history.push(val);
+      if (state.history.length > plotCanvas.width) state.history.shift();
+
+      plotCtx.clearRect(0, 0, plotCanvas.width, plotCanvas.height);
+
+      // Grid line
+      plotCtx.strokeStyle = 'rgba(255, 255, 255, 0.08)';
+      plotCtx.lineWidth = 1;
+      plotCtx.beginPath();
+      plotCtx.moveTo(0, plotCanvas.height / 2);
+      plotCtx.lineTo(plotCanvas.width, plotCanvas.height / 2);
+      plotCtx.stroke();
+
+      // Data line
+      plotCtx.strokeStyle = '#00f0ff';
+      plotCtx.lineWidth = 1.5;
+      plotCtx.beginPath();
+      const min = -5; const max = 5;
+      for (let i = 0; i < state.history.length; i++) {
+        const norm = (state.history[i] - min) / (max - min);
+        const y = plotCanvas.height - norm * plotCanvas.height;
+        if (i === 0) plotCtx.moveTo(i, y);
+        else plotCtx.lineTo(i, y);
+      }
+      plotCtx.stroke();
+    }
+
+    // --- Main Animation & Simulation Loop ---
+    function animate() {
+      requestAnimationFrame(animate);
+
+      const delta = Math.min(clock.getDelta(), 0.05);
+
+      if (state.running) {
+        const step = delta * state.speed;
+        simTime += step;
+
+        // Dynamics: Circular cyclotron motion
+        const omega = state.fieldB * 1.2;
+        const radius = Math.max(1.0, (state.velocity * 3.0) / (state.fieldB + 0.1));
+        const x = Math.cos(simTime * omega) * radius;
+        const z = Math.sin(simTime * omega) * radius;
+        const y = Math.sin(simTime * 2.0) * 0.5;
+
+        coreObject.position.set(x, y, z);
+
+        // Update vector arrows
+        const velDir = new THREE.Vector3(-Math.sin(simTime * omega), 0, Math.cos(simTime * omega)).normalize();
+        velArrow.position.copy(coreObject.position);
+        velArrow.setDirection(velDir);
+        velArrow.setLength(2.2);
+
+        const forceDir = new THREE.Vector3(-x, 0, -z).normalize();
+        forceArrow.position.copy(coreObject.position);
+        forceArrow.setDirection(forceDir);
+        forceArrow.setLength(1.8);
+
+        // Update trail
+        if (state.showTrails) {
+          const positions = trailGeometry.attributes.position.array;
+          if (trailCount < MAX_POINTS) {
+            positions[trailCount * 3] = x;
+            positions[trailCount * 3 + 1] = y;
+            positions[trailCount * 3 + 2] = z;
+            trailCount++;
+          } else {
+            // Shift points
+            for (let i = 0; i < (MAX_POINTS - 1) * 3; i++) {
+              positions[i] = positions[i + 3];
+            }
+            positions[(MAX_POINTS - 1) * 3] = x;
+            positions[(MAX_POINTS - 1) * 3 + 1] = y;
+            positions[(MAX_POINTS - 1) * 3 + 2] = z;
+          }
+          trailGeometry.setDrawRange(0, trailCount);
+          trailGeometry.attributes.position.needsUpdate = true;
+        }
+
+        // Update telemetry metrics
+        document.getElementById('stat-primary').innerText = `r = ${radius.toFixed(2)} m`;
+        const kineticE = 0.5 * (state.velocity ** 2);
+        document.getElementById('stat-energy').innerText = `E = ${kineticE.toFixed(2)} J`;
+
+        drawPlot(x);
+      }
+
+      controls.update();
+      renderer.render(scene, camera);
+    }
+
+    // --- Window Resize ---
+    window.addEventListener('resize', () => {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+    });
+
+    // Start
+    animate();
+  </script>
+</body>
+</html>
