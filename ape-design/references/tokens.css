@@ -1,0 +1,163 @@
+@import url("https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Assistant:wght@400;500;600;700;800&family=Lora:ital,wght@0,400..700;1,400..700&family=IBM+Plex+Mono:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&display=swap");
+
+:root {
+  /* Fonts */
+  --aui-font-sans: "Assistant", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --aui-font-heading: var(--aui-font-sans);
+  --aui-font-serif: "Lora", Georgia, Cambria, "Times New Roman", Times, serif;
+  --aui-font-mono: "IBM Plex Mono", "Geist Mono", "JetBrains Mono", "Fira Code", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+
+  /* Brand */
+  --aui-primary: #e5000f;
+  --aui-primary-hover: #c9000d;
+  --aui-primary-active: #a8000b;
+  --aui-primary-text: #ffffff;
+  --aui-primary-accent: #ff5a64;
+  --aui-primary-soft: rgba(229, 0, 15, 0.08);
+
+  /* Accent palette (for tags, charts, status - not used for chrome) */
+  --aui-c-red: #dc2626;
+  --aui-c-blue: #2563eb;
+  --aui-c-violet: #7c3aed;
+  --aui-c-green: #059669;
+  --aui-c-amber: #d97706;
+  --aui-c-pink: #db2777;
+  --aui-c-cyan: #0891b2;
+
+  --aui-accent-yellow: #b45309;
+  --aui-accent-orange: #ea580c;
+  --aui-accent-blue: #2563eb;
+  --aui-accent-blue-hover: #1d4ed8;
+
+  /* Status */
+  --aui-info: #2563eb;
+  --aui-success: #059669;
+  --aui-warning: #d97706;
+  --aui-danger: #dc2626;
+
+  /* Radii */
+  --aui-radius-sm: 3px;
+  --aui-radius-md: 6px;
+  --aui-radius-lg: 8px;
+  --aui-radius-xl: 10px;
+  --aui-radius-pill: 9999px;
+  --aui-radius-avatar: 8px;
+
+  /* Motion */
+  --aui-ease: cubic-bezier(0.16, 1, 0.3, 1);
+  --aui-transition: all 0.15s var(--aui-ease);
+  --aui-transition-fast: all 0.08s var(--aui-ease);
+  --aui-transition-smooth: all 0.22s var(--aui-ease);
+
+}
+
+/* Light (Architectural Paper / Ledger) */
+:root,
+[data-theme="light"] {
+  --aui-bg-primary: #faf9f5;
+  --aui-bg-secondary: #ffffff;
+  --aui-bg-tertiary: #f2efe6;
+  --aui-bg-glass: rgba(250, 249, 245, 0.92);
+  --aui-text-primary: #2d2c33;
+  --aui-text-secondary: #121116;
+  --aui-text-muted: #6e6b75;
+  --aui-border-color: #e5e0d3;
+  --aui-border-light: #eee9dd;
+  --aui-border-strong: #cecaa8;
+  --aui-shadow-xs: 0 1px 2px rgba(25, 20, 15, 0.04);
+  --aui-box-shadow: 0 1px 3px rgba(25, 20, 15, 0.05);
+  --aui-box-shadow-hover: 0 4px 14px -3px rgba(25, 20, 15, 0.12);
+  --aui-box-shadow-lg: 0 20px 40px -12px rgba(25, 20, 15, 0.22);
+  --aui-card-highlight: inset 0 1px 0 0 rgba(255, 255, 255, 0.9);
+  --aui-inset-highlight: inset 0 0 0 0 transparent;
+  --aui-clickable-hover: #f3efe5;
+  --aui-clickable-active: #eae4d6;
+  --aui-maxim-bg: transparent;
+  --aui-maxim-border: #cecaa8;
+  --aui-takeaways-bg: #f5f2e8;
+  --aui-takeaways-border: #e5e0d3;
+  --aui-grid-color: rgba(60, 50, 40, 0.045);
+  --aui-grid-dot: rgba(60, 50, 40, 0.07);
+  --aui-grid-major: rgba(229, 0, 15, 0.05);
+  --aui-dot-color: rgba(60, 50, 40, 0.07);
+  --aui-glow: rgba(229, 0, 15, 0.05);
+  --aui-glow-brand: rgba(229, 0, 15, 0.06);
+  --aui-link: #1d4ed8;
+  --aui-link-hover: #1e40af;
+  --aui-ring: rgba(229, 0, 15, 0.25);
+  --aui-tag-bg: #f2efe6;
+  --aui-tag-text: #2d2c33;
+  --aui-tag-border: #e5e0d3;
+  --aui-code-bg: #f2eee3;
+  --aui-code-text: #1c1c22;
+  --aui-pre-bg: #141419;
+  --aui-pre-text: #ececf1;
+  --aui-info-soft: #eff4ff;
+  --aui-success-soft: #ecfdf5;
+  --aui-warning-soft: #fffbeb;
+  --aui-danger-soft: #fef2f2;
+}
+
+/* Dark (Obsidian Carbon / Systems Console) */
+[data-theme="dark"],
+.dark {
+  --aui-bg-primary: #111113;
+  --aui-bg-secondary: #18181b;
+  --aui-bg-tertiary: #222226;
+  --aui-bg-glass: rgba(17, 17, 19, 0.90);
+  --aui-text-primary: #d6d6dc;
+  --aui-text-secondary: #fbfbfe;
+  --aui-text-muted: #8c8c98;
+  --aui-border-color: #27272c;
+  --aui-border-light: #1f1f24;
+  --aui-border-strong: #393942;
+  --aui-shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.45);
+  --aui-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+  --aui-box-shadow-hover: 0 6px 18px -4px rgba(0, 0, 0, 0.7);
+  --aui-box-shadow-lg: 0 20px 40px -12px rgba(0, 0, 0, 0.85);
+  --aui-card-highlight: inset 0 1px 0 0 rgba(255, 255, 255, 0.05);
+  --aui-inset-highlight: inset 0 1px 0 0 rgba(255, 255, 255, 0.03);
+  --aui-clickable-hover: #1f1f24;
+  --aui-clickable-active: #27272e;
+  --aui-maxim-bg: transparent;
+  --aui-maxim-border: #cc9900;
+  --aui-takeaways-bg: #161619;
+  --aui-takeaways-border: #27272c;
+  --aui-grid-color: rgba(255, 255, 255, 0.025);
+  --aui-grid-dot: rgba(255, 255, 255, 0.045);
+  --aui-grid-major: rgba(255, 255, 255, 0.04);
+  --aui-dot-color: rgba(255, 255, 255, 0.045);
+  --aui-glow: transparent;
+  --aui-glow-brand: rgba(255, 51, 68, 0.08);
+  --aui-link: #60a5fa;
+  --aui-link-hover: #93c5fd;
+  --aui-ring: rgba(255, 51, 68, 0.35);
+  --aui-tag-bg: #1e1e23;
+  --aui-tag-text: #e6e6ec;
+  --aui-tag-border: #27272c;
+  --aui-code-bg: #18181c;
+  --aui-code-text: #e6e6ec;
+  --aui-pre-bg: #0d0d0f;
+  --aui-pre-text: #ededf2;
+  --aui-primary: #ff3344;
+  --aui-primary-hover: #ff4d5a;
+  --aui-primary-active: #e6192b;
+  --aui-primary-accent: #ff6b76;
+  --aui-primary-soft: rgba(255, 51, 68, 0.12);
+  --aui-c-red: #ef4444;
+  --aui-c-blue: #3b82f6;
+  --aui-c-violet: #8b5cf6;
+  --aui-c-green: #10b981;
+  --aui-c-amber: #f59e0b;
+  --aui-c-pink: #ec4899;
+  --aui-c-cyan: #06b6d4;
+  --aui-info: #3b82f6;
+  --aui-success: #10b981;
+  --aui-warning: #f59e0b;
+  --aui-danger: #ef4444;
+  --aui-info-soft: rgba(59, 130, 246, 0.10);
+  --aui-success-soft: rgba(16, 185, 129, 0.10);
+  --aui-warning-soft: rgba(245, 158, 11, 0.10);
+  --aui-danger-soft: rgba(239, 68, 68, 0.12);
+}
+

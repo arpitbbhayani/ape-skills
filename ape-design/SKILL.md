@@ -5,50 +5,100 @@ description: >-
   UI, website, blog, personal site, SaaS dashboard, or documentation development task.
   Trigger on "ape design", "Array UI", or whenever building, styling, or scaffolding UI
   to guarantee high information density, mathematical precision, editorial typography,
-  and 0% custom CSS.
+  and 0% custom CSS without prompt loops.
 ---
 
 # `ape-design`: Editorial Systems Design Skill (Array UI)
 
-This skill enforces strict adherence to **Array UI (`array-ui`)**—the editorial, systems-engineering design system from [ui.arpitbhayani.me](https://ui.arpitbhayani.me).
+This skill enforces strict adherence to **Array UI (`array-ui`)**—the editorial, systems-engineering design system inspired by [arpitbhayani.me](https://arpitbhayani.me) and distributed at [ui.arpitbhayani.me](https://ui.arpitbhayani.me).
 
-When building or modifying any website (personal portfolio, engineering blog, SaaS dashboard, technical documentation, or systems explainer), the agent **MUST** follow this design system without exception.
+When building or modifying any website (personal portfolio, engineering blog, SaaS dashboard, technical documentation, or systems explainer), the agent **MUST** follow this workflow and rules without requiring prompt corrections.
 
 ---
 
-## 1. Prime Directive: The 0% Custom CSS Invariant
+## 1. The 6 Non-Negotiable Prime Invariants
 
+### Invariant 1: Mandatory Font Enforcement (DO THIS FIRST)
+> [!IMPORTANT]
+> **Before creating or editing any components, the agent MUST verify that Google Fonts are loaded and applied to `body`.**
+> If fonts are missing, the UI will fall back to system sans-serif (Arial/Inter), completely breaking the editorial authority.
+>
+> 1. **Google Fonts URL**:
+>    `https://fonts.googleapis.com/css2?family=Assistant:wght@400;500;600;700;800&family=IBM+Plex+Mono:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Lora:ital,wght@0,400..700;1,400..700&display=swap`
+> 2. **In `globals.css`** (or main CSS):
+>    ```css
+>    @import url("https://fonts.googleapis.com/css2?family=Assistant:wght@400;500;600;700;800&family=IBM+Plex+Mono:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Lora:ital,wght@0,400..700;1,400..700&display=swap");
+>    
+>    body {
+>      font-family: var(--font-sans, "Assistant", -apple-system, sans-serif);
+>      -webkit-font-smoothing: antialiased;
+>    }
+>    ```
+> 3. **Or in root layout `<head>`**: Include `<ThemeScript fonts />` from `@aui/theme-script`.
+
+### Invariant 2: 0% Custom CSS Rule
 > [!CAUTION]
 > **Custom CSS proportion MUST REMAIN 0% AT ALL TIMES.**
 > - **NEVER** create custom `.css` files.
 > - **NEVER** write `<style>` blocks or style tags in `.astro`, `.tsx`, `.jsx`, or `.html` files.
 > - **NEVER** inject arbitrary ad-hoc inline styles for margins, paddings, colors, or shadows.
-> - All layout, typography, blank spacing, telemetry, and interactive controls **MUST** be composed exclusively using native Array UI components (`Card`, `Button`, `Table`, `Badge`, `Terminal`, `PingStatus`, `DiffBlock`, `Gutter`, `Layout`, etc.) and system utility classes (`.aui-grid`, `.aui-stack`, `.aui-row`, `.aui-container`).
+> - All layout, typography, blank spacing, telemetry, and interactive controls **MUST** be composed exclusively using native Array UI components (`PageShell`, `Navbar`, `Footer`, `Card`, `Button`, `Table`, `Badge`, `Terminal`, `PingStatus`, `DiffBlock`, `Gutter`, `Layout`, etc.) and system utility classes (`.aui-grid`, `.aui-stack`, `.aui-row`, `.aui-container`).
+
+### Invariant 3: Frame Every Page in `<PageShell>`
+Never hand-roll outer page containers or guess margin widths. Wrap every full page in:
+```tsx
+<PageShell navbar={<Navbar ... />} footer={<Footer ... />}>
+  {/* Page content */}
+</PageShell>
+```
+`PageShell` (`@aui/page-shell`) automatically provides a centered `max-w-6xl` column, proper horizontal padding, full viewport height (`min-h-screen flex flex-col`), and clean baseline typography.
+
+### Invariant 4: Editorial Footer Discipline
+The footer must match [arpitbhayani.me](https://arpitbhayani.me) exactly:
+- **Canvas**: Flat paper (`#faf9f5`) or obsidian carbon (`#111113`) canvas (`bg-background`). Never use floating tinted card backgrounds (`bg-card/60`) for the footer.
+- **Hairlines**: Exactly 1px `border-t border-border` on top, and `border-t border-border/70` separating disclaimer and bottom bar.
+- **Link Layout**: Links are inline items (`inline-flex items-center gap-1.5`) with hover crimson (`text-primary`) and subtle `translate-x-0.5`. Hints are rendered inline in subtle monospace (`text-[11px] font-mono text-muted-foreground/60` like `Projects (Open-source)`). **NEVER** use `justify-between` with boxed badge pills stretching across the column.
+- **Bottom Bar**: Copyright on the left, tactile `<SocialPill>`s with tooltips on the right.
+
+### Invariant 5: Wrap Every Action & Status in `<Tooltip>`
+- Every action button, icon trigger, theme toggle, copy button, and `<PingStatus>` **MUST** be wrapped in a `<Tooltip content="...">`.
+- Communicate consequence, keyboard shortcuts, or live telemetry facts (e.g. `<Tooltip content="Toggle dark / light mode (⌘D)">`).
+
+### Invariant 6: Anti-Card-Soup & Visual Rhythm
+- **NEVER** stack identical layout blocks consecutively (e.g. never place two 3-card grids in a row, or three identical text callouts sequentially).
+- **Alternate visual weight**: Pair dense, machined telemetry (`Terminal`, `DiffBlock`, `ParamTable`, `PropertyGrid`) with airy, editorial moments (`Maxim`, pull quotes, `<Gutter size="xl" />`, `TakeawaysBox`).
+- **Use asymmetric composition**: Prefer 2-column asymmetric splits (`SplitPane`, 60/40 hero-to-terminal layouts) over monotonous symmetric grids.
 
 ---
 
-## 2. LLM-Friendly Endpoints & Context Sources
+## 2. Palette & Visual Standards
 
-The website [ui.arpitbhayani.me](https://ui.arpitbhayani.me) provides dedicated endpoints structured specifically for LLMs and autonomous coding agents:
+1. **Editorial Palette**:
+   - **Light mode**: Paper canvas (`#faf9f5`), warm hairline borders (`#dfded9`), dark carbon text (`#2b2a30`).
+   - **Dark mode**: Obsidian carbon (`#111113`), crisp border (`#27272c`), soft readable white (`#d6d6dc`).
+   - **Signature Crimson (`#e5000f` in light, `#ff3344` in dark)**: Reserved strictly for primary action buttons, active navigation indicators, and key focus rings.
+   - **Amber (`#cc9900`)**: Used exclusively for engineering maxim quotes, philosophy callouts, and warning banners.
+   - **Emerald (`#10b981`)**: Used for operational health, ping dots, uptime, and git diff additions.
+   - **Rose (`#f43f5e`)**: Used for errors, outages, and git diff deletions.
 
-- **Registry Index**: `https://ui.arpitbhayani.me/r/registry.json`
-- **Standard Context**: `https://ui.arpitbhayani.me/llms.txt`
-- **Full API Specification**: `https://ui.arpitbhayani.me/llms-full.txt`
-- **Component Schema**: `https://ui.arpitbhayani.me/r/{name}.json` (e.g. `https://ui.arpitbhayani.me/r/terminal.json`, `https://ui.arpitbhayani.me/r/diff-block.json`)
+2. **Typography**:
+   - Headings & Body: `Assistant` (dense, disciplined, 15px base size, tracking `-0.015em` on headings).
+   - Pull Quotes / Maxims: `Lora` (italic serif).
+   - Code & Telemetry: `IBM Plex Mono` / system monospace.
 
-When an unfamiliar component API or props schema is needed, read `https://ui.arpitbhayani.me/r/{name}.json` or reference `llms-full.txt`.
+3. **Restraint & Elevation**:
+   - **1px hairline borders** everywhere.
+   - Flat, tinted card surfaces (`bg-muted/30` or `var(--aui-bg-secondary)`).
+   - Zero heavy drop shadows.
 
 ---
 
-## 3. Two Installation Modes
+## 3. Installation & Autonomous Execution
 
-The agent must autonomously detect whether the project uses **shadcn/ui registry** or a **direct npm package**.
+The agent **MUST NOT** ask the user which components to install. Autonomously inspect what is needed and run:
 
-### Mode A: shadcn CLI Registry (Recommended for Next.js, Vite, Tailwind)
-
-No npm package required. Components are installed directly into the project:
-
-1. Configure `components.json`:
+### Mode A: shadcn CLI (Recommended for Next.js, Vite, Tailwind)
+1. Add registry to `components.json`:
    ```json
    {
      "$schema": "https://ui.shadcn.com/schema.json",
@@ -58,266 +108,246 @@ No npm package required. Components are installed directly into the project:
      }
    }
    ```
-
-2. Install core design tokens:
+2. Install theme & base layer:
    ```bash
    npx shadcn@latest add @aui/aui -y
    ```
-
-3. Autonomously install needed components with `-y` (do not prompt the user):
+3. Install required components autonomously with `-y`:
    ```bash
-   npx shadcn@latest add @aui/button @aui/badge @aui/card @aui/terminal @aui/diff-block @aui/ping-status @aui/gutter @aui/layout -y
+   npx shadcn@latest add @aui/page-shell @aui/navbar @aui/footer @aui/button @aui/badge @aui/card @aui/terminal @aui/diff-block @aui/ping-status @aui/tooltip @aui/gutter @aui/layout -y
    ```
 
-Components are imported from `@/components/ui/*`:
+### Mode B: Direct Package Dependency (Next.js, Astro)
+```bash
+npm install array-ui
+```
+Import styles in root layout:
 ```tsx
+import "array-ui/styles.css";
+```
+
+---
+
+## 4. Production Layout Recipes
+
+### Recipe 1: PageShell & Global Navigation Scaffold
+```tsx
+import { PageShell } from "@/components/ui/page-shell";
+import { Navbar } from "@/components/ui/navbar";
+import { Footer } from "@/components/ui/footer";
+import { Button } from "@/components/ui/button";
+import { Tooltip } from "@/components/ui/tooltip";
+import { PingStatus } from "@/components/ui/ping-status";
+import { ThemeToggle } from "@/components/ui/theme-toggle";
+import { SocialPill } from "@/components/ui/social-pill";
+
+export function SiteShell({ children }: { children: React.ReactNode }) {
+  return (
+    <PageShell
+      navbar={
+        <Navbar
+          brandName="VectorMesh"
+          brandHref="/"
+          links={[
+            { label: "Architecture", href: "/architecture" },
+            { label: "Telemetry", href: "/telemetry" },
+            { label: "Writings", href: "/writings" },
+            { label: "Docs", href: "/docs" },
+          ]}
+          statusIndicator={
+            <Tooltip content="All 16 quorum nodes operational · p99 < 12ms">
+              <PingStatus status="operational" label="99.99% Live" size="sm" />
+            </Tooltip>
+          }
+          actions={
+            <div className="flex items-center gap-2">
+              <Tooltip content="Toggle theme (⌘D)">
+                <ThemeToggle variant="ghost" size="sm" />
+              </Tooltip>
+              <Tooltip content="Launch interactive browser cluster">
+                <Button variant="primary" size="sm">
+                  Deploy
+                </Button>
+              </Tooltip>
+            </div>
+          }
+        />
+      }
+      footer={
+        <Footer
+          columns={[
+            {
+              heading: "Engine",
+              links: [
+                { label: "Consensus", href: "/consensus", hint: "Raft" },
+                { label: "Storage Engine", href: "/storage", hint: "LSM" },
+                { label: "WAL", href: "/wal" },
+              ],
+            },
+            {
+              heading: "Resources",
+              links: [
+                { label: "Documentation", href: "/docs" },
+                { label: "API Reference", href: "/api", hint: "v2.4" },
+                { label: "Benchmarks", href: "/benchmarks" },
+              ],
+            },
+            {
+              heading: "Open Source",
+              links: [
+                { label: "GitHub", href: "https://github.com", external: true },
+                { label: "RFCs", href: "/rfcs" },
+                { label: "Changelog", href: "/changelog" },
+              ],
+            },
+          ]}
+          disclaimer="VectorMesh is an open-source distributed log replication engine built for zero-copy streaming workloads. MIT Licensed."
+          copyright={`© ${new Date().getFullYear()} VectorMesh. Built for curious engineers.`}
+          socialPills={
+            <>
+              <Tooltip content="Watch deep-dives on YouTube">
+                <SocialPill platform="youtube" href="https://youtube.com" count="210k" />
+              </Tooltip>
+              <Tooltip content="Follow engineering on X">
+                <SocialPill platform="twitter" href="https://twitter.com" count="120k" />
+              </Tooltip>
+              <Tooltip content="Star on GitHub">
+                <SocialPill platform="github" href="https://github.com" count="7k" />
+              </Tooltip>
+            </>
+          }
+        />
+      }
+    >
+      {children}
+    </PageShell>
+  );
+}
+```
+
+### Recipe 2: High-Converting Technical Landing Page
+```tsx
+import { Gutter } from "@/components/ui/gutter";
+import { Container, Stack, Row, Grid } from "@/components/ui/layout";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Terminal } from "@/components/ui/terminal";
-import { DiffBlock } from "@/components/ui/diff-block";
-import { PingStatus } from "@/components/ui/ping-status";
-import { Gutter } from "@/components/ui/gutter";
-import { Container, Stack, Row, Grid } from "@/components/ui/layout";
+import { Maxim } from "@/components/ui/maxim";
+import { Tooltip } from "@/components/ui/tooltip";
+import { StatCard } from "@/components/ui/stat-card";
+
+export default function LandingPage() {
+  return (
+    <Stack gap="xl">
+      {/* 1. Top Announcement Nudge */}
+      <Row justify="start">
+        <Tooltip content="Read the v2.4 zero-copy streaming benchmark report">
+          <Badge variant="amber" interactive href="/changelog">
+            v2.4 Released: Zero-copy disk streaming engine is live →
+          </Badge>
+        </Tooltip>
+      </Row>
+
+      {/* 2. Hero Proposition */}
+      <Stack gap="md" className="max-w-3xl">
+        <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold font-heading tracking-tight leading-[1.08]">
+          Deterministic consensus at <span className="text-primary">hardware speed</span>.
+        </h1>
+        <p className="text-lg text-muted-foreground leading-relaxed font-sans">
+          A high-density distributed write-ahead log with strict Raft quorum, zero GC pauses, and sub-millisecond p99 replication latency.
+        </p>
+
+        {/* Action CTAs wrapped in Tooltips */}
+        <Row gap="sm" align="center" wrap>
+          <Tooltip content="Launches live interactive telemetry cluster (zero signup required)">
+            <Button variant="primary" size="lg">
+              Launch Sandbox Quorum
+            </Button>
+          </Tooltip>
+          <Tooltip content="Read architectural whitepaper and formal TLA+ proofs">
+            <Button variant="secondary" size="lg">
+              Read Architecture RFC →
+            </Button>
+          </Tooltip>
+        </Row>
+
+        {/* Friction-Reduction Reassurance Nudge Row */}
+        <Row gap="xs" align="center" wrap>
+          <Badge variant="secondary">Zero external dependencies</Badge>
+          <Badge variant="green">Apache 2.0</Badge>
+          <Badge variant="blue">Single static binary</Badge>
+          <Badge variant="secondary">Sub-10ms failover</Badge>
+        </Row>
+      </Stack>
+
+      <Gutter size="md" />
+
+      {/* 3. The Live Mechanical Proof (Terminal Breakout) */}
+      <Terminal
+        title="~/vectormesh (cluster: eu-west-1)"
+        lines={[
+          "vmesh cluster bootstrap --peers 3 --wal-dir /data/wal",
+          { text: "✔ Node 1 [Leader]: Quorum established (term=42, index=108420)", kind: "ok" },
+          { text: "✔ Node 2 [Follower]: Log synchronized in 0.84ms", kind: "ok" },
+          { text: "✔ Node 3 [Follower]: Heartbeat acknowledged, fsync verified", kind: "ok" },
+          { text: "Cluster status: HEALTHY · Throughput: 420,000 ops/sec", kind: "out" },
+        ]}
+      />
+
+      <Gutter size="lg" />
+
+      {/* 4. Concrete Metric Pillars */}
+      <Grid cols={3} gap="md">
+        <StatCard value="420k" label="ops / second" description="sustained write throughput" accent="emerald" />
+        <StatCard value="0.84ms" label="p99 replication" description="cross-region Raft quorum" accent="blue" />
+        <StatCard value="Zero" label="memory allocations" description="ring-buffer page cache" accent="rose" />
+      </Grid>
+
+      <Gutter size="lg" />
+
+      {/* 5. Asymmetric Deep-Dive Cards */}
+      <Grid cols={2} gap="lg">
+        <Card hoverable>
+          <CardHeader>
+            <Badge variant="violet" className="w-fit mb-2">Storage Engine</Badge>
+            <CardTitle>Memory-Mapped Append Log</CardTitle>
+          </CardHeader>
+          <CardContent className="text-muted-foreground text-sm leading-relaxed">
+            Direct I/O bypasses OS page cache jitter. Writes are sequentially appended to 64MB pre-allocated segments with hardware-enforced crc32 checksum verification.
+          </CardContent>
+        </Card>
+
+        <Card hoverable>
+          <CardHeader>
+            <Badge variant="cyan" className="w-fit mb-2">Consensus</Badge>
+            <CardTitle>Pipelined Raft Replication</CardTitle>
+          </CardHeader>
+          <CardContent className="text-muted-foreground text-sm leading-relaxed">
+            Entries are optimistically transmitted to quorum followers in lock-free ring buffers while the leader executes fsync concurrently, eliminating network round-trip bottlenecks.
+          </CardContent>
+        </Card>
+      </Grid>
+
+      <Gutter size="lg" />
+
+      {/* 6. Engineering Maxim Quote */}
+      <Maxim author="Arpit Bhayani" source="Asli Engineering">
+        Simplicity is a prerequisite for reliability. Complex systems fail in complex, unexpected ways.
+      </Maxim>
+    </Stack>
+  );
+}
 ```
 
-### Mode B: Direct Package Dependency (Next.js, Astro)
-
-1. Install `array-ui`:
-   ```bash
-   npm install array-ui
-   # or: pnpm add array-ui / bun add array-ui
-   ```
-
-2. Import styles in root layout (`layout.tsx`, `_app.tsx`, or `Layout.astro`):
-   ```tsx
-   import "array-ui/styles.css";
-   ```
-
-3. Import components:
-   ```tsx
-   // Next.js (App Router or Pages Router)
-   import { Button, Terminal, DiffBlock, PingStatus, Card, Gutter, Layout } from "array-ui/nextjs";
-
-   // Astro (zero client-JS overhead)
-   import Terminal from "array-ui/astro/Terminal.astro";
-   import DiffBlock from "array-ui/astro/DiffBlock.astro";
-   import PingStatus from "array-ui/astro/PingStatus.astro";
-   import Gutter from "array-ui/astro/Gutter.astro";
-   ```
-
 ---
 
-## 4. Visual Language & Aesthetic Rules
+## 5. Self-Audit Checklist (Verify Before Concluding)
 
-1. **Editorial Palette**:
-   - **Light mode**: Paper canvas (`#f9f8f5`), warm hairline borders (`#dfded9`), dark carbon text (`#2b2a30`).
-   - **Dark mode**: Obsidian carbon (`#111113`), crisp border (`#27272c`), soft readable white (`#d6d6dc`).
-   - **Signature Crimson (`#e5000f` in light, `#e60012` in dark)**: Reserved strictly for primary action buttons, active navigation indicators, and key focus rings.
-   - **Amber (`#cc9900`)**: Used exclusively for engineering maxim quotes, philosophy callouts, and warning banners.
-   - **Emerald (`#10b981`)**: Used for operational health, ping dots, uptime, and git diff additions.
-   - **Rose (`#f43f5e`)**: Used for errors, outages, and git diff deletions.
-
-2. **Typography**:
-   - Headings & Body: `Assistant` (dense, disciplined, 15px base size, tracking `-0.015em`).
-   - Pull Quotes / Maxims: `Lora` (italic serif).
-   - Code & Telemetry: `IBM Plex Mono` / system monospace.
-
-3. **Density & Restraint**:
-   - **1px hairline borders** everywhere.
-   - Flat, tinted card surfaces (`bg-muted/30` or `var(--aui-bg-secondary)`).
-   - **Zero arbitrary gradients, neon colors, or rounded bouncy buttons.**
-   - Eliminate external CSS margin/padding hacks:
-     - Use `<Gutter size="md" />` for spacing between sections and elements.
-     - Use `<Container>`, `<Stack>`, `<Row>`, `<Grid>` from `@aui/layout` for structural alignment.
-
----
-
-## 5. Component Catalog & Mapping
-
-Use this guide to select the exact Array UI component for every UI requirement:
-
-### Core UI & Action Primitives
-- **`Button`** (`@aui/button`): Tactile action button. Variants: `primary` (crimson), `secondary`, `outline`, `ghost`, `destructive`. Supports `icon`, `leftIcon`, `rightIcon`, `loading`.
-- **`Badge`** (`@aui/badge`): Machined status pill with monospace typography. Variants: `primary`, `green`, `amber`, `red`, `blue`, `violet`, `cyan`, `pink`. Supports `href` and `interactive`.
-- **`Card`** (`@aui/card`): Flat card with hairline border. Subcomponents: `CardHeader`, `CardTitle`, `CardDescription`, `CardContent`, `CardFooter`. Props: `hoverable`, `interactive`.
-- **`Input`** (`@aui/input`): Machined text input with subtle focus ring and optional keyboard shortcut badge (`shortcut="⌘K"`).
-- **`Kbd`** (`@aui/kbd`): Machined monospace keyboard keycap. E.g. `<Kbd keys={["⌘", "K"]} />`.
-- **`Tooltip`** (`@aui/tooltip`): Hover/focus accessible hint.
-- **`Alert`** (`@aui/alert`): Status-tinted inline callout (`warning`, `info`, `destructive`).
-- **`Tabs`** (`@aui/tabs`): Underline tab navigation (`TabsList`, `TabsTrigger`, `TabsContent`).
-- **`Accordion`** (`@aui/accordion`): Collapsible hairline sections.
-- **`Gutter` / `Spacer`** (`@aui/gutter`): Whitespace blank spacing component. Sizes: `xs` (8px), `sm` (12px), `md` (24px, default), `lg` (36px), `xl` (48px), `2xl` (72px). Orientations: `vertical` (default), `horizontal`.
-- **`Progress`** (`@aui/progress`): Machined linear progress bar with value indicator.
-- **`SplitPane`** (`@aui/split-pane`): Two-column responsive layout with sticky aside column and mobile stacking.
-- **`Layout`** (`@aui/layout`): Primitives `Container`, `Stack`, `Row`, `Grid` to compose layouts without ad-hoc CSS.
-- **`Typography`** (`@aui/typography`): Editorial typography (`Heading`, `Lead`).
-- **`StepNav`** (`@aui/step-nav`): Walkthrough/tutorial navigation bar with position counter and next/prev controls.
-- **`ThemeToggle`** (`@aui/theme-toggle`) & **`ThemeScript`** (`@aui/theme-script`): Dark/light switch with automated Google Font preconnecting.
-
-### Developer & Telemetry Primitives
-- **`Terminal`** (`@aui/terminal`): Machined telemetry terminal with bash command dots and styled outputs (`kind: "cmd" | "out" | "ok" | "err"`).
-- **`DiffBlock`** (`@aui/diff-block`): Unified git patch inspector with line gutters, additions, deletions, word-level highlights, and header badges.
-- **`PingStatus`** (`@aui/ping-status`): Pulsing heartbeat indicator (`operational`, `degraded`, `outage`, `maintenance`) with latency label.
-- **`PropertyGrid`** (`@aui/property-grid`): Dense key-value metadata inspector with one-click copy.
-- **`FileTree`** (`@aui/file-tree`): Collapsible directory and file hierarchy tree.
-- **`PackageManager`** (`@aui/package-manager`): Multi-manager install command switcher (`pnpm`, `npm`, `bun`, `yarn`) with instant click-to-copy.
-- **`StatCard`** (`@aui/stat-card`): Metric display card with optional accents (`emerald`, `rose`, `amber`, `blue`).
-
-### Editorial & Content Primitives
-- **`Maxim`** (`@aui/maxim`): Amber quotation callout box for engineering principles.
-- **`TakeawaysBox`** (`@aui/takeaways-box`): Crimson bulleted key takeaways box.
-- **`Hero`** (`@aui/hero`): Editorial portrait hero with bio, tagline, and social pills.
-- **`SocialPill`** (`@aui/social-pill`): Platform pills for YouTube, X/Twitter, GitHub, LinkedIn.
-- **`CourseCard`** (`@aui/course-card`): Card for cohorts, projects, and products with tags and CTA.
-- **`EmptyState`** (`@aui/empty-state`): Minimalist dashed container for zero-data screens.
-- **`Footer`** (`@aui/footer`): Editorial 4-column directory footer with category hints, disclaimer, and social pills.
-- **`Navbar`** (`@aui/navbar`): Editorial navbar with brand, links, action buttons, and theme toggle.
-- **`Modal`** (`@aui/modal`): Accessible dialog modal with backdrop blur.
-- **`Dropdown`** (`@aui/dropdown`): Accessible action menu with keyboard escape support.
-
-### Technical Documentation & Architecture
-- **`ApiEndpoint`** (`@aui/api-endpoint`): HTTP/gRPC API specification block with method badges, copyable paths, parameters, and status response tabs.
-- **`DocStepper`** (`@aui/doc-stepper`): Connected numbered step walkthrough for tutorials and runbooks.
-- **`ParamTable`** (`@aui/param-table`): Dense configuration options and parameter reference table.
-- **`FeatureMatrix`** (`@aui/feature-matrix`): Matrix comparison table with check/cross/partial indicators.
-- **`VersionSelector`** (`@aui/version-selector`): Documentation version switcher.
-- **`ArchitectureCanvas`** / **`Canvas`**: Systems topology and node-and-edge architecture diagrams.
-- **`MemoryLayout`**: Byte/memory layout visualizer with offsets and field inspector.
-- **`PipelineFlow`**: Multi-stage data pipeline flow visualizer with throughput metrics.
-- **`BenchmarkDelta`**: Baseline vs candidate metric delta comparator.
-
----
-
-## 6. Page Archetypes & Narrative User Journeys
-
-Great technical websites are not a uniform stack of cards. They choreograph a deliberate user journey with rhythm, progressive disclosure, and clear visual anchors.
-
-### The Law of Visual Rhythm (Anti-Card-Soup Invariant)
-- **NEVER stack identical layout blocks consecutively** (e.g. never place two 3-card grids in a row, or three identical text callouts sequentially).
-- **Alternate visual weight**: Pair dense, machined telemetry (`Terminal`, `DiffBlock`, `ParamTable`, `PropertyGrid`) with airy, editorial moments (`Maxim`, pull quotes, `<Gutter size="xl" />`, `TakeawaysBox`).
-- **Use asymmetric composition**: Prefer 2-column asymmetric splits (`SplitPane`, 60/40 hero-to-terminal layouts) over monotonous symmetric grids.
-
----
-
-### The Action Clarity & Tooltip Invariant (Wrap Every Action)
-
-> [!IMPORTANT]
-> **Every interactive control, action button, icon trigger, copy button, and status indicator MUST be wrapped in a `<Tooltip>` (`@aui/tooltip`).**
-> - **Icon-Only Buttons**: NEVER leave an icon button bare. Wrap every theme toggle, GitHub link, copy icon, and menu toggle in `<Tooltip content="...">`. Include keyboard shortcuts where applicable (`<Tooltip content="Toggle theme (⌘D)">`).
-> - **Primary & Secondary Action CTAs**: Wrap action buttons in tooltips that communicate consequence or expectation (`<Tooltip content="Launches interactive browser sandbox (zero signup required)">`).
-> - **Telemetry & Status Dots**: Wrap `<PingStatus>` in a tooltip revealing concrete telemetry (`<Tooltip content="All 12 edge clusters operational · p99 latency < 14ms">`).
-> - **Keycaps**: Pair shortcuts with tooltips explaining their trigger scope.
-
----
-
-### Landing Page Nudges & Micro-Conversion Architecture
-
-Technical users are allergic to empty marketing hype. On landing pages, use **tactile nudges**—subtle, high-signal cues that eliminate friction and demonstrate mechanical competence:
-
-1. **Announcement & Version Nudge (Above Hero)**:
-   - Place a compact, clickable badge ribbon above the main headline:
-     ```tsx
-     <Badge variant="amber" interactive href="/changelog">
-       v2.4 Released: Zero-copy streaming engine now live →
-     </Badge>
-     ```
-2. **Friction-Reduction Nudge Row (Below CTAs)**:
-   - Directly underneath primary action buttons, place a `<Row>` of subtle, monospace reassurance badges:
-     ```tsx
-     <Row gap="sm" align="center">
-       <Badge variant="secondary">Zero install</Badge>
-       <Badge variant="green">Apache 2.0</Badge>
-       <Badge variant="blue">Local-first</Badge>
-       <Badge variant="secondary">Single static binary</Badge>
-     </Row>
-     ```
-3. **Instant Command Copy Nudge**:
-   - Provide an immediate copyable terminal snippet right beside the primary button with instant tactile copy feedback and `<Tooltip content="Copy command to clipboard">`.
-4. **Live Telemetry & Social Proof Nudge**:
-   - Ground credibility in live system facts rather than adjectives: `<PingStatus status="operational" label="99.99% Uptime" />` and exact operational statistics (`<StatCard accent="emerald" />`).
-5. **Exploration Jump Nudge**:
-   - A subtle anchor jump button guiding curious users directly to the mechanical proof:
-     ```tsx
-     <Tooltip content="Jump straight to live telemetry & interactive terminal">
-       <Button variant="ghost" size="sm" icon="arrow-down">
-         Inspect the live engine ↓
-       </Button>
-     </Tooltip>
-     ```
-
----
-
-### Archetype 1: Technical Landing & SaaS Product Page
-Guide visitors from initial proposition directly into mechanical proof, feature depth, and clear action:
-
-1. **Header / Navbar**: Brand, high-level navigation, live telemetry badge wrapped in `<Tooltip>` (`<PingStatus status="operational" />`), and primary Crimson CTA button wrapped in `<Tooltip>`.
-2. **Hero Section with Nudges**: 
-   - Top Announcement Nudge: Monospace clickable badge (`<Badge variant="amber" interactive>`).
-   - Crisp one-line proposition in dense `Assistant` typography (`<Typography variant="h1">`).
-   - One-sentence engineering summary.
-   - Primary Crimson action button + secondary outline button, each wrapped in `<Tooltip>`.
-   - Friction-Reduction Nudge Row: Monospace pills ("Zero install", "Apache 2.0", "Local-first").
-3. **The Live Proof (Immediate Telemetry Breakout)**:
-   - Place a live `<Terminal>` with runnable commands or a `<DiffBlock>` directly beneath the hero. Never make users scroll past fluff to see what the system actually does.
-4. **Value Pillars (Asymmetric Grid)**:
-   - 2-column or 3-column `<Card>` layout with hairline borders, monospace metric badges, and concrete performance stats (`<StatCard>`).
-5. **Deep-Dive Mechanism / Architecture**:
-   - Use `<SplitPane>` or `<DocStepper>` alongside `<PipelineFlow>` or `<ArchitectureCanvas>` to walk through how the engine functions under the hood.
-6. **Engineering Maxim**:
-   - An amber quote box (`<Maxim>`) highlighting the core design philosophy or invariant.
-7. **Footer**: 
-   - 4-column editorial directory (`<Footer>`) with license disclaimer, documentation links, and platform `<SocialPill>`s with tooltips.
-
----
-
-### Archetype 2: Deep-Dive Engineering Blog / Technical Article
-Transform technical writing into an authoritative, publication-grade reading experience:
-
-1. **Header**: Minimal navbar with back navigation link, publication title, and `<ThemeToggle>` wrapped in `<Tooltip>`.
-2. **Editorial Meta Header**:
-   - Monospace topic badges (`<Badge>`), publication date, reading time, and system version.
-   - Article title in `Assistant` font with subtle negative tracking.
-   - Lead paragraph: 2-sentence crisp thesis statement set in editorial lead typography.
-3. **Rhythmic Narrative Flow (The Reading Spine)**:
-   - **Prose Section**: Clean, focused paragraphs capped near 70ch.
-   - `<Gutter size="lg" />`
-   - **Mechanical Evidence**: Break prose with a `<Terminal>` showing live output, a `<DiffBlock>` showing code changes, or a `<PropertyGrid>` for configuration comparisons.
-   - `<Gutter size="lg" />`
-   - **Deep Explanation**: Connected step walk-through via `<DocStepper>` or byte layouts via `<MemoryLayout>`.
-4. **Key Takeaways Box**:
-   - Bulleted summary using `<TakeawaysBox>` with crimson markers.
-5. **Postlude**:
-   - Author attribution, citations, and related technical deep-dive cards.
-
----
-
-### Archetype 3: Technical Documentation & Systems Explainer
-Optimize for rapid scanning, copyable workflows, and progressive disclosure:
-
-1. **Command & Search Bar**: Quick search `<Input>` with keyboard keycap (`<Kbd keys={["⌘", "K"]} />`) wrapped in `<Tooltip content="Search docs (⌘K)">`, and `<VersionSelector>`.
-2. **Two-Column Split Layout**: 
-   - Left: Sticky table of contents and section steps (`<StepNav>`).
-   - Right: Main documentation payload.
-3. **Step-by-Step Walkthrough**:
-   - Connected numbered procedures using `<DocStepper>`.
-   - Command installation switcher using `<PackageManager>` (`pnpm`, `npm`, `bun`) with copy tooltips.
-4. **API & Configuration Specifications**:
-   - `<ApiEndpoint>` with HTTP/gRPC badges, copyable endpoints with tooltips, and status tabs.
-   - Dense configuration option reference using `<ParamTable>`.
-   - Before/after or baseline comparison using `<BenchmarkDelta>`.
-
----
-
-## 7. Execution Workflow for the Agent
-
-When building or updating any screen or component:
-1. **Map the Narrative Journey**: Identify the page archetype (Landing Page, Blog Post, or Technical Docs). Plan the rhythmic progression (Proposition → Proof → Deep-Dive → Takeaway) before placing components.
-2. **Never ask the user which components to install**: Autonomously inspect what is needed and run `npx shadcn@latest add @aui/<component> -y` or import from `array-ui`.
-3. **Scaffold Layout using Layout Primitives**: Wrap pages in `<Container>`, organize flows in `<Stack>` and `<Row>`, and place spacing rhythm using `<Gutter size="md" | "lg" | "xl" />`.
-4. **Apply the Visual Rhythm Rule**: Verify there are no repetitive stacks of identical cards or monotonous blocks. Alternate telemetry breakouts with editorial typography.
-5. **Enforce Tooltip & Nudge Discipline**:
-   - Wrap EVERY action button, icon trigger, status dot, and copy target in `<Tooltip>`.
-   - On landing pages, embed announcement badges, friction-reduction nudge rows ("Zero install", "Apache 2.0"), and live proof jumps.
-6. **Audit Against Custom CSS**: Review code before completing—confirm there are zero custom `.css` files, zero `<style>` blocks, and zero arbitrary margin/padding utilities.
-7. **Ensure Modern Editorial Polish**: Deliver mathematical hairline borders, signature crimson accents (`#e5000f`), and clean typography.
+Before declaring any UI task done, the agent **MUST** verify every item:
+- [ ] **Fonts Enforced**: Google Fonts (`Assistant`, `IBM Plex Mono`, `Lora`) loaded in `globals.css` or `<head>`, and `body { font-family: var(--font-sans) }` active.
+- [ ] **0% Custom CSS**: Zero `.css` files created, zero `<style>` blocks written, zero ad-hoc margin/padding styles.
+- [ ] **PageShell Enforced**: Screen is framed in `<PageShell>` with centered `max-w-6xl` bounds.
+- [ ] **Footer Editorial**: Footer is flat on `bg-background` with hairline border, inline links with `(hint)`, and social pills.
+- [ ] **Tooltips Wrapped**: Every action button, theme toggle, copy button, and `<PingStatus>` has a `<Tooltip>`.
+- [ ] **Visual Rhythm**: No consecutive stacks of identical cards; telemetry breakouts and maxims alternate with prose.
