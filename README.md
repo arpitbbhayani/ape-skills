@@ -41,6 +41,7 @@ You can also tag a skill explicitly with `/skill`, e.g. `/ape-commit`.
 | [ape-cli-terminal-experience](./ape-cli-terminal-experience) | Designs a CLI's terminal experience the Claude Code way -- palette, glyphs, spinners, prompts, listings, and full-screen TUI views. |
 | [ape-present](./ape-present)               | Converts a blog post into a single self-contained, readable HTML document -- animated diagrams, large numbers, typeset formulas, just enough text to carry the idea. Requires the `reference/` directory alongside `SKILL.md`. |
 | [ape-design](./ape-design)                 | Enforces the Array UI editorial systems design system -- page archetypes, mathematical density, signature palette, and 0% custom CSS. |
+| [ape-write-paper](./ape-write-paper)       | Writes a polished two-column LaTeX paper and PDF from any source material -- audits every claim against evidence first, reports losses honestly, builds figures and tables from real data, and renders pages to check them. Requires the `reference/` directory alongside `SKILL.md`. |
 
 
 ## License

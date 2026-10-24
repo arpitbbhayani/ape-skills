@@ -1,0 +1,88 @@
+% Tested with Tectonic (XeTeX) and latexmk. Libertinus loads unicode-math: do NOT load
+% amssymb or inputenc/fontenc with it. For pdfLaTeX use \usepackage{newtxtext,newtxmath} instead.
+%
+% NOTE FOR CONFERENCES (ACM SIGMOD, IEEE, NeurIPS, ACL):
+% If submitting to a specific conference, replace \documentclass and custom title formatting
+% with the official venue class (e.g., \documentclass[sigconf,review,anonymous]{acmart} for SIGMOD).
+% See reference/snippets.md for the ACM SIGMOD template skeleton.
+\documentclass[10pt,twocolumn,a4paper]{article}
+\usepackage[top=1.9cm, bottom=1.9cm, left=1.55cm, right=1.55cm, columnsep=0.65cm]{geometry}
+\usepackage{libertinus}
+\usepackage{amsmath}
+\usepackage{microtype}
+\usepackage{booktabs}
+\usepackage{tabularx}
+\usepackage{array}
+\usepackage{enumitem}
+\usepackage{titlesec}
+\usepackage{caption}
+\usepackage{ragged2e}
+\usepackage{xcolor}
+\usepackage{tikz}
+\usepackage{pgfplots}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+\usepackage{listings}
+\usepackage{url}
+\usepackage{cite}
+\usepackage{hyperref}
+\pgfplotsset{compat=1.17}
+\usetikzlibrary{arrows.meta, positioning, calc, fit, backgrounds}
+\hypersetup{colorlinks=true, linkcolor=blue!55!black, citecolor=blue!55!black, urlcolor=blue!55!black,
+  pdftitle={TITLE}, pdfauthor={AUTHOR}}
+\urlstyle{same}
+
+% code listings style
+\lstset{
+  basicstyle=\ttfamily\scriptsize,
+  breaklines=true,
+  frame=single,
+  rulecolor=\color{black!20},
+  backgroundcolor=\color{black!3},
+  numbers=none,
+  tabsize=2,
+  showstringspaces=false
+}
+
+% palette: one tint for learned/neural parts, one for deterministic parts
+\definecolor{learned}{RGB}{31, 78, 140}
+\definecolor{learnedfill}{RGB}{226, 235, 247}
+\definecolor{determ}{RGB}{70, 70, 70}
+\definecolor{determfill}{RGB}{236, 236, 236}
+
+% headings: level 1 bold uppercase, level 2 bold; run-in paragraph heads (title text WITHOUT trailing period)
+\titleformat{\section}{\normalfont\bfseries\fontsize{10.5}{12.5}\selectfont}{\thesection}{0.6em}{\MakeUppercase}
+\titleformat{\subsection}{\normalfont\bfseries\fontsize{10}{12}\selectfont}{\thesubsection}{0.6em}{}
+\titleformat{\paragraph}[runin]{\normalfont\bfseries}{}{0pt}{}[.]
+\titlespacing*{\paragraph}{0pt}{0.6em plus 0.1em}{0.5em}
+\titlespacing*{\section}{0pt}{1.1em plus 0.2em minus 0.1em}{0.5em plus 0.1em}
+\titlespacing*{\subsection}{0pt}{0.8em plus 0.2em minus 0.1em}{0.35em plus 0.1em}
+\captionsetup{font=small, labelfont=bf, labelsep=period, justification=justified, singlelinecheck=false, skip=5pt}
+\setlist{nosep, leftmargin=1.3em, itemsep=2pt}
+\setlength{\parskip}{0pt}
+\setlength{\parindent}{1.1em}
+\setlength{\textfloatsep}{10pt plus 2pt minus 2pt}
+\setlength{\floatsep}{8pt plus 2pt minus 2pt}
+\setlength{\intextsep}{8pt plus 2pt minus 2pt}
+\renewcommand{\arraystretch}{1.08}
+
+% numbered references with hanging indent
+\makeatletter
+\renewenvironment{thebibliography}[1]
+  {\section*{References}\small
+   \list{[\arabic{enumiv}]}{\settowidth\labelwidth{[00]}\leftmargin1.4em\itemindent-1.4em
+     \labelsep0.3em \itemsep1pt \parsep0pt \usecounter{enumiv}}%
+   \sloppy\clubpenalty4000\widowpenalty4000}
+  {\endlist}
+\makeatother
+
+% ---- title block with full-width abstract (place right after \begin{document}) ----
+% \twocolumn[{%
+% \centering\vspace{0.2cm}
+% {\fontsize{17}{21}\selectfont\bfseries TITLE LINE 1\\[3pt] TITLE LINE 2\par}
+% \vspace{0.7em}{\large\bfseries AUTHOR\par}\vspace{0.15em}{\small\texttt{EMAIL}\par}
+% \vspace{1.0em}{\bfseries\normalsize Abstract\par}\vspace{0.3em}
+% \begin{minipage}{0.86\textwidth}\small\setlength{\parindent}{0pt}\justifying
+% ABSTRACT TEXT
+% \end{minipage}\vspace{1.0em}}]
+% \thispagestyle{plain}
